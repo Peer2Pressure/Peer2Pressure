@@ -69,3 +69,14 @@ class Like(AbstractModel):
     @classmethod
     def get_default_fields(cls) -> List[str]:
         return [nameof(cls.like_author), nameof(cls.post)]
+    
+class Comment(AbstractModel):
+    comment_author = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(default=datetime.now)
+    updated_on = models.DateTimeField(default=datetime.now)
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.comment_author), nameof(cls.post), nameof(cls.comment)]
