@@ -33,7 +33,11 @@ class User(AbstractModel):
     password = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["username", "firt_name", "last_name", "email", "password"], name="Unique user properties")]
+        constraints = [models.UniqueConstraint(fields=["username", "first_name", "last_name", "email", "password"], name="Unique user properties")]
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.username), nameof(cls.first_name), nameof(cls.last_name)]
 
     def __str__(self):
         return self.username
@@ -46,6 +50,10 @@ class Post(AbstractModel):
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)
     is_private = models.BooleanField(default=False)
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.author)]
 
     def __str__(self):
         return self.caption
