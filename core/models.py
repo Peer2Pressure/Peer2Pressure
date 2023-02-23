@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 from varname import nameof
 
-MAX_CharField_Lenght = 150
+MAX_CharField_Length = 150
 
 class AbstractModel(models.Model):
     class Meta:
@@ -26,11 +26,11 @@ class AbstractModel(models.Model):
         return str(self)
 
 class User(AbstractModel):
-    username = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
-    first_name = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
-    last_name = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
-    email = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
-    password = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
+    username = models.CharField(max_length=MAX_CharField_Length, blank=True)
+    first_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
+    last_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
+    email = models.CharField(max_length=MAX_CharField_Length, blank=True)
+    password = models.CharField(max_length=MAX_CharField_Length, blank=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["username", "first_name", "last_name", "email", "password"], name="Unique user properties")]
@@ -57,3 +57,15 @@ class Post(AbstractModel):
 
     def __str__(self):
         return self.caption
+
+class Like(AbstractModel):
+    like_author = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["like_author", "post"], name="A user can only like post onces")]
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.like_author), nameof(cls.post)]
