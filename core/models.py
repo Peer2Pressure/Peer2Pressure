@@ -33,7 +33,8 @@ class User(AbstractModel):
 
 class Post(AbstractModel):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    username = models.CharField(max_length=100)
+    # username = models.CharField(max_length=100)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images')
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)
