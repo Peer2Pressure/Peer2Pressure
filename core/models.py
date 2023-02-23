@@ -1,12 +1,27 @@
 from django.db import models
+from typing import List
 from django.contrib.auth import get_user_model
 import uuid
 from datetime import datetime
 
-# Create your models here.
+class AbstractModel(models.Model):
+    class Meta:
+        abstract = True
 
-# Create your models here.
-class User(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+
+    # @abstractclassmethod
+    # def get_default_fields(cls) -> List[str]:
+    #     """
+    #         Return the list of default fields when doing a `select *`.
+    #         These are only specific for the model, and irrelevant when doing `select **` (return all fields).
+    #     """
+    #     raise NotImplementedError()
+
+    def __repr__(self):
+        return str(self)
+
+class User(AbstractModel):
     username = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
@@ -16,11 +31,13 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-class Post(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+class Post(AbstractModel):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     username = models.CharField(max_length=100)
     image = models.ImageField(upload_to='post_images')
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)
     is_private = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.caption
