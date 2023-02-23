@@ -1,8 +1,10 @@
+from abc import abstractclassmethod
 from django.db import models
 from typing import List
 from django.contrib.auth import get_user_model
 import uuid
 from datetime import datetime
+from varname import nameof
 
 class AbstractModel(models.Model):
     class Meta:
@@ -10,13 +12,13 @@ class AbstractModel(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
-    # @abstractclassmethod
-    # def get_default_fields(cls) -> List[str]:
-    #     """
-    #         Return the list of default fields when doing a `select *`.
-    #         These are only specific for the model, and irrelevant when doing `select **` (return all fields).
-    #     """
-    #     raise NotImplementedError()
+    @abstractclassmethod
+    def get_default_fields(cls) -> List[str]:
+        """
+            Return the list of default fields when doing a `select *`.
+            These are only specific for the model, and irrelevant when doing `select **` (return all fields).
+        """
+        raise NotImplementedError()
 
     def __repr__(self):
         return str(self)
@@ -27,6 +29,9 @@ class User(AbstractModel):
     last_name = models.CharField(max_length=100, blank=True)
     email = models.CharField(max_length=200, blank=True)
     password = models.CharField(max_length=150, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["username", "firt_name", "last_name", "email", "password"], name="Unique user properties")]
 
     def __str__(self):
         return self.username
