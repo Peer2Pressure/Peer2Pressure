@@ -6,6 +6,8 @@ import uuid
 from datetime import datetime
 from varname import nameof
 
+MAX_CharField_Lenght = 150
+
 class AbstractModel(models.Model):
     class Meta:
         abstract = True
@@ -24,11 +26,11 @@ class AbstractModel(models.Model):
         return str(self)
 
 class User(AbstractModel):
-    username = models.CharField(max_length=100, blank=True)
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    email = models.CharField(max_length=200, blank=True)
-    password = models.CharField(max_length=150, blank=True)
+    username = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
+    first_name = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
+    last_name = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
+    email = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
+    password = models.CharField(max_length=MAX_CharField_Lenght, blank=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["username", "firt_name", "last_name", "email", "password"], name="Unique user properties")]
