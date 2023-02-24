@@ -1,5 +1,5 @@
 # Local libraries
-from . models import Author
+from . models import Author, Relation
 
 # Third-party libraries
 from rest_framework import serializers
@@ -26,3 +26,8 @@ class AuthorSerializer(serializers.ModelSerializer):
         author_obj, author_created = Author.objects.create(**identifiers, defaults=defaults)
 
         return author_obj, author_created
+    
+class RelationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Relation
+        fields = "__all__"

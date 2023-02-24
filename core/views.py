@@ -1,5 +1,5 @@
 # Local Libraries
-from .serializers import AuthorSerializer
+from .serializers import AuthorSerializer, RelationSerializer
 from .models import Author, Relation
 
 # Built-in libraries
@@ -55,10 +55,20 @@ class AuthorAPI(GenericAPIView):
             return Response(serializer.data) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
-class FollowerList(GenericAPIView):
+class FollowerListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request, author_id):
-        # try:
-        #     followers = 
-        pass
+        try:
+            followers = list(Relation.objects.filter(from_author=author_id, to_author_request=True).values_list('to_author', flat=True))
+            followers += list(Relation.objects.filter(to_author=author_id, from_author_request=True).values_list('from_author', flat=True))
+
+            authors = Author.objects.filter(pk__in=list(followers))
+            print(authors)
+        except Relation.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = AuthorSerializer(authors, many=True)
+        return Response(serializer.data)
+        
+        

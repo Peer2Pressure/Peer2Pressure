@@ -24,5 +24,5 @@ urlpatterns = [
    #  path('', views.index, name='index'),
     path('authors/', views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>', views.AuthorAPI.as_view(), name='author_api'),
-   #  path('authors/<uuid:author_id>/followers', views.FollowerList, name='followers_list')   
+    path('authors/<uuid:author_id>/followers', views.FollowerListAPI.as_view(), name='followers_list')   
 ]
