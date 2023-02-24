@@ -1,4 +1,9 @@
+# Django #
+*.log
+*.pot
+*.pyc
 __pycache__
-.venv
-.DS_Store
 db.sqlite3
+media
+
+.DS_Store
