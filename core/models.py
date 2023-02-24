@@ -7,6 +7,7 @@ from datetime import datetime
 from varname import nameof
 
 MAX_CharField_Length = 150
+Local_host = "http://127.0.0.1:5454"
 
 class AbstractModel(models.Model):
     class Meta:
@@ -27,6 +28,7 @@ class AbstractModel(models.Model):
 
 class Author(AbstractModel):
     # type = models.CharField(max_length=10, default="author")
+    host = models.URLField(default=Local_host)
     username = models.CharField(max_length=MAX_CharField_Length, blank=True)
     first_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
     last_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
@@ -38,7 +40,7 @@ class Author(AbstractModel):
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.username), nameof(cls.first_name), nameof(cls.last_name)]
+        return [nameof(cls.username), nameof(cls.first_name), nameof(cls.last_name), nameof(cls.host)]
 
     def __str__(self):
         return self.username
