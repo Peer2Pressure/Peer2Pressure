@@ -8,7 +8,7 @@ from varname import nameof
 from django.utils import timezone
 
 MAX_CharField_Length = 150
-Local_host = "http://127.0.0.1:5454"
+Local_host = "http://127.0.0.1:5454/"
 
 class AbstractModel(models.Model):
     class Meta:

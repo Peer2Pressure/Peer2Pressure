@@ -30,6 +30,25 @@ class AuthorSerializer(serializers.ModelSerializer):
         author_obj= Author.objects.create(**defaults)
 
         return author_obj.id
+    
+    def get_author_id_by_username(self, username):
+        
+        try:
+            author_obj = Author.objects.get(username=username)
+        except Author.DoesNotExist:
+            raise ValueError("Author does not exist")
+
+        return author_obj.id
+
+    def get_author_by_id(self, author_id):
+
+        try:
+            author_obj = Author.objects.get(id = author_id)
+        except Author.DoesNotExist:
+            raise ValueError("Author does not exist")
+        
+        return author_obj
+        
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
