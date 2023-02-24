@@ -44,8 +44,8 @@ class Author(AbstractModel):
         return self.username
 
 class Relation(AbstractModel):
-    from_author = models.ForeignKey(Author, related_name='from_author', on_delete=models.CASCADE)
-    to_author = models.ForeignKey(Author, related_name='to_author', on_delete=models.CASCADE)
+    from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
+    to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=datetime.now)
     from_author_request = models.BooleanField(default=False)
     to_author_request = models.BooleanField(default=False)

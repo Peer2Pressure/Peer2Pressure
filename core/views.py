@@ -26,10 +26,6 @@ class AuthorListAPI(GenericAPIView):
         authors = Author.objects.all()    
         serializer = AuthorSerializer(authors, many=True)
         data = list(serializer.data)
-        # result = {
-        #     "type":"authors",
-        #     "items": list(serializer.data) 
-        #     }
         return Response(data)
 
 class AuthorAPI(GenericAPIView):
@@ -64,11 +60,9 @@ class FollowerListAPI(GenericAPIView):
             followers += list(Relation.objects.filter(to_author=author_id, from_author_request=True).values_list('from_author', flat=True))
 
             authors = Author.objects.filter(pk__in=list(followers))
-            print(authors)
-        except Relation.DoesNotExist:
+        except Author.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
         serializer = AuthorSerializer(authors, many=True)
         return Response(serializer.data)
-        
         
