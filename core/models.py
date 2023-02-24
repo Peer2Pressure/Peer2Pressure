@@ -43,22 +43,22 @@ class Author(AbstractModel):
     def __str__(self):
         return self.username
 
-# class Relations(AbstractModel):
-#     from_author = models.ForeignKey(User, on_delete=models.CASCADE)
-#     to_author = models.ForeignKey(User, on_delete=models.CASCADE)
-#     created_at = models.DateTimeField(default=datetime.now)
-#     from_author_request = models.BooleanField(default=False)
-#     to_author_request = models.BooleanField(default=False)
+class Relations(AbstractModel):
+    from_author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='relations_from_author')
+    to_author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='relations_to_author')
+    created_at = models.DateTimeField(default=datetime.now)
+    from_author_request = models.BooleanField(default=False)
+    to_author_request = models.BooleanField(default=False)
 
-#     class Meta:
-#         constraints = [models.UniqueConstraint(fields=["from_author", "to_author"], name="There can only be this relation between two authors")]
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["from_author", "to_author"], name="There can only be this relation between two authors")]
 
-#     @classmethod
-#     def get_default_fields(cls) -> List[str]:
-#         return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
     
-#     def __str__(self) -> str:
-#         return self.from_author
+    def __str__(self) -> str:
+        return self.from_author
 
 class Post(AbstractModel):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4)
