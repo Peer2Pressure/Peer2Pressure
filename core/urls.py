@@ -6,11 +6,11 @@ from . import views
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Snippets API",
+      title="Peer2Pressure API",
       default_version='v1',
-      description="Test description",
+      description="API Docs for Peer2Pressure Social Network",
       terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
+      contact=openapi.Contact(email="admin@peer2pressure.com"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
@@ -21,7 +21,8 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('', views.index, name='index'),
-    path('authors/', views.author_list, name="author_list"),
-   #  path('authors/')
+   #  path('', views.index, name='index'),
+    path('authors/', views.AuthorListAPI.as_view(), name='author_list'),
+    path('authors/<uuid:author_id>', views.AuthorAPI.as_view(), name='author_api'),
+   #  path('authors/<uuid:author_id>/followers', views.FollowerList, name='followers_list')   
 ]
