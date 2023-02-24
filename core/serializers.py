@@ -7,42 +7,59 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = "__all__"
 
-    def create_author(self, username, firstname, lastname, email, password):
+    def create_author(self, username, firstname, lastname, email, password, host = None):
 
-        defaults = {
-            nameof(Author.username): username,
-            nameof(Author.first_name): firstname,
-            nameof(Author.last_name): lastname,
-            nameof(Author.email): email,
-            nameof(Author.password): password
-        }
+        if host is not None:
+            defaults = {
+                nameof(Author.host): host,
+                nameof(Author.username): username,
+                nameof(Author.first_name): firstname,
+                nameof(Author.last_name): lastname,
+                nameof(Author.email): email,
+                nameof(Author.password): password
+            }
+        else:
+            defaults = {
+                nameof(Author.username): username,
+                nameof(Author.first_name): firstname,
+                nameof(Author.last_name): lastname,
+                nameof(Author.email): email,
+                nameof(Author.password): password
+            }
 
-        author_obj, author_created = Author.objects.create(defaults=defaults)
+        author_obj= Author.objects.create(**defaults)
 
-        return author_obj.id, author_created
+        return author_obj.id
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
 
-    def create_post(self, author, image, caption, is_private):
+    def create_post(self, author, is_private, image = None, caption = None):
+
+        if image is None and caption is None:
+            raise ValueError("Require eithr caption or image for the post")
 
         try:
-            author_obj = Author.objects.get(username=author)
+            author_obj = Author.objects.get(id=author)
         except Author.DoesNotExist:
             raise ValueError("Author does not exist")
-        
+
         defaults = {
             nameof(Post.author): author_obj,
-            nameof(Post.image): image,
-            nameof(Post.caption): caption,
             nameof(Post.is_private): is_private
         }
 
-        post_obj, post_created = Post.objects.create(defaults=defaults)
+        if image is not None:
+            defaults[nameof(Post.image)] = image
 
-        return post_obj.id, post_created
+        if caption is not None:
+            defaults[nameof(Post.caption)] = caption
+
+        post_obj = Post.objects.create(**defaults)
+
+        return post_obj.id
 
 class RelationsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,9 +83,9 @@ class RelationsSerializer(serializers.ModelSerializer):
             nameof(Relations.to_author): to_author_obj
         }
 
-        relation_obj, relation_created = Relations.objects.create(defaults=defaults)
+        relation_obj= Relations.objects.create(**defaults)
 
-        return relation_obj.id, relation_created
+        return relation_obj.id
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,9 +109,9 @@ class LikeSerializer(serializers.ModelSerializer):
             nameof(Like.post): post_obj
         }
 
-        like_obj, like_created = Like.objects.create(defaults=defaults)
+        like_obj = Like.objects.create(**defaults)
 
-        return like_obj.id, like_created
+        return like_obj.id
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
