@@ -23,4 +23,5 @@ urlpatterns = [
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('', views.index, name='index'),
     path('authors/', views.author_list, name="author_list"),
+   #  path('authors/')
 ]

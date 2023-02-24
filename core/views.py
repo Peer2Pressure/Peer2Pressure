@@ -16,6 +16,12 @@ def author_list(request):
     '''
     authors = Author.objects.all()
     serializer = AuthorSerializer(authors, many=True)
-    return JsonResponse(serializer.data, safe=False)
+    data = list(serializer.data)
+    result = {
+        "type":"authors",
+        "items": list(serializer.data) 
+        }
+    
+    return JsonResponse(result, safe=False)
 
 
