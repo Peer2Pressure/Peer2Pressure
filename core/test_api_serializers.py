@@ -9,7 +9,7 @@ class AuthorAPISerializerTest(TestCase):
         self.apiserializer = AuthorAPISerializer()
 
     def test_author_create(self):
-        author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gamil.com", "authorpassword")
+        author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
         result_dict = self.apiserializer.get_single_author(author_id)
 
         self.assertTrue(result_dict["type"] == "author")
