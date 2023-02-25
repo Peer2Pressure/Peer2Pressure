@@ -5,8 +5,10 @@ from django.contrib.auth import get_user_model
 import uuid
 from datetime import datetime
 from varname import nameof
+from django.utils import timezone
 
 MAX_CharField_Length = 150
+Local_host = "http://127.0.0.1:5454/"
 
 class AbstractModel(models.Model):
     class Meta:
@@ -27,6 +29,7 @@ class AbstractModel(models.Model):
 
 class Author(AbstractModel):
     # type = models.CharField(max_length=10, default="author")
+    host = models.URLField(default=Local_host)
     username = models.CharField(max_length=MAX_CharField_Length, blank=True)
     first_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
     last_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
@@ -38,7 +41,7 @@ class Author(AbstractModel):
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.username), nameof(cls.first_name), nameof(cls.last_name)]
+        return [nameof(cls.username), nameof(cls.first_name), nameof(cls.last_name), nameof(cls.host)]
 
     def __str__(self):
         return self.username
@@ -65,9 +68,9 @@ class Post(AbstractModel):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     # username = models.CharField(max_length=100)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='post_images')
-    caption = models.TextField()
-    created_at = models.DateTimeField(default=datetime.now)
+    image = models.ImageField(upload_to='post_images', blank=True)
+    caption = models.TextField(blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
     is_private = models.BooleanField(default=False)
 
     @classmethod
@@ -80,7 +83,7 @@ class Post(AbstractModel):
 class Like(AbstractModel):
     like_author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["like_author", "post"], name="A user can only like post onces")]
@@ -96,8 +99,8 @@ class Comment(AbstractModel):
     comment_author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment = models.TextField()
-    created_at = models.DateTimeField(default=datetime.now)
-    updated_on = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_on = models.DateTimeField(default=timezone.now)
 
     @classmethod
     def get_default_fields(cls) -> List[str]:

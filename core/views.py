@@ -1,5 +1,5 @@
 # Local Libraries
-from .serializers import AuthorSerializer, RelationSerializer
+from .serializers import AuthorSerializer
 from .models import Author, Relation
 
 # Built-in libraries
