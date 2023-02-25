@@ -13,23 +13,16 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     def create_author(self, username, firstname, lastname, email, password, host = None):
 
+        defaults = {
+            nameof(Author.username): username,
+            nameof(Author.first_name): firstname,
+            nameof(Author.last_name): lastname,
+            nameof(Author.email): email,
+            nameof(Author.password): password
+        }
+
         if host is not None:
-            defaults = {
-                nameof(Author.host): host,
-                nameof(Author.username): username,
-                nameof(Author.first_name): firstname,
-                nameof(Author.last_name): lastname,
-                nameof(Author.email): email,
-                nameof(Author.password): password
-            }
-        else:
-            defaults = {
-                nameof(Author.username): username,
-                nameof(Author.first_name): firstname,
-                nameof(Author.last_name): lastname,
-                nameof(Author.email): email,
-                nameof(Author.password): password
-            }
+            defaults[nameof(Author.host)] = host
 
         author_obj= Author.objects.create(**defaults)
 
@@ -52,6 +45,23 @@ class AuthorSerializer(serializers.ModelSerializer):
             raise ValueError("Author does not exist")
         
         return author_obj
+    
+    def update_author(self, author_id, username, firstname, lastname, email, password, host = None):
+
+        defaults = {
+            nameof(Author.username): username,
+            nameof(Author.first_name): firstname,
+            nameof(Author.last_name): lastname,
+            nameof(Author.email): email,
+            nameof(Author.password): password
+        }
+
+        if host is not None:
+            defaults[nameof(Author.host)] = host
+
+        updated_rows_count = Author.objects.filter(id=author_id).update(**defaults)
+
+        return updated_rows_count
         
 
 class PostSerializer(serializers.ModelSerializer):

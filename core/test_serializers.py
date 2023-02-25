@@ -16,6 +16,11 @@ class AuthorSerializerTest(TestCase):
         self.assertTrue(created_author.password == "authorpassword")
         
         self.assertTrue(self.serializer.get_author_id_by_username(created_author.username) == author_id)
+
+        updated_rows = self.serializer.update_author(author_id, "author username1", "author firstname", "author lastname", "author@gamil.com", "authorpassword")
+
+        self.assertTrue(updated_rows == 1)
+        self.assertTrue(author_id == self.serializer.get_author_id_by_username("author username1"))
         # print(author_id)
 
 class PostSerializerTest(TestCase):
