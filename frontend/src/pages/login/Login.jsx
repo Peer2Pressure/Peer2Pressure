@@ -1,5 +1,6 @@
 import "./login.css"
 
+
 const Login = () => {
   return (
     <div className="signin">
@@ -11,7 +12,7 @@ const Login = () => {
                 <div className="signinBox">
                     <input type="Email" placeholder="Email" className="signinInput" />
                     <input type="Password" placeholder="Password" className="signinInput" />
-                    <button className="signinButton">Sign in</button>
+                    <button variant="contained" className="signinButton">Sign in</button>
                     <div className="joinBox">
                         <span className="joinDescription">New to Peer2Pressure?</span>
                         <button className="joinButton">Join Now</button>
