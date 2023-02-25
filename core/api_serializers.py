@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from . models import *
-from . serializers import *
 from varname import nameof
+from .serializers.authorserializer import AuthorSerializer
 
 author_serializer = AuthorSerializer()
 

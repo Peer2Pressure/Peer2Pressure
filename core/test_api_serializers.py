@@ -1,7 +1,11 @@
 from .models import *
 from django.test import TestCase
-from .serializers import *
 from .api_serializers import *
+from .serializers.authorserializer import AuthorSerializer
+from .serializers.postserializer import PostSerializer
+from .serializers.relationserializer import RelationSerializer
+from .serializers.likeserializer import LikeSerializer
+from .serializers.commentserializer import CommentSerializer
 
 class AuthorAPISerializerTest(TestCase):
     def setUp(self) -> None:
