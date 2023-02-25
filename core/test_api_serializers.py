@@ -21,3 +21,9 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue(result_dict["github"] == "author@gmail.com")
 
         print(result_dict)
+
+    def test_get_all_authors(self):
+        author_id1 = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
+        result_dict = self.apiserializer.get_all_authors()
+
+        print(result_dict)

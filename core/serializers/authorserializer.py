@@ -62,3 +62,9 @@ class AuthorSerializer(serializers.ModelSerializer):
         updated_rows_count = Author.objects.filter(id=author_id).update(**defaults)
 
         return updated_rows_count
+    
+    def all_authors(self):
+
+        authors = Author.objects.all()
+
+        return authors
