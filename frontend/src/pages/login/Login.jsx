@@ -12,7 +12,9 @@ const Login = () => {
                 <div className="signinBox">
                     <input type="Email" placeholder="Email" className="signinInput" />
                     <input type="Password" placeholder="Password" className="signinInput" />
-                    <button className="signinButton">Sign in</button>
+                    <Link to="/home">
+                        <button className="signinButton">Sign in</button>
+                    </Link>
                     <div className="joinBox">
                         <span className="joinDescription">New to Peer2Pressure?</span>
                         <Link to="/register">
