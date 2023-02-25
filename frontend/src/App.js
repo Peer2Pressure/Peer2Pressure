@@ -6,8 +6,9 @@ import Home from "./pages/home/home";
 
 const router = createBrowserRouter([
   {
+    // NOTE: this will need to go to home if a user is logged in
     path: "/",
-    element: <Home/>
+    element: <Login/>
   },
   {
     path: "/home",
