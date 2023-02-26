@@ -2,8 +2,10 @@ from rest_framework import serializers
 from . models import *
 from varname import nameof
 from .serializers.authorserializer import AuthorSerializer
+from .serializers.relationserializer import RelationSerializer
 
 author_serializer = AuthorSerializer()
+relation_serializer = RelationSerializer()
 
 class AuthorAPISerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,6 +41,42 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         list_authors = []
 
         for author in authors:
+
+            # TODO: Need to add image
+            curr_author = {}
+
+            curr_author["type"] = "author"
+            curr_author["id"] = str(author.host) + "authors/" + str(author.id)
+            curr_author["url"] = str(author.host) + "authors/" + str(author.id)
+            curr_author["host"] = author.host
+            curr_author["displayName"] = author.username
+            curr_author["github"] = author.email
+
+            list_authors.append(curr_author)
+
+        result_dict["items"] = list_authors
+
+        return result_dict
+    
+
+class RelationAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Relation
+        fields = "__all__"
+
+    def get_all_followers(author_id):
+
+        followers = relation_serializer.get_followers(author_id)
+
+        if len(followers) <= 0:
+            return {"type": "followers", "items": []}
+        
+        result_dict = {}
+        result_dict["type"] = "followers"
+
+        list_authors = []
+
+        for author in followers:
 
             # TODO: Need to add image
             curr_author = {}
