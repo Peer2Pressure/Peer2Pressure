@@ -13,7 +13,7 @@ from rest_framework import status
 
 # Local Libraries
 from .api_serializers import AuthorAPISerializer
-from .serializers import AuthorSerializer
+from .serializers.authorserializer import AuthorSerializer
 from .models import Author, Relation
 
 
