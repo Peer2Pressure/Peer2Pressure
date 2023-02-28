@@ -21,8 +21,12 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-   #  path('', views.index, name='index'),
+    
+    path('signin/', views.signin, name='signin'),
+    path('signup/', views.signup, name='signup'),
     path('authors/', views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>', views.AuthorAPI.as_view(), name='author_api'),
-    path('authors/<uuid:author_id>/followers', views.FollowerListAPI.as_view(), name='followers_list')   
+    path('authors/<uuid:author_id>/followers', views.FollowerListAPI.as_view(), name='followers_list'),
+    path('authors/<uuid:author_id>/followers/<uuid:foreign_author_id>', views.FollowerAPI.as_view(), name="follower_api"),
+      
 ]

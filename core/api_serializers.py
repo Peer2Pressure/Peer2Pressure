@@ -21,9 +21,15 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         }
 
         id = str(author_obj.host) + "authors/" + str(author_id)
-
         result_dict["id"] = id
-
         result_dict["url"] = id
-
+        
         return result_dict
+
+    # def update_single_author(self, author_id):
+    #     updated_author = author_serializer.update(author_id)
+
+    #     return updated_author
+
+
+

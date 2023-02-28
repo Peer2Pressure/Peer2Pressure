@@ -1,14 +1,15 @@
-from abc import abstractclassmethod
-from django.db import models
-from typing import List
-from django.contrib.auth import get_user_model
 import uuid
+from abc import abstractclassmethod
 from datetime import datetime
 from varname import nameof
+from typing import List
+
+from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 
-MAX_CharField_Length = 150
-Local_host = "http://127.0.0.1:5454/"
+MAX_CHARFIELD_LENGTH = 150
+LOCALHOST = "http://127.0.0.1:5454/"
 
 class AbstractModel(models.Model):
     class Meta:
@@ -29,12 +30,14 @@ class AbstractModel(models.Model):
 
 class Author(AbstractModel):
     # type = models.CharField(max_length=10, default="author")
-    host = models.URLField(default=Local_host)
-    username = models.CharField(max_length=MAX_CharField_Length, blank=True)
-    first_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
-    last_name = models.CharField(max_length=MAX_CharField_Length, blank=True)
-    email = models.CharField(max_length=MAX_CharField_Length, blank=True)
-    password = models.CharField(max_length=MAX_CharField_Length, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    host = models.URLField(default=LOCALHOST)
+    username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    first_name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    last_name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default=f"{host}/{id}")
+    email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["username", "email", "password"], name="Unique user properties")]
