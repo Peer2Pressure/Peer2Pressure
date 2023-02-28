@@ -34,3 +34,12 @@ class PostSerializer(serializers.ModelSerializer):
         post_obj = Post.objects.create(**defaults)
 
         return post_obj.id
+
+    def get_post(self, authorid, postid):
+
+        try:
+            post_obj = Post.objects.get(author_id=authorid, id = postid)
+        except Post.DoesNotExist:
+            raise ValueError("Post does not exist")
+
+        return post_obj
