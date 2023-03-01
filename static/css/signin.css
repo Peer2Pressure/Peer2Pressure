@@ -60,6 +60,7 @@
 .signinButton{
     margin-top: 1em;
     margin-bottom: 1em;
+    /* padding: 1em; */
     height: 50px;
     border-radius: 45px;
     border: none;
@@ -78,11 +79,13 @@
 }
 
 .joinButton{
+    margin-left: 2em;
     border: none;
     background-color: transparent;
     font-weight: 600;
     color: #2977c9;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .joinDescription{

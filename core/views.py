@@ -71,10 +71,23 @@ class FollowerAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request, author_id, foreign_author_id):
-        pass
-
+        try:
+            follower = Relation.objects.get(from_author=foreign_author_id, to_author=author_id)
+            follower_author = follower.from_author
+        except Relation.DoesNotExist:
+            return Response(data={"msg": "Follower does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = AuthorSerializer(follower_author)
+        return Response(serializer.data)
+    
     def put(self, request, author_id, foreign_author_id):
-        pass
+        try:
+            new_relation = relation_serializer.create_relations(author_id, foreign_author_id)
+            follower = new_relation.from_author
+        except Relation.DoesNotExist:
+            
+            return Response(data={"msg": "Follower does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = AuthorSerializer(new_relation)
+        return Response(serializer.data)
 
     def delete(self, request, author_id, foreign_author_id):
         try:

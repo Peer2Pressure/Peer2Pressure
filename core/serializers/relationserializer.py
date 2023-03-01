@@ -12,15 +12,15 @@ class RelationSerializer(serializers.ModelSerializer):
         model = Relation
         fields = "__all__"
 
-    def create_relations(self, from_author, to_author):
+    def create_relations(self, author_id, foreign_author_id):
 
         try:
-            from_author_obj = Author.objects.get(id=from_author)
+            from_author_obj = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             raise ValueError("From Author does not exist")
         
         try:
-            to_author_obj = Author.objects.get(id=to_author)
+            to_author_obj = Author.objects.get(pk=foreign_author_id)
         except Author.DoesNotExist:
             raise ValueError("To Author does not exist")
         
@@ -31,7 +31,7 @@ class RelationSerializer(serializers.ModelSerializer):
 
         relation_obj= Relation.objects.create(**defaults)
 
-        return relation_obj.id
+        return relation_obj
     
     def update_follow_status(self, from_authorid, to_authorid, status):
 
