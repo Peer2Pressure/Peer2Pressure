@@ -85,3 +85,18 @@
     font-weight: 600;
     font-size: 13px;
 }
+
+
+.register-button-container {
+    margin-left: 2em;
+    border: none;
+    background-color: transparent;
+    color: #2977c9;
+    cursor: pointer;
+}
+
+.register-button-text {
+    color: #2977c9;
+    font-weight: 600;
+    text-decoration: none;
+}
