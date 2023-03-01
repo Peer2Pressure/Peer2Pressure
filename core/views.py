@@ -12,9 +12,13 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Local Libraries
-from .api_serializers import AuthorAPISerializer
+from .api_serializers import *
 from .serializers.authorserializer import AuthorSerializer
-from .models import Author, Relation
+from .serializers.postserializer import PostSerializer
+from .serializers.commentserializer import CommentSerializer
+from .serializers.likeserializer import LikeSerializer
+from .serializers.inboxserializer import InboxSerializer
+from .models import *
 
 
 authorapi_serializer = AuthorAPISerializer()
@@ -29,7 +33,7 @@ class AuthorListAPI(GenericAPIView):
         return Response(data)
 
 class AuthorAPI(GenericAPIView):
-    serializer_class = AuthorAPISerializer
+    serializer_class = AuthorSerializer
     def get(self, request, author_id):
         author = authorapi_serializer.get_single_author(author_id)
         return Response(author)
@@ -47,7 +51,7 @@ class AuthorAPI(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 class FollowerListAPI(GenericAPIView):
-    serializer_class = AuthorAPISerializer
+    serializer_class = AuthorSerializer
 
     def get(self, request, author_id):
         try:
@@ -64,7 +68,13 @@ class FollowerListAPI(GenericAPIView):
         return Response(serializer.data)
 
 class FollowerAPI(GenericAPIView):
-    serializer_class = AuthorAPISerializer
+    serializer_class = AuthorSerializer
+
+    def get(self, request, author_id, foreign_author_id):
+        pass
+
+    def put(self, request, author_id, foreign_author_id):
+        pass
 
     def delete(self, request, author_id, foreign_author_id):
         try:
@@ -75,6 +85,168 @@ class FollowerAPI(GenericAPIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         # serializer = AuthorSerializer(follower_author.from_author)
         return Response({"msg": f"{follower_author.username} has been removed from as a follower."})
+
+
+class SinglePostAPI(GenericAPIView):
+    serializer_class = PostSerializer
+
+    def get(self, request, author_id, post_id):
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    
+    def put(self, request, author_id, post_id):
+        # if request.user.is_authenticated:
+        #     pass
+        # else:
+        #     pass
+
+        try:
+            author = Author.objects.get(pk=author_id)
+            is_private=request.data["is_private"]
+            caption = request.data["caption"]
+            image = request.data["image"]
+            post = PostSerializer.create_post(author=author, is_private=is_private, id=post_id, caption=caption, image=image)
+        except Author.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)    
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    
+    # must be authenticated
+    def post(self, request, author_id, post_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+            author_id = author.id
+            post = Post.objects.get(pk=post_id)
+        except (Author.DoesNotExist, Post.DoesNotExist):
+            return Response(status=status.HTTP_404_NOT_FOUND)    
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, author_id, post_id):
+        try:
+            author_id = Author.objects.get(pk=author_id)
+            post = Post.objects.get(pk=post_id)
+            post.delete()
+        except (Author.DoesNotExist, Post.DoesNotExist):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({"msg": f"Post {post_id} has been deleted successfuly."})
+
+
+class PostAPI(GenericAPIView):
+    serializer_class = PostSerializer
+
+    def get(self, request, author_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+        except Author.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        posts = Post.objects.filter(author=author)
+        serializer = PostSerializer(posts, many=True)
+        data = list(serializer.data)
+        return Response(data)
+    
+    def post(self, request, author_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+            is_private=request.data["is_private"]
+            caption = request.data["caption"]
+            image = request.data["image"]
+            post = PostSerializer.create_post(author=author, is_private=is_private, caption=caption, image=image)
+        except Author.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)    
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+    
+
+class CommentAPI(GenericAPIView):
+    serializer_class = CommentSerializer
+
+    def get(self, request, author_id, post_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+            post = Post.objects.get(pk=post_id)
+            comments = post.comments
+        except (Author.DoesNotExist, Post.DoesNotExist, Comment.DoesNotExist):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CommentSerializer(comments, many=True)
+        data = list(serializer.data)
+        return Response(data)
+    
+    def post(self, request, author_id, post_id):
+        comment = request.data["comment"]
+        new_comment = CommentSerializer.create_comment(author_id=author_id, post_id=post_id, comment=comment)
+        if new_comment is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CommentSerializer(new_comment)
+        return Response(serializer.data)
+
+class LikeAPI(GenericAPIView):
+    serializer_class = LikeSerializer
+
+    def get(self, request, author_id, post_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+            post = Post.objects.get(pk=post_id)
+            likes = post.likes
+        except (Author.DoesNotExist, Post.DoesNotExist, Like.DoesNotExist):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = LikeSerializer(likes, many=True)
+        data = list(serializer.data)
+        return Response(data)
+    
+    def post(self, request, author_id, post_id):
+        comment = request.data["comment"]
+        new_comment = CommentSerializer.create_comment(author_id=author_id, post_id=post_id, comment=comment)
+        if new_comment is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CommentSerializer(new_comment)
+        return Response(serializer.data)
+
+class LikedAPI(GenericAPIView):
+    serializer_class=PostSerializer
+    
+    def get(self, request, author_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+            likes = author.likes
+        except (Author.DoesNotExist, Like.DoesNotExist):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = Like(likes, many=True)
+        data = list(serializer.data)
+        return Response(data)
+
+# incomplete
+class CommentLikeAPI(GenericAPIView):
+    serializer_class = LikeSerializer
+
+    def get(sef, request, author_id, post_id, comment_id):
+        try:
+            author = Author.objects.get(pk=author_id)
+            post = Post.objects.get(pk=post_id)
+            comment = Comment.objects.get(pk=comment_id)
+        except (Author.DoesNotExist, Post.DoesNotExist, Comment.DoesNotExist):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        # serializer = LikeSerializer(likes, many=True)
+        # data = list(serializer.data)
+        # return Response(data)
+        return None
+
+
+class InboxLike(GenericAPIView):
+    serializer_class = InboxSerializer
+
+    def post(self, request, author_id):
+        pass
+
+
 
 def signin(request):
     if request.method == 'POST':

@@ -24,8 +24,19 @@ urlpatterns = [
     path('signin/', views.signin, name='signin'),
     path('signup/', views.signup, name='signup'),
     path('authors/', views.AuthorListAPI.as_view(), name='author_list'),
-    path('authors/<uuid:author_id>', views.AuthorAPI.as_view(), name='author_api'),
-    path('authors/<uuid:author_id>/followers', views.FollowerListAPI.as_view(), name='followers_list'),
-    path('authors/<uuid:author_id>/followers/<uuid:foreign_author_id>', views.FollowerAPI.as_view(), name="follower_api"),
+    path('authors/<uuid:author_id>/', views.AuthorAPI.as_view(), name='author_api'),
+    path('authors/<uuid:author_id>/followers/', views.FollowerListAPI.as_view(), name='followers_list'),
+    path('authors/<uuid:author_id>/followers/<uuid:foreign_author_id>/', views.FollowerAPI.as_view(), name="follower_api"),
+
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/', views.SinglePostAPI.as_view(), name="post_single"),
+    path('authors/<uuid:author_id>/posts/', views.PostAPI.as_view(), name="post"),
+
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/', views.CommentAPI.as_view(), name="comment"),
+    
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/likes/', views.LikeAPI.as_view(), name="like"),
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', views.CommentLikeAPI.as_view(), name="comment_like"),
+    path('authors/<uuid:author_id>/inbox/', views.InboxLike.as_view(), name="inbox_like"),
+
+    path('authors/<uuid:author_id>/liked/', views.InboxLike.as_view(), name="author_liked")
       
 ]

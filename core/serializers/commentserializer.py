@@ -10,15 +10,15 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = "__all__"
     
-    def create_comment(self, comment_author, post, comment):
+    def create_comment(self, author_id, post_id, comment):
 
         try:
-            comment_author_obj = Author.objects.get(id=comment_author)
+            comment_author_obj = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
             raise ValueError("Comment Author does not exist")
         
         try:
-            post_obj = Post.objects.get(id = post)
+            post_obj = Post.objects.get(pk=post_id)
         except Post.DoesNotExist:
             raise ValueError("Post does not exist")
         

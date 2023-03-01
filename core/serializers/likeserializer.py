@@ -10,10 +10,10 @@ class LikeSerializer(serializers.ModelSerializer):
         model = Like
         fields = "__all__"
 
-    def create_like(self, like_author, post):
+    def create_like(self, author, post):
 
         try:
-            like_author_obj = Author.objects.get(id=like_author)
+            like_author_obj = Author.objects.get(id=author)
         except Author.DoesNotExist:
             raise ValueError("Like Author does not exist")
         
@@ -23,7 +23,7 @@ class LikeSerializer(serializers.ModelSerializer):
             raise ValueError("Post does not exist")
         
         defaults = {
-            nameof(Like.like_author): like_author_obj,
+            nameof(Like.author): like_author_obj,
             nameof(Like.post): post_obj
         }
 

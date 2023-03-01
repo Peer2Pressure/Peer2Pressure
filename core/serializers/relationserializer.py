@@ -64,7 +64,6 @@ class RelationSerializer(serializers.ModelSerializer):
         return False        
     
     def get_followers(self, author_id):
-
         to_relations = Relation.objects.filter(to_author_id=author_id, to_author_request=True)
         from_relations = Relation.objects.filter(from_author_id=author_id, from_author_request=True)
 

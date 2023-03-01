@@ -84,30 +84,42 @@ class Post(AbstractModel):
         return self.caption
 
 class Like(AbstractModel):
-    like_author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["like_author", "post"], name="A user can only like post onces")]
+        constraints = [models.UniqueConstraint(fields=["author", "post"], name="A user can only like post onces")]
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.like_author), nameof(cls.post)]
+        return [nameof(cls.author), nameof(cls.post)]
     
     def __str__(self):
-        return self.like_author
+        return self.author
 
 class Comment(AbstractModel):
-    comment_author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     comment = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.comment_author), nameof(cls.post), nameof(cls.comment)]
+        return [nameof(cls.author), nameof(cls.post), nameof(cls.comment)]
     
     def __str__(self):
-        return self.comment_author
+        return self.author
+
+class Inbox(AbstractModel):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    obj_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    obj_url = models.CharField(max_length=250, blank=True)
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.author), nameof(cls.obj_type), nameof(cls.obj_url)]
+    
+    def __str__(self):
+        return f"{self.author.username}:{self.type}"
