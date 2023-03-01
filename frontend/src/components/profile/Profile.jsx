@@ -6,7 +6,7 @@ import { Avatar, Button } from "@mui/material";
 export default function Profile() {
 
   // calling the api to get data to be rendered in this component
-  const {data, loading, error} = useFetch("https://random-data-api.com/api/v2/users?size=1&is_xml=true");
+  const {data, loading, error} = useFetch("http://localhost:8000/authors/ea89c93d-4879-450d-9d12-58bb06d484c1");
   
   // check if loading 
   if (loading) return <h1> Loading... </h1>; // placeholder for now 
