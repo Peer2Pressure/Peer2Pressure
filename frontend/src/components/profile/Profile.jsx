@@ -1,7 +1,7 @@
 import "./profile.css"
 import useFetch from "../../useFetch"
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Button } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
 
 export default function Profile() {
 
@@ -18,7 +18,8 @@ export default function Profile() {
     <div>
         <div className="profileBox">
             {/* <img class="profileImage" src={data?.profileImage} alt="profile of id.name"/> <-- what we actually need to display*/}
-            <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/>
+            {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
+            <Avatar alt={data?.displayName} src="/assets/johnDoe.jpg" sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
                 {data?.first_name} {data?.last_name}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
