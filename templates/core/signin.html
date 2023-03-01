@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <!-- <link href="{% static 'favicon.png' %}" rel="icon" type="image/png"> -->
+    <title>Home</title>
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <link rel="stylesheet" href="{% static 'css/signin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+    <div class="signin">
+        <div class="signinCard">
+            <div class="signinLeft">
+                <h1 class="logo">Peer2Pressure</h1>
+            </div>
+            <div class="signinRight">
+                <div class="signinBox">
+                    <form action="{% url 'signin' %}" method="post">
+                        {% csrf_token %}
+                        <input type="text" name="username" placeholder="Email" class="signinInput" />
+                        <input type="password" name="password" placeholder="Password" class="signinInput" />
+                        <input type="submit" class="signinButton" value="Sign In">
+                        <div class="joinBox">
+                            <span class="joinDescription">New to Peer2Pressure?</span>
+                            <link to="/signup">
+                                <button class="joinButton">Join Now</button>
+                            </link>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>
