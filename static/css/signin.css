@@ -78,13 +78,17 @@
     align-items: center;
 }
 
-.joinButton{
+.join-button-container {
     margin-left: 2em;
     border: none;
     background-color: transparent;
-    font-weight: 600;
     color: #2977c9;
     cursor: pointer;
+}
+
+.join-button-text {
+    color: #2977c9;
+    font-weight: 600;
     text-decoration: none;
 }
 
