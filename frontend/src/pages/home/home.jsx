@@ -8,7 +8,9 @@ const Home = () => {
     return (
       <>
       <div className="homeContainer">
-        <Profile/>
+        <div className="profileContainer">
+          <Profile/>
+        </div>
         <div className="streamContainer">
           <Share/>
           <Stream/>
