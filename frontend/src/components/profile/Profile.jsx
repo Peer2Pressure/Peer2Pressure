@@ -21,7 +21,7 @@ export default function Profile() {
             {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
             <Avatar alt={data?.displayName} src="/assets/johnDoe.jpg" sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
-                {data?.first_name}{data?.last_name}{data?.username}
+                {data?.first_name} {data?.last_name}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
             <Button className="manageProfileButton">Manage profile</Button>
