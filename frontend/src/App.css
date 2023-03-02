@@ -1,6 +1,8 @@
 body {
   --main-color: #0058A2;
-  --main-background: #e6ecf0;
+  --main-background: #f8f8f8;
+  background-color: #f8f8f8;
+  
 }
 
 .app {

@@ -1,5 +1,5 @@
 .share {
-    display: flex;
+    display: inline-block;
     /* align-items: center; */
     justify-content: center;
     position: relative;
@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     height: fit-content;
-    background-color: #f8f8f8;
+    background-color: white;
     /* border: 1px solid black; */
     height: 250px;
     align-content: space-between;
@@ -47,11 +47,10 @@
 }
 
 textarea {
-    width: 30rem;
-    height: 1rem;
+    min-width: 30rem;
     padding: 2rem;
     border: none;
-    background-color: #f8f8f8;
+    background-color: white;
     resize: none;
 }
 
