@@ -2,6 +2,7 @@ import "./share.css";
 import { useState } from "react";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { Switch } from "@mui/material";
 
 
 const Share = () => {
@@ -10,6 +11,7 @@ const Share = () => {
     const [files, setFile] = useState([]);
     const [desc, setDesc] = useState("");
     const [message, setMessage] = useState();
+    const [isPrivate, setIsPrivate] = useState(false); 
 
     const handleFile = (e) => {
         setMessage("");
@@ -54,20 +56,30 @@ const Share = () => {
                         <label htmlFor="file">
                             <div className="uploadImg">
                                 <PhotoSizeSelectActualOutlinedIcon 
-                                    fontSize="small" 
+                                    fontSize="small"     
                                     color="primary"
                                 /> <b>Upload a Photo</b>
                                 <img src = {Image} alt="" /> 
                             </div>
                         </label>
                     </div>
+                    <div className="isPrivateSwitch">
+                        <Switch
+                            private={isPrivate}
+                            onChange={(event) => setIsPrivate(event.target.checked)}
+                            color="primary"
+                        />
+                        <b>Private</b>  
+                    </div>
                 </div>
                 
                 
 
                 <div className="bottom">
-                    <textarea name="text" placeholder={"Write something..."} />                    
-
+                    <div className="textBox">
+                        <textarea name="text" placeholder={"Write something..."} />   
+                    </div>
+                       
                     <div className="imgPreview">
                         <span className="errorMsg">{message}</span>
                         {files.map((file, key) => {
@@ -81,8 +93,9 @@ const Share = () => {
                     </div>
 
                 </div>
-                
-                <button className="postButton" onClick={handleClick}>Post</button>
+                <div className="buttonBox">
+                    <button className="postButton" onClick={handleClick}>Post</button>
+                </div>
             </div>
         </div>
     );
