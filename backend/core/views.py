@@ -7,6 +7,7 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
+from django.contrib.auth import logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
@@ -273,7 +274,15 @@ class InboxLike(GenericAPIView):
     def post(self, request, author_id):
         pass
 
+def index(request):
+   if request.user.is_authenticated:
+      return render(request, "index.html")
+   else:
+      return redirect('signin')
 
+def logout_view(request):
+    logout(request)
+    return redirect('signin')
 
 def signin(request):
     if request.method == 'POST':
