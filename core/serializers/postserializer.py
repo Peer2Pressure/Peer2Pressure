@@ -46,6 +46,6 @@ class PostSerializer(serializers.ModelSerializer):
         try:
             post_obj = Post.objects.get(author_id=authorid, id = postid)
         except Post.DoesNotExist:
-            raise ValueError("Post does not exist")
+            return None
 
         return post_obj
