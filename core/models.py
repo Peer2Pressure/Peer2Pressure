@@ -38,7 +38,7 @@ class Author(AbstractModel):
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default=f"{host}/{id}")
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    avatar = models.ImageField(upload_to="profile_images", default=None)
+    avatar = models.ImageField(upload_to="profile_images", null=True, blank=True, default="/media/default-user.jpeg")
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["username", "email", "password"], name="Unique user properties")]
