@@ -8,3 +8,6 @@ media
 media_cdn
 
 .DS_Store
+
+# React
+frontend/node_modules

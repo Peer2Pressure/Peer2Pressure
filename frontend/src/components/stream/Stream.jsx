@@ -1,4 +1,4 @@
-import Share from "../share/Share";
+import Share from "../share/share";
 import Flipmove from "react-flip-move";
 
 import "./stream.css";
