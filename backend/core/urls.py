@@ -2,8 +2,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.urls import path, re_path
-from django.contrib.auth import logout
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from . import views
 
@@ -20,19 +19,19 @@ schema_view = get_schema_view(
    permission_classes=[permissions.AllowAny],
 )
 
-def logout_view(request):
-    logout(request)
-    return redirect('signin')
+
 
 urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     
+    re_path(r"^$", views.index, name="index"),
+    
     path('get_author_id/', views.CurrentAuthorID.as_view(), name="get_author_id"),
 
     path('signin/', views.signin, name='signin'),
     path('signup/', views.signup, name='signup'),
-    path('accounts/logout/', logout_view, name='logout'),
+    path('accounts/logout/', views.logout_view, name='logout'),
     
     path('authors/', views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', views.AuthorAPI.as_view(), name='author_api'),
