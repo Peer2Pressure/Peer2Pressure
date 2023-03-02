@@ -26,8 +26,8 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "email": author_obj.email,
         }
 
-        id = str(author_obj.host) + "authors/" + str(author_id)
-        result_dict["id"] = id
+        url = str(author_obj.host) + "authors/" + str(author_id)
+        # result_dict["id"] = id
         result_dict["url"] = id
         
         return result_dict
