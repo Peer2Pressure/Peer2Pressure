@@ -4,18 +4,18 @@ body {
     /* background-color: red; */
 }
 
-/* .signin{
-    top: auto;
+/* .signin{ */
+    /* top: auto;
     left: auto;
-    padding: 0;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #f0f2f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-} */
+    padding: 0; */
+    /* padding: 2em; */
+    /* width: 100vw;
+    /* height: 100vh; */
+    /* background-color: #f0f2f5; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */ 
+/* } */
 
 .signinCard{
     /* width: 100%;
@@ -23,25 +23,25 @@ body {
     display: flex;
     height: 100vh;
     /* align-items: flex-end; */
-    /* flex-direction: row; */
+    flex-direction: row;
     /* border: 1px solid black; */
 }
 
 .signinLeft {
-    /* border: 1px solid yellow; */
-    /* align-self: stretch; */
     width: 40%;
     justify-content: center;
-    /* background-color: #172f40; */
-    background-color:rgba(56, 132, 144, 0.5);
+    background-color: rgb(48, 124, 136);
+
 }
 
 .signinRight {
     /* border: 1px solid yellow; */
-    flex: 1;
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* justify-content: center; */
+    /* flex: 1; */
+    margin-left: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self:center
 }
 
 .logo{
@@ -59,61 +59,97 @@ body {
 .signinBox{
 
     height: 500px;
-    padding: 20px;
+    width: 100%;
+    /* padding: 20px; */
     background-color: white;
-    border-radius: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
+    justify-items: center;
 }
 
+.formHead {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.formHead > h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    font-size: 60px;
+    display: flex;
+    justify-items: center;
+}
+/* .formBox {
+
+
+} */
 .signinInput{
-    height: 50px;
+    background-color: #f8f8f8;
+    margin-bottom: 1em;
+    height: 60px;
     border-radius: 10px;
     border: 1px solid #DDDFE2;
     font-size: 24px;
     padding-left: 20px;
-}
-
-.signinInput{
     outline: none;
+    display: flex;
+    align-items: center;
 }
 
+.buttonBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
 .signinButton{
-    margin-top: 1em;
+    font-family: 'Roboto', sans-serif;
     margin-bottom: 1em;
     /* padding: 1em; */
-    height: 50px;
-    border-radius: 45px;
+    height: 55px;
+    width: 150px;
+    border-radius: 50px;
     border: none;
-    background-color: #2977c9;
+    background-color: rgb(48, 124, 136);
     color: white;
     font-size: 25px;
-    font-weight: 800;
+    font-weight: 300;
     cursor: pointer;
+    text-align: center;
+}
+
+.signinButton:hover {
+    background-color: rgba(48, 124, 136, 0.6);
 }
 
 .joinBox{
     /* border: 1px solid red; */
     display: flex;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
 }
 
 .join-button-container {
-    margin-left: 2em;
+    /* margin-left: 2em; */
     border: none;
     background-color: transparent;
-    color: #2977c9;
     cursor: pointer;
 }
 
 .join-button-text {
-    color: #2977c9;
-    font-weight: 600;
+    margin-left: 0.5em;
+    font-family: 'Lato', sans-serif;
+    color: rgb(58, 145, 159);
+    font-weight: 700;
     text-decoration: none;
 }
 
+.join-button-text:hover {
+    color: rgb(48, 124, 136);
+}
+
 .joinDescription{
-    font-weight: 600;
+    font-family: 'Lato', sans-serif;;
+    font-weight: bold;
 }
