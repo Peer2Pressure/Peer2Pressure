@@ -68,8 +68,8 @@ const Share = () => {
                 <div className="bottom">
                     <textarea name="text" placeholder={"Write something..."} />                    
 
-                    <div classname="imgPreview">
-                        <span classname="errorMsg">{message}</span>
+                    <div className="imgPreview">
+                        <span className="errorMsg">{message}</span>
                         {files.map((file, key) => {
                             return (
                                 <div key={key}>

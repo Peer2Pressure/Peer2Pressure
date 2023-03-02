@@ -1,13 +1,17 @@
 .profileBox{
-    border: 1px solid black;
-    border-radius: 45px;
+    flex: 0.3;
+    /* border: 1px solid black;
+    border-radius: 45px; */
     max-width: 300px;
     max-height: auto;
-    height: 450px;
+    margin-top: 2em;
+    margin-right: 1em;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    background-color: white;
     row-gap: 25px;
     padding: 25px;
 }
