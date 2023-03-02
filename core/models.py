@@ -69,8 +69,8 @@ class Relation(AbstractModel):
 
 class Post(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='post_images', blank=True)
-    caption = models.TextField(blank=True)
+    image = models.ImageField(upload_to='post_images', blank=True, default=None)
+    caption = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     is_private = models.BooleanField(default=False)
 
@@ -99,7 +99,7 @@ class Like(AbstractModel):
 class Comment(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    comment = models.TextField()
+    comment = models.TextField(default="")
     created_at = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
 
