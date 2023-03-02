@@ -11,8 +11,8 @@ function Stream() {
   return (
     <div className="stream">
       <div className="stream__header">
-        <h2>Home</h2>
-      <Share/>
+        {/* <h2>Home</h2> */}
+        {/* <Share/> */}
       </div>
       <div className="stream__posts">
       <Flipmove>

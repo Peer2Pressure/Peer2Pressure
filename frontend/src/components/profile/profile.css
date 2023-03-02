@@ -4,8 +4,8 @@
     border-radius: 45px; */
     max-width: 300px;
     max-height: auto;
-    margin-top: 2em;
-    margin-right: 1em;
+    /* margin-top: 2em;
+    margin-right: 1em; */
     height: 300px;
     display: flex;
     flex-direction: column;
@@ -14,6 +14,7 @@
     background-color: white;
     row-gap: 25px;
     padding: 25px;
+    /* border: 1px solid black; */
 }
 
 .profileImage {

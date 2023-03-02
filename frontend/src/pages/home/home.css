@@ -1,7 +1,8 @@
 .homeContainer {
-    padding: 100px;
+    padding-top: 100px;
     display: flex;
-    justify-content: space-evenly;
-    /* column-gap: 250px; */
+    justify-content: center;
+    column-gap: 125px;
+    align-items: flex-start;
 }
 

@@ -3,13 +3,17 @@
     /* align-items: center; */
     justify-content: center;
     position: relative;
+    /* border: 1px solid red; */
 }
 
 .shareCard {
     display: flex;
+    flex-direction: column;
     height: fit-content;
     background-color: white;
     /* border: 1px solid black; */
+    height: 250px;
+    align-content: space-between;
 }
 
 .top {
@@ -17,11 +21,16 @@
     display: flex;
     align-items: center;
     column-gap: 2rem;
-    position: absolute;
+    /* position: absolute; */
+    /* border: 1px solid green; */
+    justify-content: center;
 }
 
 .bottom {
     padding-top: 2rem;
+    display: flex;
+    /* border: 1px solid black; */
+    /* align-content: flex-start; */
 }
 
 .postButton{
@@ -34,6 +43,7 @@
     padding: 0rem 0.5rem;
     /* font-weight: 800; */
     cursor: pointer;
+    width: fit-content;
 }
 
 textarea {
@@ -53,3 +63,27 @@ textarea:focus {
     cursor: pointer;
     
 }
+
+.shareText, .shareImage, .isPrivateSwitch, .uploadImg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .textBox{
+    border: 1px solid black;
+    width: fit-content;
+    height: fit-content;
+} */
+
+.buttonBox{
+    height: auto;
+    display: flex;
+    /* border: 1px solid black; */
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+/* .imgPreview {
+    border: 1px solid black;
+} */

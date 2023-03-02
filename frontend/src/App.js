@@ -5,7 +5,7 @@ import Register from "./pages/register/Register";
 import Profile from './components/profile/Profile';
 import Stream  from './components/stream/Stream';
 import { createBrowserRouter, RouterProvider, Route} from "react-router-dom"
-import Home from "./pages/home/home";
+import Home from "./pages/home/Home";
 
 const router = createBrowserRouter([
   {
