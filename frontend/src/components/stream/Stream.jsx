@@ -17,16 +17,18 @@ function Stream() {
       <div className="stream__posts">
       <Flipmove>
       {posts.map((post) => (
-        <Post
-          key={post.id}
-          displayName={post.displayName}
-          username={post.username}
-          text={post.caption}
-          image={"http://localhost:8000"+post.image}
-          avatar={post.avatar}
-          likes={post.likes}
-          comments={post.comments}
-        />
+        <div key={post.id}>
+          <Post
+            key={post.id}
+            displayName={post.displayName}
+            username={post.username}
+            text={post.caption}
+            image={"http://localhost:8000"+post.image}
+            avatar={post.avatar}
+            likes={post.likes}
+            comments={post.comments}
+          />
+        </div>
       ))}
       </Flipmove>
       </div>

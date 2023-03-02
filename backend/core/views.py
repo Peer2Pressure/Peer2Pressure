@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import api_view
 
 # Local Libraries
 from .api_serializers import *
@@ -20,7 +21,6 @@ from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
 from .serializers.commentserializer import CommentSerializer
 from .serializers.likeserializer import LikeSerializer
-from .serializers.inboxserializer import InboxSerializer
 from .models import *
 
 
@@ -41,10 +41,12 @@ class AuthorListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request):
-        authors = Author.objects.all()    
-        serializer = AuthorSerializer(authors, many=True)
-        data = list(serializer.data)
-        return Response(data)
+        authors = authorapi_serializer.get_all_authors()
+        return Response(authors)
+        # authors = Author.objects.all()    
+        # serializer = AuthorSerializer(authors, many=True)
+        # data = list(serializer.data)
+        
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer
@@ -269,17 +271,17 @@ class CommentLikeAPI(GenericAPIView):
 
 
 class InboxLike(GenericAPIView):
-    serializer_class = InboxSerializer
 
     def post(self, request, author_id):
         pass
 
 def index(request):
-   if request.user.is_authenticated:
+   if request.user.is_authenticated and not request.user.is_staff:
       return render(request, "index.html")
    else:
       return redirect('signin')
 
+# @api_view(['POST'])
 def logout_view(request):
     logout(request)
     return redirect('signin')

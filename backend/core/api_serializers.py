@@ -15,31 +15,20 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_single_author(self, author_id):
-        author_obj = author_serializer.get_author_by_id(author_id)
+        author = author_serializer.get_author_by_id(author_id)
 
-        result_dict = {
+        author_data = {
             "type": "author",
             "id": author_id,
-            "host": author_obj.host,
-            "first_name": author_obj.first_name,
-            "last_name": author_obj.last_name,
-            "username": author_obj.username,
-            "email": author_obj.email,
-            "avatar": author_obj.avatar.url,
+            "url": author.url,
+            "host": author.host,
+            "displayName": f"{author.first_name} {author.last_name}",
+            "username": author.username,
+            "email": author.email,
+            "profileImage": f"{author.host}{author.avatar.url}",
         }
-
-        url = str(author_obj.host) + "authors/" + str(author_id)
-        # result_dict["id"] = id
-        result_dict["url"] = url
         
-        return result_dict
-
-    # def update_single_author(self, author_id):
-    #     updated_author = author_serializer.update(author_id)
-
-    #     return updated_author
-
-        return result_dict
+        return author_data
     
     def get_all_authors(self):
 
@@ -57,11 +46,13 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             curr_author = {}
 
             curr_author["type"] = "author"
-            curr_author["id"] = str(author.host) + "authors/" + str(author.id)
-            curr_author["url"] = str(author.host) + "authors/" + str(author.id)
+            curr_author["id"] = str(author.id)
+            curr_author["url"] = str(author.host) + "/authors/" + str(author.id)
             curr_author["host"] = author.host
-            curr_author["displayName"] = author.username
-            curr_author["github"] = author.email
+            curr_author["displayName"] = f"{author.first_name} {author.last_name}"
+            curr_author["username"] = author.username   
+            curr_author["email"] = author.email
+            curr_author["profileImage"] = f"{author.host}{author.avatar.url}"
 
             list_authors.append(curr_author)
 
@@ -122,9 +113,9 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         # TODO: Need to handle the case if post or author doesn't exist
         post_obj = post_serializer.get_post(authorid, postid)
-        author_obj = author_serializer.get_author_by_id(authorid)
+        author = author_serializer.get_author_by_id(authorid)
 
-        result_dict["id"] = str(author_obj.host) + "/authors/" + str(authorid) + "/posts/" + str(postid)
+        result_dict["id"] = str(author.host) + "/authors/" + str(authorid) + "/posts/" + str(postid)
 
         # TODO: Need to find source and origin
         result_dict["origin"] = ""
