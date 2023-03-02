@@ -13,8 +13,8 @@ function Stream() {
           key={post.id}
           displayName={post.displayName}
           username={post.username}
-          text={post.text}
-          image={post.image}
+          text={post.caption}
+          image={"http://localhost:8000"+post.image}
           avatar={post.avatar}
           likes={post.likes}
           comments={post.comments}

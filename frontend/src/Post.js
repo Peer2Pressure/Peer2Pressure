@@ -27,6 +27,7 @@ const Post = forwardRef(
               <p>{text}</p>
             </div>
           </div>
+          
           <img src={image} alt="" />
           <div className="post__footer">
             <div className="post__likes">

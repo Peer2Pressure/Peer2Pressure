@@ -7,11 +7,13 @@
 
 .post__body {
   flex: 1;
+  
   padding: 10px;
 }
 
 .post__body > img {
   border-radius: 20px;
+  max-width: 50%;
 }
 
 .post__footer {
@@ -23,6 +25,8 @@
   align-items: center;
   margin-right: 10px;
 }
+
+
 .post__likes > p {
   font-size: 15px;
   
