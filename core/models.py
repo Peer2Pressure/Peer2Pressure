@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 MAX_CHARFIELD_LENGTH = 150
-LOCALHOST = "http://127.0.0.1:5454/"
+LOCALHOST = "http://127.0.0.1:8000"
 
 class AbstractModel(models.Model):
     class Meta:
@@ -68,8 +68,6 @@ class Relation(AbstractModel):
 
 
 class Post(AbstractModel):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    # username = models.CharField(max_length=100)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images', blank=True)
     caption = models.TextField(blank=True)
