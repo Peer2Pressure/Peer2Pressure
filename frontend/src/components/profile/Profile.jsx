@@ -6,7 +6,7 @@ import { Avatar, Button } from "@mui/material";
 export default function Profile() {
 
   // calling the api to get data to be rendered in this component
-  const {data, loading, error} = useFetch("http://localhost:8000/authors/ea89c93d-4879-450d-9d12-58bb06d484c1/");
+  const {data, loading, error} = useFetch("http://localhost:8000/authors/9c65c771-0032-41bf-af0f-6a0762bdf556/");
   
   // check if loading 
   if (loading) return <h1> Loading... </h1>; // placeholder for now 
@@ -21,16 +21,9 @@ export default function Profile() {
             {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
             <Avatar alt={data?.displayName} src="/assets/johnDoe.jpg" sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
-                {data?.displayName}
+                {data?.first_name}{data?.last_name}{data?.username}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
-            <h2 className="gitHubProfile">
-              <span className="gitHubBox">
-                <Button variant="text">
-                  <GitHubIcon/> {data?.email}
-                </Button>
-              </span>
-            </h2>
             <Button className="manageProfileButton">Manage profile</Button>
         </div>
     </div>
