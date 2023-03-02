@@ -1,8 +1,10 @@
-import "./Stream.css";
-import Post from "./Post";
-import usePosts from "./usePosts";
 import Share from "./components/share/share";
 import Flipmove from "react-flip-move";
+
+import "./stream.css";
+import Post from "../post/Post";
+import usePosts from "../../usePosts";
+
 function Stream() {
   const posts = usePosts();
 

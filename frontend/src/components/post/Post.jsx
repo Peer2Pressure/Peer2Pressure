@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import "./Post.css";
+import "./post.css";
 import { Avatar } from "@mui/material";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 

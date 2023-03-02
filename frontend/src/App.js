@@ -1,7 +1,5 @@
 import React from 'react';
 import './App.css';
-import Sidebar from './Sidebar';
-import Stream from './Stream';
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from './components/profile/Profile';
@@ -31,9 +29,11 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div className="app">
-      <Profile/>
-        <Stream/>
+      {/* <Profile/>
+        <Stream/> */}
        
+        <Home/>
+
     </div>
   );
   return <RouterProvider router = {router} />
