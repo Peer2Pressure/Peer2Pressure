@@ -22,6 +22,9 @@ from .models import *
 
 
 authorapi_serializer = AuthorAPISerializer()
+post_serializer = PostSerializer()
+comment_serializer = CommentSerializer()
+
 
 class AuthorListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
@@ -105,8 +108,9 @@ class SinglePostAPI(GenericAPIView):
 
     def get(self, request, author_id, post_id):
         try:
+            author = Author.objects.get(pk=author_id)
             post = Post.objects.get(pk=post_id)
-        except Post.DoesNotExist:
+        except (Author.DoesNotExist, Post.DoesNotExist):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = PostSerializer(post)
         return Response(serializer.data)
@@ -172,7 +176,7 @@ class PostAPI(GenericAPIView):
             is_private=request.data["is_private"]
             caption = request.data["caption"]
             image = request.data["image"]
-            post = PostSerializer.create_post(author=author, is_private=is_private, caption=caption, image=image)
+            post = post_serializer.create_post(author=author, is_private=is_private, caption=caption, image=image)
         except Author.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)    
         serializer = PostSerializer(post)

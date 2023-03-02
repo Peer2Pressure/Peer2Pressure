@@ -20,8 +20,10 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         result_dict = {
             "type": "author",
             "host": author_obj.host,
-            "displayName": author_obj.username,
-            "github": author_obj.email
+            "first_name": author_obj.first_name,
+            "last_name": author_obj.last_name,
+            "username": author_obj.username,
+            "email": author_obj.email,
         }
 
         id = str(author_obj.host) + "authors/" + str(author_id)
