@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <!-- <link href="{% static 'favicon.png' %}" rel="icon" type="image/png"> -->
+    <title>Home</title>
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <link rel="stylesheet" href="{% static 'css/signin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet"> 
+
+</head>
+<body>
+    <div class="signin">
+        <div class="signinCard">
+            <div class="signinLeft">
+                <h1 class="logo">Peer2Pressure</h1>
+            </div>
+            <div class="signinRight">
+                <div class="signinBox">
+                    <form action="{% url 'signin' %}" method="post">
+                        {% csrf_token %}
+                        <input type="text" name="username" placeholder="Email" class="signinInput" />
+                        <input type="password" name="password" placeholder="Password" class="signinInput" />
+                        <input type="submit" class="signinButton" value="Sign In">
+
+                    </form>
+                    <div class="joinBox">
+                        <span class="joinDescription">New to Peer2Pressure?</span>
+                        <div class="join-button-container">
+                            <a href="/signup" class="join-button-text">Join Now</a>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>

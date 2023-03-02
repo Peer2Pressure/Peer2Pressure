@@ -6,15 +6,18 @@ import Stream from "../../components/stream/Stream";
 
 const Home = () => {
     return (
-      <>
-      <div className="homeContainer">
+      <div>
         <Profile/>
-        <div className="streamContainer">
-          <Share/>
-          <Stream/>
-        </div>
+        <Share/>
+        <Stream/>
       </div>
-      </>
+      // <div className="homeContainer">
+      //   <Profile/>
+      //   <div className="streamContainer">
+      //   <Share/>
+      //     <Stream/>
+      //   </div>
+      // </div>
     )
   }
   

@@ -30,14 +30,15 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div className="app">
+      {/* <Login/> */}
       <Profile/>
-        <Stream/>
+      <Stream/>
        
-        {/* <Home/> */}
+      {/* <Home/> */}
 
     </div>
   );
-  return <RouterProvider router = {router} />
+  // return <RouterProvider router = {router} />
 }
 
 export default App;

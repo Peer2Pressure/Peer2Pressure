@@ -1,13 +1,51 @@
 import "./profile.css"
 import useFetch from "../../useFetch"
+
+import axios from "axios";
+import { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Avatar, Button } from "@mui/material";
 
+function getCsrfToken() {
+  const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
+  return csrfToken ? csrfToken[1] : '';
+}
+
+
 export default function Profile() {
 
-  // calling the api to get data to be rendered in this component
-  const {data, loading, error} = useFetch("http://localhost:8000/authors/9c65c771-0032-41bf-af0f-6a0762bdf556/");
+  // // calling the api to get data to be rendered in this component
+  // const {data1, loading1, error1} = useFetch("http://localhost:8000/get_author_id/");
+  // const authorId = data1.author_id;
+  // const {data, loading, error} = useFetch("http://localhost:8000/authors/"+ authorId + "/");
+  // console.log(authorId, data, data1)
   
+  const [authorData, setAuthorData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const getAuthorData = async () => {
+      try {
+        
+        const csrftoken = getCsrfToken();
+        
+        const response1 = await axios.get("/get_author_id/", {
+          'X-CSRFToken': csrftoken,
+        });
+        const authorId = response1.data.author_id;
+        const response2 = await axios.get("/authors/"+authorId+"/");
+        setAuthorData(response2.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    getAuthorData();
+  }, []);
+
   // check if loading 
   if (loading) return <h1> Loading... </h1>; // placeholder for now 
 
@@ -19,9 +57,9 @@ export default function Profile() {
         <div className="profileBox">
             {/* <img class="profileImage" src={data?.profileImage} alt="profile of id.name"/> <-- what we actually need to display*/}
             {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
-            <Avatar alt={data?.displayName} src="/assets/johnDoe.jpg" sx={{width:100, height:100}}/>
+            <Avatar src={authorData?.avatar} sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
-                {data?.first_name} {data?.last_name}
+                {authorData?.first_name} {authorData?.last_name}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
             <Button className="manageProfileButton">Manage profile</Button>
