@@ -54,6 +54,8 @@ class AuthorSerializer(serializers.ModelSerializer):
     
     def update_author(self, author_id, username, firstname, lastname, email, password, host = None):
 
+        author = self.get_author_by_id(author_id=author_id)
+        
         defaults = {
             nameof(Author.username): username,
             nameof(Author.first_name): firstname,

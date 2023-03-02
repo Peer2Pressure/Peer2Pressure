@@ -76,8 +76,9 @@ class Relation(AbstractModel):
 
 class Post(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     image = models.ImageField(upload_to='post_images', blank=True, default=None)
-    caption = models.TextField(blank=True, default="")
+    content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     is_private = models.BooleanField(default=False)
 
@@ -116,15 +117,3 @@ class Comment(AbstractModel):
     
     def __str__(self):
         return self.author
-
-class Inbox(AbstractModel):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    obj_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    obj_url = models.CharField(max_length=250, blank=True)
-
-    @classmethod
-    def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.author), nameof(cls.obj_type), nameof(cls.obj_url)]
-    
-    def __str__(self):
-        return f"{self.author.username}:{self.type}"

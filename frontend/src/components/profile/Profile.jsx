@@ -2,22 +2,25 @@ import "./profile.css"
 import useFetch from "../../useFetch"
 
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Avatar, Button } from "@mui/material";
 
 function getCsrfToken() {
-  const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
-  return csrfToken ? csrfToken[1] : '';
+  // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
+  // return csrfToken ? csrfToken[1] : '';
+  const csrftoken = Cookies.get('csrftoken');
+  return csrftoken;
 }
 
 
 export default function Profile() {
 
   // // calling the api to get data to be rendered in this component
-  // const {data1, loading1, error1} = useFetch("http://localhost:8000/get_author_id/");
-  // const authorId = data1.author_id;
-  // const {data, loading, error} = useFetch("http://localhost:8000/authors/"+ authorId + "/");
+  // const {response1, loading1, error1} = useFetch("http://localhost:8000/get_author_id/");
+  // const authorId = response1.author_id;
+  // const {response2, loading2, error2} = useFetch("http://localhost:8000/authors/"+ authorId + "/");
   // console.log(authorId, data, data1)
   
   const [authorData, setAuthorData] = useState(null);
