@@ -5,7 +5,7 @@ import Stream from './Stream';
 function App() {
   return (
     <div className="app">
-        
+        <Sidebar/>
         <Stream/>
 
     </div>
