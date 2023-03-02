@@ -7,6 +7,7 @@
 
 .shareCard {
     display: flex;
+    height: fit-content;
     background-color: #f8f8f8;
     /* border: 1px solid black; */
 }
@@ -37,11 +38,15 @@
 
 textarea {
     width: 30rem;
-    height: 5rem;
+    height: 1rem;
     padding: 2rem;
     border: none;
     background-color: #f8f8f8;
     resize: none;
+}
+
+textarea:focus {
+    outline: 0;
 }
 
 .shareText:hover, .shareImage:hover, .uploadImg:hover {
