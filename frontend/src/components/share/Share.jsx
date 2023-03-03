@@ -114,7 +114,7 @@ const Share = () => {
                     </div>
 
                 </div>
-                <div className="buttonBox">
+                <div className="postButtonBox">
                     <button className="postButton" role="button" onClick={sendPost}>Post</button>
                 </div>
             </div>

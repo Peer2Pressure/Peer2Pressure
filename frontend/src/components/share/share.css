@@ -42,7 +42,7 @@
     border: none;
     background-color: #2977c9;
     color: white;
-    font-size: 1.2em;
+    font-size: 1.4rem;
     padding: 0rem 0.5rem;
     /* font-weight: 800; */
     cursor: pointer;
@@ -79,12 +79,14 @@ textarea:focus {
     height: fit-content;
 } */
 
-.buttonBox {
+.postButtonBox {
     height: auto;
+    /* width: fit-content; */
     display: flex;
     /* border: 1px solid black; */
-    justify-content: flex-end;
-    padding: 10px;
+    justify-content: right;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
 }
 
 /* .imgPreview {
