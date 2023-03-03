@@ -14,10 +14,10 @@ function Stream() {
         {/* <h2>Home</h2> */}
         {/* <Share/> */}
       </div>
-      <div className="stream__posts">
+      <div  >
       <Flipmove>
       {posts.map((post) => (
-        <div key={post.id}>
+        <div className="stream__posts" key={post.id}>
           <Post
             key={post.id}
             displayName={post.displayName}

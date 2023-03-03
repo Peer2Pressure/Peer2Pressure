@@ -68,11 +68,11 @@ export default function Profile() {
                 {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
-            <Link to="/home/settings/">
+            
               <Button className="manageProfileButton">
                 Manage profile
               </Button>
-            </Link>
+            
         </div>
     </div>
   )
