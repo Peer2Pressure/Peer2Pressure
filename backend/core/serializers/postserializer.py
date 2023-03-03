@@ -41,9 +41,8 @@ class PostSerializer(serializers.ModelSerializer):
                 defaults[key] = request_data[key]
 
         post = Post.objects.create(**defaults)
-        post_data = self.get_post_data(post)
 
-        return post, post_data
+        return post.id
 
     def get_post_data(self, post):
         

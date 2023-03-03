@@ -60,9 +60,9 @@ export default function Profile() {
         <div className="profileBox">
             {/* <img class="profileImage" src={data?.profileImage} alt="profile of id.name"/> <-- what we actually need to display*/}
             {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
-            <Avatar src={authorData?.avatar} sx={{width:100, height:100}}/>
+            <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
-                {authorData?.first_name} {authorData?.last_name}
+                {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
             <Button className="manageProfileButton">Manage profile</Button>

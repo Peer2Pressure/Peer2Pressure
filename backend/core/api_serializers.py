@@ -25,18 +25,17 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "username": author.username,
             "email": author.email,
             "profileImage": f"{author.host}{author.avatar.url}",
-            }
-        
+            }    
         return author_data
     
     def get_single_author(self, author_id):
-            author_data = {}
-            try:
-                author = author_serializer.get_author_by_id(author_id)
-                author_data = self.get_author_data(author)
-            except ValueError:
-                return None
-            return author_data
+        author_data = {}
+        try:
+            author = author_serializer.get_author_by_id(author_id)
+            author_data = self.get_author_data(author)
+        except ValueError:
+            return None
+        return author_data
     
     def get_all_authors(self):
 
@@ -67,8 +66,6 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         for key in request_data:
             if key in updatable_fields:
                 defaults[key] = request_data[key]
-        
-        print(defaults)
 
         Author.objects.filter(pk=author_id).update(**defaults)
 
