@@ -12,7 +12,13 @@ const Share = () => {
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const authorId = "a936e2f8-6abc-4589-b12a-822bf1c73af7";
+    const [fileURL, setFileURL] = useState(null)
+
+    const authorId = "cfa35fee-0696-4253-91c0-df7646cde2fe";
+
+    const handleContentChange = event => {
+        setContent(event.target.value);
+      };
 
     const handleFile = (e) => {
         setMessage("");
@@ -34,12 +40,14 @@ const Share = () => {
     }
 
     const sendPost = async(event) => {
+        // setContent("test")
         event.preventDefault();
         axios
         .post("http://localhost:8000/authors/" + authorId + "/posts/", {
-            "content": "okay it worked!",
+            "content": content,
             "author" : authorId,
             "is_private": false,
+            "image": files
         })
         .then(response => console.log('Posting data', response))
         .catch(error => console.log(error));
@@ -84,7 +92,12 @@ const Share = () => {
 
                 <div className="bottom">
                     <div className="textBox">
-                        <textarea name="text" placeholder={"Write something..."} />   
+                        <textarea 
+                            name="text" 
+                            placeholder={"Write something..."}
+                            value={content}
+                            onChange={handleContentChange}
+                        />   
                     </div>
                        
                     <div className="imgPreview">
@@ -92,7 +105,7 @@ const Share = () => {
                         {files.map((file, key) => {
                             return (
                                 <div key={key} className="imgContainer">
-                                    <button onClick={() => { removeImage(file.name)}}>x</button>            
+                                    <button onClick={() => { removeImage(file.name)}}>x</button>
                                     <img src={URL.createObjectURL(file)}/>
                                 </div>
                             )
