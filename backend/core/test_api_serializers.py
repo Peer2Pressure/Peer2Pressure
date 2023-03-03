@@ -13,8 +13,11 @@ class AuthorAPISerializerTest(TestCase):
         self.apiserializer = AuthorAPISerializer()
 
     def test_get_single_author(self):
-        author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
-        self.assertTrue(author_id == self.serializer.get_author_id_by_username("author username"))
+        user = User.objects.create_user(username="authorusername", email="author@gamil.com", password="authorpassword")
+        user.save()
+
+        author_id = self.serializer.create_author("authorusername", "author firstname", "author lastname", "author@gmail.com", "authorpassword", user=user)
+        self.assertTrue(author_id == self.serializer.get_author_id_by_username("authorusername"))
 
         author_obj = self.serializer.get_author_by_id(author_id)
 
@@ -26,14 +29,22 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue(author_obj.email == single_author_response["email"])
         self.assertTrue(author_obj.first_name + " " + author_obj.last_name == single_author_response["displayName"])
         self.assertTrue(author_obj.host == single_author_response["host"])
+        user.delete()
 
     
     def test_get_all_authors(self):
-        author_id1 = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
-        author_id2 = self.serializer.create_author("author username1", "author firstname1", "author lastname1", "author1@gmail.com", "authorpassword1")
+        user1 = User.objects.create_user(username="authorusername1", email="author@gamil.com", password="authorpassword")
+        user1.save()
 
-        self.assertTrue(author_id1 == self.serializer.get_author_id_by_username("author username"))
-        self.assertTrue(author_id2 == self.serializer.get_author_id_by_username("author username1"))
+        author_id1 = self.serializer.create_author("authorusername1", "author firstname", "author lastname", "author@gmail.com", "authorpassword", user=user1)
+        
+        user2 = User.objects.create_user(username="authorusername2", email="author@gamil.com", password="authorpassword")
+        user2.save()
+
+        author_id2 = self.serializer.create_author("authorusername2", "author firstname1", "author lastname1", "author1@gmail.com", "authorpassword1", user=user2)
+
+        self.assertTrue(author_id1 == self.serializer.get_author_id_by_username("authorusername1"))
+        self.assertTrue(author_id2 == self.serializer.get_author_id_by_username("authorusername2"))
 
         first_author_obj = self.serializer.get_author_by_id(author_id1)
         second_author_obj = self.serializer.get_author_by_id(author_id2)
@@ -53,6 +64,8 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue(second_author_obj.first_name + " " + second_author_obj.last_name == all_authors_response["items"][1]["displayName"])
         self.assertTrue(second_author_obj.host == all_authors_response["items"][1]["host"])
 
+        user1.delete()
+        user2.delete()
 
 
     # def test_author_create(self):
