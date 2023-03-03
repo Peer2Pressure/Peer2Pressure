@@ -60,6 +60,8 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
         except ValueError:
+            # TODO : If author does not exist create new author. Will need to create new User object too !!!
+            # author = author_serializer.create_author()
             return None
 
         defaults = {}
@@ -67,7 +69,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             if key in updatable_fields:
                 defaults[key] = request_data[key]
 
-        Author.objects.filter(pk=author_id).update_or_create(**defaults)
+        Author.objects.filter(pk=author_id).update(**defaults)
 
         return self.get_single_author(author_id)
 

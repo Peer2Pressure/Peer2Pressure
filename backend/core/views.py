@@ -87,8 +87,9 @@ class FollowerAPI(GenericAPIView):
     
 
     def put(self, request, author_id, foreign_author_id):
-        new_relation = relation_serializer.create_relations(author_id, foreign_author_id)
-        if new_relation:
+        new_relation_id = relation_serializer.create_relations(author_id, foreign_author_id)
+        if new_relation_id:
+            new_relation = relation_serializer.get_relation_by_ids(author_id, foreign_author_id)
             return Response({"msg": f"{new_relation.from_author.username} is following {new_relation.to_author.username}"})
         return Response(data={"msg": f"Unable to follow author: {author_id}"}, status=status.HTTP_404_NOT_FOUND)
 
