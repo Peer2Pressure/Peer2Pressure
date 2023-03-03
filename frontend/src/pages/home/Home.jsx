@@ -13,7 +13,7 @@ const Home = () => {
       <div className="homeContainer">
         <Profile/>
         <div className="streamContainer">
-          {/* <Share/> */}
+          <Share/>
           <Stream/>
         </div>
       </div>

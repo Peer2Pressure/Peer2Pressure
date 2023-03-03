@@ -12,7 +12,7 @@ function Stream() {
     <div className="stream">
       <div className="stream__header">
         {/* <h2>Home</h2> */}
-        <Share/>
+        {/* <Share/> */}
       </div>
       <div className="stream__posts">
       <Flipmove>

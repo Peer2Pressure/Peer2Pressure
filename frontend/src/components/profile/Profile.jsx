@@ -5,7 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Avatar, Button } from "@mui/material";
-import { BrowserRouter as Router, Link} from 'react-router-dom';
+import { Navigate, useNavigate } from "react-router-dom";
 
 function getCsrfToken() {
   // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
@@ -22,6 +22,8 @@ export default function Profile() {
   // const authorId = response1.author_id;
   // const {response2, loading2, error2} = useFetch("http://localhost:8000/authors/"+ authorId + "/");
   // console.log(authorId, data, data1)
+
+  const navigate = useNavigate();
   
   const [authorData, setAuthorData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,11 +70,9 @@ export default function Profile() {
                 {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
-            <Link to="/home/settings/">
-              <Button className="manageProfileButton">
+              <Button className="manageProfileButton" onClick={()=> navigate('/profilepage')}>
                 Manage profile
               </Button>
-            </Link>
         </div>
     </div>
   )

@@ -9,7 +9,7 @@ import { useState } from "react";
 
 export default function ProfileSetting() {
 
-    const {data, loading, error} = useFetch("http://localhost:8000/authors/107cb2ca-44ab-488b-bdd2-fcd0edd3c13d/");
+    const {data, loading, error} = useFetch("http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/");
     if (data) console.log(data);
     const [userData, setUserData] = useState({
         username: '',
@@ -49,7 +49,7 @@ export default function ProfileSetting() {
     
         axios
         .post(
-            "http://localhost:8000/authors/107cb2ca-44ab-488b-bdd2-fcd0edd3c13d/", 
+            "http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/", 
             formData,
             {
                 headers: {
@@ -120,7 +120,7 @@ export default function ProfileSetting() {
                     </div>
                 </div>  
                 <div className="buttonBox">
-                    <Button variant="outlined">Cancel</Button>
+                    <Button variant="outlined" onClick>Cancel</Button>
                     <Button variant="contained" onClick={handleSubmit}>Save</Button>
                 </div>
                 </div>
