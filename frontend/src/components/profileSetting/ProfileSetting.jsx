@@ -3,6 +3,7 @@ import "./profileSetting.css";
 import useFetch from "../../useFetch";
 import axios from "axios";
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 
@@ -11,6 +12,7 @@ export default function ProfileSetting() {
 
     const {data, loading, error} = useFetch("http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/");
     if (data) console.log(data);
+    const navigate = useNavigate();
     const [userData, setUserData] = useState({
         username: '',
         title: '',
@@ -120,7 +122,7 @@ export default function ProfileSetting() {
                     </div>
                 </div>  
                 <div className="buttonBox">
-                    <Button variant="outlined" onClick>Cancel</Button>
+                    <Button variant="outlined" onClick={()=>{navigate(-1)}}>Cancel</Button>
                     <Button variant="contained" onClick={handleSubmit}>Save</Button>
                 </div>
                 </div>
