@@ -7,6 +7,7 @@ from typing import List
 from django.db import models
 from django.contrib.auth.models import User, AnonymousUser
 from django.utils import timezone
+from django.contrib.auth.models import AnonymousUser
 
 
 MAX_CHARFIELD_LENGTH = 300
@@ -30,8 +31,7 @@ class AbstractModel(models.Model):
         return str(self)
 
 class Author(AbstractModel):
-    # type = models.CharField(max_length=10, default="author")
-    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
     host = models.URLField(default=HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     first_name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)

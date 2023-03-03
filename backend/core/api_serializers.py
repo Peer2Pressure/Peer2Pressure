@@ -25,18 +25,17 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "username": author.username,
             "email": author.email,
             "profileImage": f"{author.host}{author.avatar.url}",
-            }
-        
+            }    
         return author_data
     
     def get_single_author(self, author_id):
-            author_data = {}
-            try:
-                author = author_serializer.get_author_by_id(author_id)
-                author_data = self.get_author_data(author)
-            except ValueError:
-                return None
-            return author_data
+        author_data = {}
+        try:
+            author = author_serializer.get_author_by_id(author_id)
+            author_data = self.get_author_data(author)
+        except ValueError:
+            return None
+        return author_data
     
     def get_all_authors(self):
 
@@ -61,14 +60,14 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
         except ValueError:
+            # TODO : If author does not exist create new author. Will need to create new User object too !!!
+            # author = author_serializer.create_author()
             return None
 
         defaults = {}
         for key in request_data:
             if key in updatable_fields:
                 defaults[key] = request_data[key]
-        
-        print(defaults)
 
         Author.objects.filter(pk=author_id).update(**defaults)
 
@@ -134,6 +133,23 @@ class PostAPISerializer(serializers.ModelSerializer):
         model = Post
         fields = "__all__"
 
+    def get_post_data(self, post):
+        
+        author_data = author_serializer.get_author_data(post.author)
+
+        post_data = {
+            "type": "post",
+            "id": post.id,
+            "url": post.url,
+            "title": post.title,
+            "content": post.content,
+            "image": post.image,
+            "visibility": "private"if post.is_private else "public", 
+            "author": author_data,
+            }
+        
+        return post_data
+    
     def get_a_post(self, authorid, postid):
         result_dict = {}
 
