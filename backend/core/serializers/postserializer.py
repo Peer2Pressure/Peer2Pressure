@@ -16,9 +16,6 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create_post(self, author_id, request_data):
         field_names = [field.name for field in Post._meta.get_fields()]
-        
-        print(field_names)
-        print(request_data)
 
         if "image" not in list(request_data.keys()) and "content" not in list(request_data.keys()):
             print("Require either contetn or image for the post")
@@ -43,5 +40,7 @@ class PostSerializer(serializers.ModelSerializer):
         post = Post.objects.create(**defaults)
 
         return post.id
+
+
 
 

@@ -88,7 +88,7 @@ class Post(AbstractModel):
         return [nameof(cls.author)]
 
     def __str__(self):
-        return self.url
+        return str(self.id)
     
     def save(self, *args, **kwargs):
         if not self.url:

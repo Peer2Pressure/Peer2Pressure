@@ -25,7 +25,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "username": author.username,
             "email": author.email,
             "profileImage": f"{author.host}{author.avatar.url}",
-            }    
+            }
         return author_data
     
     def get_single_author(self, author_id):
@@ -54,7 +54,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
 
         return result_dict
 
-    def update_author(self, author_id, request_data):
+    def create_or_update_author(self, author_id, request_data):
         author = None
         updatable_fields = ["first_name", "last_name", "username", "email", "avatar"]
         try:
@@ -134,8 +134,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_post_data(self, post):
-        
-        author_data = author_serializer.get_author_data(post.author)
+        author_data = author_api_serializer.get_author_data(post.author)
 
         post_data = {
             "type": "post",
@@ -143,12 +142,45 @@ class PostAPISerializer(serializers.ModelSerializer):
             "url": post.url,
             "title": post.title,
             "content": post.content,
-            "image": post.image,
             "visibility": "private"if post.is_private else "public", 
             "author": author_data,
             }
         
         return post_data
+    
+    # def create_post(self, author_id)
+
+
+    def get_all_author_posts(self, author_id):
+        author = None
+        try:
+            author = author_serializer.get_author_by_id(author_id)
+        except ValueError:
+            return None
+
+        print(author)
+
+        posts = Post.objects.filter(author=author)
+
+        print("\n\nPOST", posts, "\n\n")
+
+
+        result_dict = {}
+        result_dict["type"] = "posts"
+
+        posts_list = []
+
+        for post in posts:
+            curr_post_data = self.get_post_data(post)
+            print("CURRR  :", curr_post_data)
+            print()
+            posts_list.append(curr_post_data)
+
+        result_dict["items"] = posts_list
+        print("RESULT:\n")
+        print(result_dict)
+
+        return result_dict
     
     def get_a_post(self, authorid, postid):
         result_dict = {}
