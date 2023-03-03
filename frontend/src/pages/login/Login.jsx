@@ -1,7 +1,7 @@
 import "./login.css"
+import { Link } from "react-router-dom"
 
-
-const Login = () => {
+export default function Login() {
   return (
     <div className="signin">
         <div className="signinCard">
@@ -12,10 +12,14 @@ const Login = () => {
                 <div className="signinBox">
                     <input type="Email" placeholder="Email" className="signinInput" />
                     <input type="Password" placeholder="Password" className="signinInput" />
-                    <button variant="contained" className="signinButton">Sign in</button>
+                    <Link to="/home">
+                        <button className="signinButton">Sign in</button>
+                    </Link>
                     <div className="joinBox">
                         <span className="joinDescription">New to Peer2Pressure?</span>
-                        <button className="joinButton">Join Now</button>
+                        <Link to="/register">
+                            <button className="joinButton">Join Now</button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -24,4 +28,4 @@ const Login = () => {
   )
 }
 
-export default Login
+// export default Login
