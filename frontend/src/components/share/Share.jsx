@@ -8,12 +8,11 @@ import axios from "axios";
 
 const Share = () => {
 
-
     const [files, setFile] = useState([]);
-    const [desc, setDesc] = useState("");
+    const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75";
+    const authorId = "a936e2f8-6abc-4589-b12a-822bf1c73af7";
 
     const handleFile = (e) => {
         setMessage("");
@@ -25,10 +24,10 @@ const Share = () => {
             if (validImageTypes.includes(fileType)) {
                 setFile([...files,file[i]]);
             } else {
-                setMessage("only images accepted");
-            } 
+                setMessage("only jpeg and png accepted");
+            }
         }
-    }; 
+    };
 
     const removeImage = (i) => {
        setFile(files.filter(x => x.name !== i));
@@ -82,8 +81,6 @@ const Share = () => {
                         <b>Private</b>  
                     </div>
                 </div>
-                
-                
 
                 <div className="bottom">
                     <div className="textBox">
@@ -94,8 +91,8 @@ const Share = () => {
                         <span className="errorMsg">{message}</span>
                         {files.map((file, key) => {
                             return (
-                                <div key={key}>
-                                    <i onClick={() => { removeImage(file.name)}}></i>            
+                                <div key={key} className="imgContainer">
+                                    <button onClick={() => { removeImage(file.name)}}>x</button>            
                                     <img src={URL.createObjectURL(file)}/>
                                 </div>
                             )
@@ -105,7 +102,6 @@ const Share = () => {
                 </div>
                 <div className="buttonBox">
                     <button className="postButton" onClick={sendPost}>Post</button>
-
                 </div>
             </div>
         </div>
