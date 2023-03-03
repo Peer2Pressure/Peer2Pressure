@@ -25,6 +25,6 @@ export default function useFetch(url) {
     });
   }, [url]);                                            // useEffect need dependency array which will have url 
 
-
+  // console.log(data);
   return {data, loading, error};                        // return an object containing the three      
 }
