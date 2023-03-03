@@ -26,17 +26,18 @@ export default function Profile() {
   const [authorData, setAuthorData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const getAuthorData = async () => {
       try {
-        
         const csrftoken = getCsrfToken();
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        axios.defaults.xsrfCookieName = csrftoken;
         
-        const response1 = await axios.get("/get_author_id/", {
-          'X-CSRFToken': csrftoken,
-        });
-        const authorId = response1.data.author_id;
+        
+        // const response1 = await axios.get("/get_author_id/");
+        // const authorId = response1.data.author_id;
+        const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
         const response2 = await axios.get("/authors/"+authorId+"/");
         setAuthorData(response2.data);
         setLoading(false);
@@ -49,20 +50,22 @@ export default function Profile() {
     getAuthorData();
   }, []);
 
+    
   // check if loading 
   if (loading) return <h1> Loading... </h1>; // placeholder for now 
 
   // check if any error generated shown in console
   if (error) console.log(error);
 
+  if (authorData) console.log(authorData);
   return (
     <div>
         <div className="profileBox">
             {/* <img class="profileImage" src={data?.profileImage} alt="profile of id.name"/> <-- what we actually need to display*/}
             {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
-            <Avatar src={authorData?.avatar} sx={{width:100, height:100}}/>
+            <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
-                {authorData?.first_name} {authorData?.last_name}
+                {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
             <Button className="manageProfileButton">Manage profile</Button>

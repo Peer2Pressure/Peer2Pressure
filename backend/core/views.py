@@ -33,6 +33,7 @@ class CurrentAuthorID(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        print("\n\nUSER:   ", request.user)
         author_id = request.user.author_profile.id
         return Response({'author_id': author_id})
         
@@ -41,12 +42,11 @@ class AuthorListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request):
+        print("USER: ", request.user, "------")
+        # author_id = request.user.author_profile.id
+        # return Response({'author_id': author_id})
         authors = authorapi_serializer.get_all_authors()
         return Response(authors)
-        # authors = Author.objects.all()    
-        # serializer = AuthorSerializer(authors, many=True)
-        # data = list(serializer.data)
-        
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer

@@ -3,6 +3,7 @@ import { useState } from "react";
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch } from "@mui/material";
+import axios from "axios";
 
 
 const Share = () => {
@@ -12,6 +13,7 @@ const Share = () => {
     const [desc, setDesc] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
+    const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75";
 
     const handleFile = (e) => {
         setMessage("");
@@ -32,8 +34,16 @@ const Share = () => {
        setFile(files.filter(x => x.name !== i));
     }
 
-    const handleClick = async(event) => {
-        event.preventDefault()
+    const sendPost = async(event) => {
+        event.preventDefault();
+        axios
+        .post("http://localhost:8000/authors/" + authorId + "/posts/", {
+            "content": "okay it worked!",
+            "author" : authorId,
+            "is_private": false,
+        })
+        .then(response => console.log('Posting data', response))
+        .catch(error => console.log(error));
     }
 
     return (
@@ -94,7 +104,8 @@ const Share = () => {
 
                 </div>
                 <div className="buttonBox">
-                    <button className="postButton" onClick={handleClick}>Post</button>
+                    <button className="postButton" onClick={sendPost}>Post</button>
+
                 </div>
             </div>
         </div>

@@ -31,8 +31,9 @@ function App() {
   return (
     <div className="app">
       {/* <Login/> */}
-      <Profile/>
-      <Stream/>
+      {/* <Profile/>
+      <Stream/> */}
+      <Home/>
        
       {/* <Home/> */}
 
