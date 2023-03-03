@@ -25,7 +25,11 @@ from .models import *
 
 
 author_serializer = AuthorSerializer()
+author_api_serializer = AuthorAPISerializer()
+relation_serializer = RelationSerializer()
+relation_api_serializer = RelationAPISerializer()
 post_serializer = PostSerializer()
+post_api_serializer = PostAPISerializer()
 comment_serializer = CommentSerializer()
 
 class CurrentAuthorID(GenericAPIView):
@@ -41,14 +45,14 @@ class AuthorListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request):
-        authors = author_serializer.get_all_authors()
+        authors = author_api_serializer.get_all_authors()
         return Response(authors)
         
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer
     def get(self, request, author_id):
-        author = author_serializer.get_single_author(author_id)
+        author = author_api_serializer.get_single_author(author_id)
         if author:
             return Response(author)
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
@@ -56,7 +60,7 @@ class AuthorAPI(GenericAPIView):
     
     # discuss if we need to change to PUT request
     def post(self, request, author_id):
-        update_author = author_serializer.update_author(author_id, request.data)
+        update_author = author_api_serializer.update_author(author_id, request.data)
         
         if update_author:
             return Response(update_author)
@@ -66,30 +70,20 @@ class FollowerListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request, author_id):
-        try:
-            following_ids = list(Author.objects.get(pk=author_id).follower.all().values_list('from_author', flat=True))
-
-            # Uncomment if using bool to set relations
-            # followers = list(Relation.objects.filter(from_author=author_id, to_author_request=True).values_list('to_author', flat=True))
-            # followers += list(Relation.objects.filter(to_author=author_id, from_author_request=True).values_list('from_author', flat=True))
-
-            authors = Author.objects.filter(pk__in=following_ids)
-        except Author.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = AuthorSerializer(authors, many=True)
-        return Response(serializer.data)
+        followers = relation_api_serializer.get_all_followers(author_id)
+        if followers:
+            return Response(followers)
+        return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
 class FollowerAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request, author_id, foreign_author_id):
-        try:
-            follower = Relation.objects.get(from_author=foreign_author_id, to_author=author_id)
-            follower_author = follower.from_author
-        except Relation.DoesNotExist:
-            return Response(data={"msg": "Follower does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = AuthorSerializer(follower_author)
-        return Response(serializer.data)
+        follower = relation_api_serializer.get_single_follower(author_id, foreign_author_id)
+        if follower:
+            return Response(follower)
+        return Response({"msg": "Follower not found"}, status=status.HTTP_404_NOT_FOUND) 
+    
 
     def put(self, request, author_id, foreign_author_id):
         new_relation = relation_serializer.create_relations(author_id, foreign_author_id)
@@ -98,7 +92,7 @@ class FollowerAPI(GenericAPIView):
         return Response(data={"msg": f"Unable to follow author: {author_id}"}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, author_id, foreign_author_id):
-        relation = relation_serializer.remove_follower(author_id, foreign_author_id)
+        relation = relation_api_serializer.remove_follower(author_id, foreign_author_id)
         if relation:
             return Response({"msg": "Follower has been removed successfully"})
         return Response(data={"msg": f"Unable to remover follower: {foreign_author_id}"}, status=status.HTTP_404_NOT_FOUND)
@@ -161,29 +155,26 @@ class PostAPI(GenericAPIView):
     serializer_class = PostSerializer
 
     def get(self, request, author_id):
-        try:
-            author = Author.objects.get(pk=author_id)
-        except Author.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        posts = Post.objects.filter(author=author)
-        serializer = PostSerializer(posts, many=True)
-        data = list(serializer.data)
-        return Response(data)
+        posts = post_serializer.get_all_author_posts(author_id)
+        if posts:
+            return Response(posts)
+        return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, author_id):
         try:
             author = Author.objects.get(pk=author_id)
-            is_private=request.data["is_private"]
-            caption = request.data["caption"]
-            image = request.data["image"]
-            post = post_serializer.create_post(author=author, is_private=is_private, caption=caption, image=image)
         except Author.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)    
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
-    
-
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        request.data["author"] = author.id
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            post = serializer.save()
+            if post is not None:
+                post_data = serializer.get_post_data(post)
+                return Response(post_data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 class CommentAPI(GenericAPIView):
     serializer_class = CommentSerializer
 

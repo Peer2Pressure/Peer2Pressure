@@ -5,6 +5,7 @@ from .serializers.authorserializer import AuthorSerializer
 from .serializers.relationserializer import RelationSerializer
 from .serializers.postserializer import PostSerializer
 
+
 author_serializer = AuthorSerializer()
 relation_serializer = RelationSerializer()
 post_serializer = PostSerializer()
@@ -14,90 +15,119 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         model = Author
         fields = "__all__"
 
-    def get_single_author(self, author_id):
-        author = author_serializer.get_author_by_id(author_id)
-
+    def get_author_data(self, author):
         author_data = {
             "type": "author",
-            "id": author_id,
+            "id": author.id,
             "url": author.url,
             "host": author.host,
             "displayName": f"{author.first_name} {author.last_name}",
             "username": author.username,
             "email": author.email,
             "profileImage": f"{author.host}{author.avatar.url}",
-        }
+            }
         
         return author_data
     
+    def get_single_author(self, author_id):
+            author_data = {}
+            try:
+                author = author_serializer.get_author_by_id(author_id)
+                author_data = self.get_author_data(author)
+            except ValueError:
+                return None
+            return author_data
+    
     def get_all_authors(self):
 
-        authors = author_serializer.all_authors()
-
+        authors = Author.objects.all()
+        
         result_dict = {}
-
         result_dict["type"] = "authors"
 
-        list_authors = []
+        authors_list = []
 
         for author in authors:
+            curr_author_data = self.get_author_data(author)
+            authors_list.append(curr_author_data)
 
-            # TODO: Need to add image
-            curr_author = {}
-
-            curr_author["type"] = "author"
-            curr_author["id"] = str(author.id)
-            curr_author["url"] = str(author.host) + "/authors/" + str(author.id)
-            curr_author["host"] = author.host
-            curr_author["displayName"] = f"{author.first_name} {author.last_name}"
-            curr_author["username"] = author.username   
-            curr_author["email"] = author.email
-            curr_author["profileImage"] = f"{author.host}{author.avatar.url}"
-
-            list_authors.append(curr_author)
-
-        result_dict["items"] = list_authors
+        result_dict["items"] = authors_list
 
         return result_dict
-    
+
+    def update_author(self, author_id, request_data):
+        author = None
+        updatable_fields = ["first_name", "last_name", "username", "email", "avatar"]
+        try:
+            author = author_serializer.get_author_by_id(author_id=author_id)
+        except ValueError:
+            return None
+
+        defaults = {}
+        for key in request_data:
+            if key in updatable_fields:
+                defaults[key] = request_data[key]
+        
+        print(defaults)
+
+        Author.objects.filter(pk=author_id).update(**defaults)
+
+        return self.get_single_author(author_id)
+
+
+author_api_serializer = AuthorAPISerializer()
 
 class RelationAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = Relation
         fields = "__all__"
 
+    
     def get_all_followers(self, author_id):
-
-        followers = relation_serializer.get_followers(author_id)
-
-        if len(followers) <= 0:
-            return {"type": "followers", "items": []}
+        follower_relations = None
+        try:
+            follower_relations = author_serializer.get_author_by_id(author_id).follower.all()
+        except ValueError:
+            return None
         
+        followers = [follower.from_author for follower in follower_relations]
+
         result_dict = {}
         result_dict["type"] = "followers"
 
-        list_authors = []
+        followers_list = []
 
-        for author in followers:
+        for follower in followers:
+            follower_serialized = author_api_serializer.get_author_data(follower)
+            followers_list.append(follower_serialized)
 
-            # TODO: Need to add image
-            curr_author = {}
-
-            curr_author["type"] = "author"
-            curr_author["id"] = str(author.host) + "authors/" + str(author.id)
-            curr_author["url"] = str(author.host) + "authors/" + str(author.id)
-            curr_author["host"] = author.host
-            curr_author["displayName"] = author.username
-            curr_author["github"] = author.email
-
-            list_authors.append(curr_author)
-
-        result_dict["items"] = list_authors
+        result_dict["items"] = followers_list
 
         return result_dict
 
+    def get_single_follower(self, author_id, foreign_author_id):
+        relation = None
+        try:
+            relation = relation_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        except ValueError:
+            return None
+        
+        follower = relation.from_author
+        follower_serialized = author_api_serializer.get_author_data(follower)
 
-author_api_serializer = AuthorAPISerializer()
+        return follower_serialized
+
+    def remove_follower(self, author_id, foreign_author_id):
+        relation = None
+        try:
+            relation = relation_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        except ValueError:
+            return None
+        
+        relation.delete()
+
+        return relation
+
 
 class PostAPISerializer(serializers.ModelSerializer):
     class Meta:

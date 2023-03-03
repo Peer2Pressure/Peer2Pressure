@@ -8,7 +8,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-MAX_CHARFIELD_LENGTH = 150
+MAX_CHARFIELD_LENGTH = 300
 HOST = "http://127.0.0.1:8000"
 
 class AbstractModel(models.Model):
@@ -75,9 +75,10 @@ class Relation(AbstractModel):
 
 
 class Post(AbstractModel):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="posts")
+    url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
-    image = models.ImageField(upload_to='post_images', blank=True, default=None)
+    image = models.ImageField(upload_to='post_images', blank=True, null=True)
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     is_private = models.BooleanField(default=False)
@@ -87,7 +88,13 @@ class Post(AbstractModel):
         return [nameof(cls.author)]
 
     def __str__(self):
-        return self.caption
+        return self.url
+    
+    def save(self, *args, **kwargs):
+        if not self.url:
+            # Generate a URL based on the object's ID
+            self.url = f"{self.author.url}/{self.id}"
+        super().save(*args, **kwargs)
 
 class Like(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)

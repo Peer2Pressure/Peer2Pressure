@@ -73,7 +73,6 @@ class RelationSerializer(serializers.ModelSerializer):
         try:
             relation = Relation.objects.get(from_author=foreign_author_id, to_author=author_id)
         except Relation.DoesNotExist:
-            print("44444")
             raise ValueError("Relation does not exist")
 
         return relation
