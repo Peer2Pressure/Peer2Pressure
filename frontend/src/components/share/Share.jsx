@@ -8,12 +8,17 @@ import axios from "axios";
 
 const Share = () => {
 
-
-    const [files, setFile] = useState([]);
-    const [desc, setDesc] = useState("");
+    const [files, setFiles] = useState([]);
+    const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75";
+    // const [fileURL, setFileURL] = useState(null)
+
+    const authorId = "cfa35fee-0696-4253-91c0-df7646cde2fe";
+
+    const handleContentChange = event => {
+        setContent(event.target.value);
+      };
 
     const handleFile = (e) => {
         setMessage("");
@@ -23,27 +28,29 @@ const Share = () => {
             const fileType = file[i]['type'];
             const validImageTypes = ['image/jpeg', 'image/png'];
             if (validImageTypes.includes(fileType)) {
-                setFile([...files,file[i]]);
+                setFiles([...files,file[i]]);
             } else {
-                setMessage("only images accepted");
-            } 
+                setMessage("only jpeg and png accepted");
+            }
         }
-    }; 
+    };
 
     const removeImage = (i) => {
-       setFile(files.filter(x => x.name !== i));
+       setFiles(files.filter(x => x.name !== i));
     }
 
     const sendPost = async(event) => {
         event.preventDefault();
         axios
         .post("http://localhost:8000/authors/" + authorId + "/posts/", {
-            "content": "okay it worked!",
+            "content": content,
             "author" : authorId,
             "is_private": false,
+            "image": files  // or test with null
         })
         .then(response => console.log('Posting data', response))
         .catch(error => console.log(error));
+        // .catch(console.log(files));
     }
 
     return (
@@ -82,20 +89,23 @@ const Share = () => {
                         <b>Private</b>  
                     </div>
                 </div>
-                
-                
 
                 <div className="bottom">
                     <div className="textBox">
-                        <textarea name="text" placeholder={"Write something..."} />   
+                        <textarea 
+                            name="text" 
+                            placeholder={"Write something..."}
+                            value={content}
+                            onChange={handleContentChange}
+                        />   
                     </div>
                        
                     <div className="imgPreview">
                         <span className="errorMsg">{message}</span>
                         {files.map((file, key) => {
                             return (
-                                <div key={key}>
-                                    <i onClick={() => { removeImage(file.name)}}></i>            
+                                <div key={key} className="imgContainer">
+                                    <button onClick={() => { removeImage(file.name)}}>x</button>
                                     <img src={URL.createObjectURL(file)}/>
                                 </div>
                             )
@@ -105,7 +115,6 @@ const Share = () => {
                 </div>
                 <div className="buttonBox">
                     <button className="postButton" onClick={sendPost}>Post</button>
-
                 </div>
             </div>
         </div>

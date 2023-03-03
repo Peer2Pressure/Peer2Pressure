@@ -3,6 +3,7 @@
     /* align-items: center; */
     justify-content: center;
     position: relative;
+    height: fit-content;
     /* border: 1px solid red; */
 }
 
@@ -12,7 +13,8 @@
     height: fit-content;
     background-color: white;
     /* border: 1px solid black; */
-    height: 250px;
+    /* height: 250px; */
+    height: fit-content;
     align-content: space-between;
 }
 
@@ -29,6 +31,7 @@
 .bottom {
     padding-top: 2rem;
     display: flex;
+    flex-direction: column;
     /* border: 1px solid black; */
     /* align-content: flex-start; */
 }
@@ -76,7 +79,7 @@ textarea:focus {
     height: fit-content;
 } */
 
-.buttonBox{
+.buttonBox {
     height: auto;
     display: flex;
     /* border: 1px solid black; */
@@ -87,3 +90,27 @@ textarea:focus {
 /* .imgPreview {
     border: 1px solid black;
 } */
+
+img {
+    max-width: 10rem;
+    max-height: 10rem;
+}
+
+.imgContainer {
+    position: relative;
+    width: fit-content;
+    padding-left: 2rem;
+}
+
+.imgContainer button {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    background-color: red;
+    color: white;
+    font-size: 0.8rem;
+    padding-bottom: 0.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 100%;
+  }
