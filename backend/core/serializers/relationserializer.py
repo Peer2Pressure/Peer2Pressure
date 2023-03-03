@@ -24,21 +24,20 @@ class RelationSerializer(serializers.ModelSerializer):
             to_author_obj = author_serializer.get_author_by_id(author_id)
         except ValueError:
             return None
-
-        try:
-            self.get_single_follower(author_id, foreign_author_id)
-        except ValueError:
-            return None
         
-        defaults = {
-            nameof(Relation.from_author): from_author_obj,
-            nameof(Relation.to_author): to_author_obj
-        }
+        try:
+            relation = self.get_relation_by_ids(author_id, foreign_author_id)
+        except ValueError:
+            defaults = {
+                nameof(Relation.from_author): from_author_obj,
+                nameof(Relation.to_author): to_author_obj
+            }
+            relation_obj = Relation.objects.create(**defaults)
 
-        relation_obj = Relation.objects.create(**defaults)
+            return relation_obj
 
-        return relation_obj
-    
+        return None
+
     def update_follow_status(self, from_authorid, to_authorid, status):
 
         relation = Relation.objects.filter(to_author_id = to_authorid, from_author_id = from_authorid, to_author_request = not status)
@@ -74,6 +73,7 @@ class RelationSerializer(serializers.ModelSerializer):
         try:
             relation = Relation.objects.get(from_author=foreign_author_id, to_author=author_id)
         except Relation.DoesNotExist:
+            print("44444")
             raise ValueError("Relation does not exist")
 
         return relation

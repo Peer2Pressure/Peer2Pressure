@@ -97,7 +97,6 @@ class FollowerAPI(GenericAPIView):
             return Response({"msg": f"{new_relation.from_author.username} is following {new_relation.to_author.username}"})
         return Response(data={"msg": f"Unable to follow author: {author_id}"}, status=status.HTTP_404_NOT_FOUND)
 
-
     def delete(self, request, author_id, foreign_author_id):
         relation = relation_serializer.remove_follower(author_id, foreign_author_id)
         if relation:
