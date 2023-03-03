@@ -1,0 +1,30 @@
+.profileBox{
+    flex: 0.3;
+    /* border: 1px solid black;
+    border-radius: 45px; */
+    max-width: 300px;
+    max-height: auto;
+    /* margin-top: 2em;
+    margin-right: 1em; */
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: white;
+    row-gap: 25px;
+    padding: 25px;
+    /* border: 1px solid black; */
+}
+
+.profileImage {
+    width: 50%;
+    border-radius: 100%;
+}
+
+.manageProfileButton{
+    width: 50%;
+    white-space: nowrap; 
+    min-width: auto;
+    /* text-transform: unset !important; */
+}
