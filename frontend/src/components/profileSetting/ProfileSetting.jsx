@@ -38,11 +38,11 @@ export default function ProfileSetting() {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('username', userData.username);
-        formData.append('email', userData.email);
-        formData.append('password', userData.password);
-        formData.append('first_name', userData.first_name);
-        formData.append('last_name', userData.last_name);
+        formData.append('username', userData.username || data?.username);
+        formData.append('email', userData.email || data?.email);
+        formData.append('password', userData.password || data?.password);
+        formData.append('first_name', userData.first_name || data?.first_name);
+        formData.append('last_name', userData.last_name || data?.last_name);
         if (userData.avatar) {
             formData.append('avatar', userData.avatar, userData.avatar.name);
         }
