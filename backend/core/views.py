@@ -37,6 +37,7 @@ class CurrentAuthorID(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        print("USER:   ",request.user)
         author_id = request.user.author_profile.id
         return Response({'author_id': author_id})
         
@@ -163,7 +164,7 @@ class PostAPI(GenericAPIView):
     
     def post(self, request, author_id):
         post_id = post_api_serializer.create_post(author_id, request.data)
-        
+
         try:
             author = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:

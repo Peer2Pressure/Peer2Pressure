@@ -67,7 +67,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             if key in updatable_fields:
                 defaults[key] = request_data[key]
 
-        Author.objects.filter(pk=author_id).update(**defaults)
+        Author.objects.filter(pk=author_id).update_or_create(**defaults)
 
         return self.get_single_author(author_id)
 
@@ -131,6 +131,23 @@ class PostAPISerializer(serializers.ModelSerializer):
         model = Post
         fields = "__all__"
 
+    def get_post_data(self, post):
+        
+        author_data = author_serializer.get_author_data(post.author)
+
+        post_data = {
+            "type": "post",
+            "id": post.id,
+            "url": post.url,
+            "title": post.title,
+            "content": post.content,
+            "image": post.image,
+            "visibility": "private"if post.is_private else "public", 
+            "author": author_data,
+            }
+        
+        return post_data
+    
     def get_a_post(self, authorid, postid):
         result_dict = {}
 
