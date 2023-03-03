@@ -8,11 +8,11 @@ import axios from "axios";
 
 const Share = () => {
 
-    const [files, setFile] = useState([]);
+    const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const [fileURL, setFileURL] = useState(null)
+    // const [fileURL, setFileURL] = useState(null)
 
     const authorId = "cfa35fee-0696-4253-91c0-df7646cde2fe";
 
@@ -28,7 +28,7 @@ const Share = () => {
             const fileType = file[i]['type'];
             const validImageTypes = ['image/jpeg', 'image/png'];
             if (validImageTypes.includes(fileType)) {
-                setFile([...files,file[i]]);
+                setFiles([...files,file[i]]);
             } else {
                 setMessage("only jpeg and png accepted");
             }
@@ -36,21 +36,21 @@ const Share = () => {
     };
 
     const removeImage = (i) => {
-       setFile(files.filter(x => x.name !== i));
+       setFiles(files.filter(x => x.name !== i));
     }
 
     const sendPost = async(event) => {
-        // setContent("test")
         event.preventDefault();
         axios
         .post("http://localhost:8000/authors/" + authorId + "/posts/", {
             "content": content,
             "author" : authorId,
             "is_private": false,
-            "image": files
+            "image": files  // or test with null
         })
         .then(response => console.log('Posting data', response))
         .catch(error => console.log(error));
+        // .catch(console.log(files));
     }
 
     return (
