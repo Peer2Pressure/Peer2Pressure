@@ -30,7 +30,7 @@ class AbstractModel(models.Model):
 
 class Author(AbstractModel):
     # type = models.CharField(max_length=10, default="author")
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile")
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
     host = models.URLField(default=HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     first_name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
