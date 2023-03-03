@@ -1,4 +1,9 @@
 {
+  "jest": {
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    }
+  },
   "name": "frontend",
   "proxy": "http://localhost:8000",
   "version": "0.1.0",
