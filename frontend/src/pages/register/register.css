@@ -1,0 +1,87 @@
+.register{
+    width: 100vw;
+    height: 100vh;
+    background-color: #f0f2f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.registerCard{
+    width: 50%;
+    height: 50%;
+    display: flex;
+    /* border: 1px solid black; */
+}
+
+.registerLeft, .registerRight{
+    /* border: 1px solid yellow; */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo{
+    font-size: 50px;
+    font-weight: 800;
+    color: #172f40;
+    padding-right: 2rem;
+}
+
+.registerBox{
+    height: 500px;
+    width: 22vw;
+    padding: 20px;
+    /* border: 1px solid black; */
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.registerInput{
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #DDDFE2;
+    font-size: 0.8rem;
+    padding-left: 20px;
+}
+
+.registerInput{
+    outline: none;
+}
+
+.registerButton{
+    height: 50px;
+    border-radius: 45px;
+    border: none;
+    background-color: #2977c9;
+    color: white;
+    font-size: 25px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.registerSigninBox{
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.registerSigninButton{
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+    color: #2977c9;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.registerSigninDescription{
+    font-weight: 600;
+    font-size: 13px;
+}

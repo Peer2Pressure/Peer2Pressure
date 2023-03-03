@@ -1,0 +1,55 @@
+.share {
+    display: inline-block;
+    /* align-items: center; */
+    justify-content: center;
+    position: relative;
+}
+
+.shareCard {
+    display: flex;
+    height: fit-content;
+    background-color: white;
+    /* border: 1px solid black; */
+}
+
+.top {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    column-gap: 2rem;
+    position: absolute;
+}
+
+.bottom {
+    padding-top: 2rem;
+}
+
+.postButton{
+    height: max-content;
+    border-radius: 20px;
+    border: none;
+    background-color: #2977c9;
+    color: white;
+    font-size: 1.2em;
+    padding: 0rem 0.5rem;
+    /* font-weight: 800; */
+    cursor: pointer;
+}
+
+textarea {
+    min-width: 30rem;
+    padding: 2rem;
+    border: none;
+    background-color: white;
+    resize: none;
+}
+
+textarea:focus {
+    outline: 0;
+}
+
+.shareText:hover, .shareImage:hover, .uploadImg:hover {
+    color: rgb(22, 67, 113);
+    cursor: pointer;
+    
+}
