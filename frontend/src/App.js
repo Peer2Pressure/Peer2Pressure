@@ -11,18 +11,19 @@ import ProfilePage from './pages/profilePage/ProfilePage';
 
 function App() {
   return (
-    <Router>
-      <div className="app">
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/home" element={<Home/>} />
-          {/* <Route path="/login" component={<Login/>} />
-          <Route path="/register" component={<Register/>} /> */}
-          <Route path="/home/settings" component={<ProfilePage/>} />
-        </Routes>
-      </div>
-    </Router>
-    // <Home/>
+    // <Router>
+    //   <div className="app">
+    //     <Routes>
+    //       <Route path="/" element={<Home/>} />
+    //       <Route path="/home" element={<Home/>} />
+    //       <Route path="/settings" component={<ProfilePage/>} />
+    //       {/* <Route path="/login" component={<Login/>} />
+    //       <Route path="/register" component={<Register/>} /> */}
+    //       {/* <Route path="/home/settings" component={<ProfilePage/>} /> */}
+    //     </Routes>
+    //   </div>
+    // </Router>
+    <ProfilePage/>
   );
 }
 

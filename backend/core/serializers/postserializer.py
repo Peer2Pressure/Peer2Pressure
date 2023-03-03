@@ -41,24 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
                 defaults[key] = request_data[key]
 
         post = Post.objects.create(**defaults)
-        post_data = self.get_post_data(post)
 
-        return post, post_data
+        return post.id
 
-    def get_post_data(self, post):
-        
-        author_data = author_serializer.get_author_data(post.author)
-
-        post_data = {
-            "type": "post",
-            "id": post.id,
-            "url": post.url,
-            "title": post.title,
-            "content": post.content,
-            "image": post.image,
-            "visibility": "private"if post.is_private else "public", 
-            "author": author_data,
-            }
-        
-        return post_data
 

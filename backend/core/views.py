@@ -37,7 +37,7 @@ class CurrentAuthorID(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        print("\n\nUSER:   ", request.user)
+        print("USER:   ",request.user)
         author_id = request.user.author_profile.id
         return Response({'author_id': author_id})
         
@@ -74,6 +74,7 @@ class FollowerListAPI(GenericAPIView):
         if followers:
             return Response(followers)
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
 
 class FollowerAPI(GenericAPIView):
     serializer_class = AuthorSerializer
@@ -155,12 +156,14 @@ class PostAPI(GenericAPIView):
     serializer_class = PostSerializer
 
     def get(self, request, author_id):
-        posts = post_serializer.get_all_author_posts(author_id)
+        posts = post_api_serializer.get_all_author_posts(author_id)
         if posts:
             return Response(posts)
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, author_id):
+        post_id = post_api_serializer.create_post(author_id, request.data)
+
         try:
             author = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
