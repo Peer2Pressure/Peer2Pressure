@@ -5,8 +5,9 @@ from varname import nameof
 from typing import List
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.utils import timezone
+
 
 MAX_CHARFIELD_LENGTH = 300
 HOST = "http://127.0.0.1:8000"
