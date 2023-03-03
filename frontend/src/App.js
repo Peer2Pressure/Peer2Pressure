@@ -4,42 +4,26 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from './components/profile/Profile';
 import Stream  from './components/stream/Stream';
-import { createBrowserRouter, RouterProvider, Route} from "react-router-dom"
+import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import Home from "./pages/home/Home";
-
-const router = createBrowserRouter([
-  {
-    // NOTE: this will need to go to home if a user is logged in
-    path: "/",
-    element: <Login/>
-  },
-  {
-    path: "/home",
-    element: <Home/>
-  },
-  {
-    path: "/login",
-    element: <Login/>
-  },
-  {
-    path: "/register",
-    element: <Register/>
-  }
-])
+import ProfileSetting from './components/profileSetting/ProfileSetting';
+import ProfilePage from './pages/profilePage/ProfilePage';
 
 function App() {
   return (
-    <div className="app">
-      {/* <Login/> */}
-      {/* <Profile/>
-      <Stream/> */}
-      <Home/>
-       
-      {/* <Home/> */}
-
-    </div>
+    // <Router>
+    //   <div className="app">
+    //     <Routes>
+    //       <Route path="/" element={<Home/>} />
+    //       <Route path="/home" element={<Home/>} />
+    //       {/* <Route path="/login" component={<Login/>} />
+    //       <Route path="/register" component={<Register/>} /> */}
+    //       <Route path="/home/settings" component={<ProfilePage/>} />
+    //     </Routes>
+    //   </div>
+    // </Router>
+    <ProfilePage/>
   );
-  // return <RouterProvider router = {router} />
 }
 
 export default App;

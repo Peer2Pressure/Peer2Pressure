@@ -1,16 +1,16 @@
 import "./profile.css"
 import useFetch from "../../useFetch"
-
-import axios from "axios";
 import Cookies from 'js-cookie';
+import axios from "axios";
 import { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Avatar, Button } from "@mui/material";
+import { BrowserRouter as Router, Link} from 'react-router-dom';
 
 function getCsrfToken() {
   // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
   // return csrfToken ? csrfToken[1] : '';
-  const csrftoken = Cookies.get('csrftoken');
+  const csrftoken = Cookies.get('XSRF-TOKEN');
   return csrftoken;
 }
 
@@ -68,7 +68,11 @@ export default function Profile() {
                 {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
-            <Button className="manageProfileButton">Manage profile</Button>
+            <Link to="/home/settings/">
+              <Button className="manageProfileButton">
+                Manage profile
+              </Button>
+            </Link>
         </div>
     </div>
   )
