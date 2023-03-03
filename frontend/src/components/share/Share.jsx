@@ -100,21 +100,22 @@ const Share = () => {
                         />   
                     </div>
                        
-                    <div className="imgPreview">
+                    <div className="imgPreview" role="test">
                         <span className="errorMsg">{message}</span>
                         {files.map((file, key) => {
                             return (
                                 <div key={key} className="imgContainer">
                                     <button onClick={() => { removeImage(file.name)}}>x</button>
-                                    <img src={URL.createObjectURL(file)}/>
+                                    <img src={URL.createObjectURL(file)} alt={file}/>   
+                                    {/* alt for tests, idk what file actually is though */}
                                 </div>
                             )
                         })}
                     </div>
 
                 </div>
-                <div className="buttonBox">
-                    <button className="postButton" onClick={sendPost}>Post</button>
+                <div className="postButtonBox">
+                    <button className="postButton" role="button" onClick={sendPost}>Post</button>
                 </div>
             </div>
         </div>
