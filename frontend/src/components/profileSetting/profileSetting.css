@@ -1,0 +1,50 @@
+
+.profileSettingsBox {
+    margin: 25px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: flex-start;
+    width: 100%;
+    /* border: 1px solid black; */
+}
+
+.profileImageBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: center;
+    padding: 0%;
+    row-gap: 10px;
+    /* border: 1px solid black; */
+}
+
+.profileDetailsBox {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    /* border: 1px solid black; */
+}
+
+.usernameBox, .fullNameBox, .emailBox, .passwordBox {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    display: flex;
+    column-gap: 25px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fieldTitle {
+    padding-bottom: 10px;
+}
+
+.buttonBox {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0%;
+    column-gap: 10px;
+    /* border: 1px solid black; */
+}

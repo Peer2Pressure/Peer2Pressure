@@ -1,6 +1,45 @@
+# Peer2Pressure
+
+Peer2Pressure is a Social Distribution Network project for CMPUT404. More details are shown in the link below:
+
+https://github.com/abramhindle/CMPUT404-project-socialdistribution/blob/master/project.org
+
+## Frontend 
+
+The team has decided to use React to develop the user interfaces. Before creating pages and components in React, the team first went through the design process to kickstart a potential prototype the team will follow in creating these user interfaces.
+
+More information about how to start the React app can be found further down below or through this [link](#getting-started-with-create-react-app).
+
+### Design
+
+The team decided to use Figma to draft our prototypes, including the moodboard and the style tile. Further details about the design can be see in the link below:
+
+https://www.figma.com/file/PiCaW09Eg5poVr7aXVYCid/Peer2Pressure?t=4pKJHWvTRk1FiWMl-1
+
+#### Moodboard
+
+The team needed inspiration on how the user interface would look like. We have found this inspiration from behance and we included snippets of its creative outlook towards our moodboard shown below:
+
+![moodboard](https://github.com/Peer2Pressure/Peer2Pressure/blob/frontend/frontend/public/readme_assets/moodboard.png)
+
+#### Styletile
+
+Fortunately, the inspiration source also included color scheme for their mockups. Shown in the style below are the hex codes for the color scheme in the user interface, typography of various headings, screen used for prototypes, as well as icons that were used. 
+
+![styletile](https://github.com/Peer2Pressure/Peer2Pressure/blob/frontend/frontend/public/readme_assets/styletile.png)
+
+
+#### Prototype 
+
+On to the main part, the image shown below is the partial interaction of various pages and components. **Note that these prototypes are not final and may not accurately depict what the final iteration will be. As the proper procedure of iterative design process, these prototypes will be improved on overtime to accommodate to the various user stories that will be implemented over the course**. 
+
+![prototype](https://github.com/Peer2Pressure/Peer2Pressure/blob/frontend/frontend/public/readme_assets/prototype.png)
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 
 ## Available Scripts
 

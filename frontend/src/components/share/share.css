@@ -3,13 +3,19 @@
     /* align-items: center; */
     justify-content: center;
     position: relative;
+    height: fit-content;
+    /* border: 1px solid red; */
 }
 
 .shareCard {
     display: flex;
+    flex-direction: column;
     height: fit-content;
     background-color: white;
     /* border: 1px solid black; */
+    /* height: 250px; */
+    height: fit-content;
+    align-content: space-between;
 }
 
 .top {
@@ -17,11 +23,17 @@
     display: flex;
     align-items: center;
     column-gap: 2rem;
-    position: absolute;
+    /* position: absolute; */
+    /* border: 1px solid green; */
+    justify-content: center;
 }
 
 .bottom {
     padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid black; */
+    /* align-content: flex-start; */
 }
 
 .postButton{
@@ -30,10 +42,11 @@
     border: none;
     background-color: #2977c9;
     color: white;
-    font-size: 1.2em;
+    font-size: 1.4rem;
     padding: 0rem 0.5rem;
     /* font-weight: 800; */
     cursor: pointer;
+    width: fit-content;
 }
 
 textarea {
@@ -53,3 +66,53 @@ textarea:focus {
     cursor: pointer;
     
 }
+
+.shareText, .shareImage, .isPrivateSwitch, .uploadImg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .textBox{
+    border: 1px solid black;
+    width: fit-content;
+    height: fit-content;
+} */
+
+.postButtonBox {
+    height: auto;
+    /* width: fit-content; */
+    display: flex;
+    /* border: 1px solid black; */
+    justify-content: right;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* .imgPreview {
+    border: 1px solid black;
+} */
+
+img {
+    max-width: 10rem;
+    max-height: 10rem;
+}
+
+.imgContainer {
+    position: relative;
+    width: fit-content;
+    padding-left: 2rem;
+}
+
+.imgContainer button {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    background-color: red;
+    color: white;
+    font-size: 0.8rem;
+    padding-bottom: 0.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 100%;
+  }

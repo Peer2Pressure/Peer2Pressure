@@ -4,41 +4,21 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from './components/profile/Profile';
 import Stream  from './components/stream/Stream';
-import { createBrowserRouter, RouterProvider, Route} from "react-router-dom"
-import Home from "./pages/home/home";
-
-const router = createBrowserRouter([
-  {
-    // NOTE: this will need to go to home if a user is logged in
-    path: "/",
-    element: <Login/>
-  },
-  {
-    path: "/home",
-    element: <Home/>
-  },
-  {
-    path: "/login",
-    element: <Login/>
-  },
-  {
-    path: "/register",
-    element: <Register/>
-  }
-])
+import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import Home from "./pages/home/Home";
+import ProfilePage from './pages/profilePage/ProfilePage';
 
 function App() {
   return (
-    <div className="app">
-      {/* <Login/> */}
-      <Profile/>
-      <Stream/>
-       
-      {/* <Home/> */}
-
-    </div>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route exact path="/" element={<Home/>} />
+          <Route path="/profilepage" element={<ProfilePage/>} />
+        </Routes>
+      </div>
+    </Router>
   );
-  // return <RouterProvider router = {router} />
 }
 
 export default App;

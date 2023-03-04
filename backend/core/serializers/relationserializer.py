@@ -5,6 +5,7 @@ from varname import nameof
 # Local libraries
 from .. models import *
 from ..serializers.authorserializer import AuthorSerializer
+from ..api_serializers import *
 
 author_serializer = AuthorSerializer()
 
@@ -34,7 +35,7 @@ class RelationSerializer(serializers.ModelSerializer):
             }
             relation_obj = Relation.objects.create(**defaults)
 
-            return relation_obj
+            return relation_obj.id
 
         return None
 
