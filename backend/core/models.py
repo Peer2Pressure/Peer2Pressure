@@ -93,7 +93,7 @@ class Post(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            self.url = f"{self.author.url}/{self.id}"
+            self.url = f"{self.author.url}/posts/{self.id}"
         super().save(*args, **kwargs)
 
 class Like(AbstractModel):

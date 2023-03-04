@@ -58,7 +58,6 @@ class AuthorAPI(GenericAPIView):
             return Response(author)
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
-    
     # discuss if we need to change to PUT request
     def post(self, request, author_id):
         update_author = author_api_serializer.create_or_update_author(author_id, request.data)
@@ -163,22 +162,9 @@ class PostAPI(GenericAPIView):
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, author_id):
-        post_id = post_api_serializer.create_post(author_id, request.data)
+        post_id = post_serializer.create_post(author_id, request.data)
+        return Response(data={"msg": "hello world"})
 
-        try:
-            author = Author.objects.get(pk=author_id)
-        except Author.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        request.data["author"] = author.id
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            post = serializer.save()
-            if post is not None:
-                post_data = serializer.get_post_data(post)
-                return Response(post_data)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
 class CommentAPI(GenericAPIView):
     serializer_class = CommentSerializer
 

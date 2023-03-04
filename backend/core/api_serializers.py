@@ -143,6 +143,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             "title": post.title,
             "content": post.content,
             "visibility": "private"if post.is_private else "public", 
+            "image": f"{author_data['host']}{post.image.url}" if post.image else None,
             "author": author_data,
             }
         
@@ -157,13 +158,8 @@ class PostAPISerializer(serializers.ModelSerializer):
             author = author_serializer.get_author_by_id(author_id)
         except ValueError:
             return None
-
-        print(author)
-
+        
         posts = Post.objects.filter(author=author)
-
-        print("\n\nPOST", posts, "\n\n")
-
 
         result_dict = {}
         result_dict["type"] = "posts"
@@ -172,13 +168,9 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         for post in posts:
             curr_post_data = self.get_post_data(post)
-            print("CURRR  :", curr_post_data)
-            print()
             posts_list.append(curr_post_data)
 
         result_dict["items"] = posts_list
-        print("RESULT:\n")
-        print(result_dict)
 
         return result_dict
     
