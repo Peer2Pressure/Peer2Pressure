@@ -1,10 +1,15 @@
+import base64
+from uuid import uuid4
+
+
 from rest_framework import serializers
-from . models import *
 from varname import nameof
+
+from . models import *
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.relationserializer import RelationSerializer
 from .serializers.postserializer import PostSerializer
-
+from django.core.files.base import ContentFile
 
 author_serializer = AuthorSerializer()
 relation_serializer = RelationSerializer()
@@ -24,7 +29,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "displayName": f"{author.first_name} {author.last_name}",
             "username": author.username,
             "email": author.email,
-            "profileImage": f"{author.host}{author.avatar.url}",
+            "profileImage": author.avatar,
             }
         return author_data
     
@@ -69,6 +74,19 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             if key in updatable_fields:
                 defaults[key] = request_data[key]
 
+        if "image" in list(request_data.keys()) and request_data["avatar"] is not None:
+            image_name = uuid4()
+            extension = "png"
+
+            image_filename = f"{image_name}.{extension}"
+
+            image_encoded = request_data["image"]
+            image_file = ContentFile(base64.b64decode(image_encoded), name=image_filename)
+            defaults["image"] = image_file
+        
+        print("Defaults:  ")
+        print(defaults)
+        print()
         Author.objects.filter(pk=author_id).update(**defaults)
 
         return self.get_single_author(author_id)

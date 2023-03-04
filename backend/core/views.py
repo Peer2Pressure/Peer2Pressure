@@ -83,7 +83,6 @@ class FollowerAPI(GenericAPIView):
         if follower:
             return Response(follower)
         return Response({"msg": "Follower not found"}, status=status.HTTP_404_NOT_FOUND) 
-    
 
     def put(self, request, author_id, foreign_author_id):
         new_relation_id = relation_serializer.create_relations(author_id, foreign_author_id)

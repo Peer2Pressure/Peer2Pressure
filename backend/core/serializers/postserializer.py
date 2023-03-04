@@ -53,10 +53,6 @@ class PostSerializer(serializers.ModelSerializer):
             image_file = ContentFile(base64.b64decode(image_encoded), name=image_filename)
             defaults["image"] = image_file
         
-        print("Defaults:  ")
-        print(defaults)
-        print()
-
         post = Post.objects.create(**defaults)
 
         return post.id
