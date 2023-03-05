@@ -6,7 +6,7 @@ function usePosts() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/authors/0898446d-c1ff-4845-8aba-510997a2c223/posts")
+      .get("http://localhost:8000/authors/b1411a6f-2314-4195-9b23-8055f2b42b79/posts")
       .then((response) => setPosts(response.data))
       .catch((error) => console.error(error));
       

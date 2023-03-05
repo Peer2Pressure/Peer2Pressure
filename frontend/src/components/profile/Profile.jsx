@@ -8,8 +8,6 @@ import { Avatar, Button } from "@mui/material";
 import { Navigate, useNavigate } from "react-router-dom";
 
 function getCsrfToken() {
-  // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
-  // return csrfToken ? csrfToken[1] : '';
   const csrftoken = Cookies.get('XSRF-TOKEN');
   return csrftoken;
 }
@@ -17,49 +15,47 @@ function getCsrfToken() {
 
 export default function Profile() {
 
-  // // calling the api to get data to be rendered in this component
-  // const {response1, loading1, error1} = useFetch("http://localhost:8000/get_author_id/");
-  // const authorId = response1.author_id;
-  // const {response2, loading2, error2} = useFetch("http://localhost:8000/authors/"+ authorId + "/");
-  // console.log(authorId, data, data1)
-
   const navigate = useNavigate();
-  
+
+  const [authorId, setAuthorId] = useState(null);
   const [authorData, setAuthorData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [count, setCount] = useState(0);
+  const [count1, setCount1] = useState(0);
 
+  const {data: responseData1} = useFetch("/get_author_id/", {method: "get"});
   useEffect(() => {
-    const getAuthorData = async () => {
-      try {
-        const csrftoken = getCsrfToken();
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        axios.defaults.xsrfCookieName = csrftoken;
-        
-        
-        // const response1 = await axios.get("/get_author_id/");
-        // const authorId = response1.data.author_id;
-        const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
-        const response2 = await axios.get("/authors/"+authorId+"/");
-        setAuthorData(response2.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
+    console.log("count: ", count);
+    setCount(count+1);
+    if (responseData1){
+      console.log("get_author_id: ", count, ":",responseData1.author_id, ":")
+      setAuthorId(responseData1.author_id);
+      setAuthorData(responseData1.author_id);
+      console.log("updated: ");
+      // console.log(authorId, ":", authorData);
+    }
+  }, [responseData1]);
+
+
+  const {data: responseData2, loading, error} = useFetch(authorId ? "/authors/"+authorId+"/" : null, {method: "get"});
+  useEffect(() => {
+    console.log("count 1: ", count1);
+    console.log("Author data: ", authorData, authorId);
+    if (responseData2){
+      setCount1(count1+1);
+      console.log("COUNT 1: ", count1, ":",responseData2, ":")
+      setAuthorData(responseData2);
     };
+  }, [authorData, responseData2]);
 
-    getAuthorData();
-  }, []);
+  // // check if loading 
+  // if (loading) return <h1> Loading... </h1>; // placeholder for now 
 
-    
-  // check if loading 
-  if (loading) return <h1> Loading... </h1>; // placeholder for now 
+  // // check if any error generated shown in console
+  // if (error) console.log(error);
 
-  // check if any error generated shown in console
-  if (error) console.log(error);
-
-  if (authorData) console.log(authorData);
+  if (authorData) {
+    console.log(authorId, ":", authorData);
+  }
   return (
     <div>
         <div className="profileBox">
@@ -76,4 +72,5 @@ export default function Profile() {
         </div>
     </div>
   )
+
 }

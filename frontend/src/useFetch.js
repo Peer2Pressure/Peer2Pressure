@@ -5,26 +5,34 @@ import axios from "axios";
 // that we may need upon calling the hook.
 // installed axios to use this hook
 
-export default function useFetch(url) {
-    // do an api call whenever we call this hook.
+export default function useFetch(url, options={}) {
+  // do an api call whenever we call this hook.
+  const [data, setData] = useState(null);             // set as null because we don't really know the state the data is in initially.
+  const [loading, setLoading] = useState(false);      // boolean; set to false initially becuase nothing is loading yet till we call something to load 
+  const [error, setError] = useState(null);           // 
 
-    const [data, setData] = useState(null);             // set as null because we don't really know the state the data is in initially.
-    const [loading, setLoading] = useState(false);      // boolean; set to false initially becuase nothing is loading yet till we call something to load 
-    const [error, setError] = useState(null);           // 
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken';
 
-  useEffect(() => {                                     // insert url to get in touch with the api
-    setLoading(true);                                   // set loading to true after a call to an api is made 
-    axios
-    .get(url)
+  useEffect(async () => {
+    if (!url) {
+      return;
+    }                            // insert url to get in touch with the api
+    setLoading(true);             // set loading to true after a call to an api is made 
+    await axios({url, options})
     .then((response) => {
+        console.log("axios response: ", data);
         setData(response.data);
-    }).catch((error) => {                               // catch will be call if there's an error 
+    }).catch((error) => {            
+        console.log("error1: ", data);                   // catch will be call if there's an error 
         setError(error);
     }).finally(() => {
         setLoading(false);                              // Loading phase is done when reached 
     });
-  }, [url]);                                            // useEffect need dependency array which will have url 
-
-  // console.log(data);
-  return {data, loading, error};                        // return an object containing the three      
+    
+      
+  }, []);                                            // useEffect need dependency array which will have url 
+  console.log("data after api call: ", url, data);
+  return {data, loading, error};                // return an object containing the three      
+                          
 }

@@ -12,10 +12,10 @@ const Home = () => {
       // </div>
       <div className="homeContainer">
         <Profile/>
-        <div className="streamContainer">
+        {/* <div className="streamContainer">
           <Share/>
           <Stream/>
-        </div>
+        </div> */}
       </div>
     )
   }
