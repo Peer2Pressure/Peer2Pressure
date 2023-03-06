@@ -11,7 +11,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 export default function ProfileSetting() {
 
     const {data, loading, error} = useFetch("http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/");
-    if (data) console.log(data);
+    // if (data) console.log(data);
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         username: '',
@@ -27,44 +27,74 @@ export default function ProfileSetting() {
 
 
     const handleFileChange = (event) => {
-        setUserData({
-            ...userData,
-            avatar: event.target.files[0]
+        console.log("EVENT  111");
+        setUserData( userData => {
+            return {
+                ...userData,
+                avatar: event.target.files[0]
+            };
         });
-        console.log("EVENT  :   ", event.target.files);
+        console.log("EVENT  222");
+        console.log("EVENT  :   ", userData.avatar);
     };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+    
         const formData = new FormData();
         formData.append('username', userData.username || data?.username);
         formData.append('email', userData.email || data?.email);
         formData.append('password', userData.password || data?.password);
         formData.append('first_name', userData.first_name || data?.first_name);
         formData.append('last_name', userData.last_name || data?.last_name);
+    
         if (userData.avatar) {
-            formData.append('avatar', userData.avatar, userData.avatar.name);
+            const reader = new FileReader();
+    
+            reader.onload = (event) => {
+                const base64String = event.target.result.split(",")[1];
+                formData.append('avatar', base64String);
+                
+                axios
+                    .post(
+                        "http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/", 
+                        formData,
+                        {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                        })
+                    .then((response) => {
+                        console.log(response.data);
+                        window.location.reload();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            };
+    
+            reader.readAsDataURL(userData.avatar);
+        } else {
+            axios
+                .post(
+                    "http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/", 
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    })
+                .then((response) => {
+                    console.log(response.data);
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
-    
-        console.log("usernameeeee: "+userData);
-    
-        axios
-        .post(
-            "http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/", 
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-        .then((response) => {
-            console.log(response.data);
-            window.location.reload();
-        }).catch((error) => {
-            console.log(error);
-        });
     };
+    
 
     // const handleChange = (event) => {
     //     setUserData({
@@ -80,17 +110,19 @@ export default function ProfileSetting() {
         });
     };
 
+    
+
     // console.log("forData: "+formData);
-    console.log("username: "+userData.username);
-    console.log("email: " + userData.email);    
-    console.log('first_namne: '+userData.first_name);
-    console.log('last_name: '+userData.last_name);
+    // console.log("username: "+userData.username);
+    // console.log("email: " + userData.email);    
+    // console.log('first_namne: '+userData.first_name);
+    // console.log('last_name: '+userData.last_name);
 
     return (
         <form onSubmit={handleSubmit}>
             <div className="profileSettingsBox">
                 <div className="profileImageBox">
-                    <Avatar src={data?.profileImage} sx={{width:100, height:100}}/>
+                    <Avatar src={userData.avatar ? URL.createObjectURL(userData.avatar) : data?.profileImage} sx={{width:100, height:100}}/>
                     <input type="file" accept="image/*" onChange={handleFileChange}/>
                     {/* <label htmlFor="avatar-input">
                         <Button component="span">Change image</Button>
@@ -98,7 +130,7 @@ export default function ProfileSetting() {
                 </div>
                 <div className="profileDetailsBox">
                     <div className="usernameBox">
-                        <h2 class="fieldTitle">Username</h2>
+                        <h2 className="fieldTitle">Username</h2>
                         {/* <TextField label="username" placeholder={data?.username} value={userData.username} onChange={handleChange}/> */}
                         <TextField label="username" placeholder={data?.username} value={userData.username} onChange={(e) => handleChange2("username", e.target.value)}/>
                     </div>

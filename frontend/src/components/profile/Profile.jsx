@@ -8,8 +8,6 @@ import { Avatar, Button } from "@mui/material";
 import { Navigate, useNavigate } from "react-router-dom";
 
 function getCsrfToken() {
-  // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
-  // return csrfToken ? csrfToken[1] : '';
   const csrftoken = Cookies.get('XSRF-TOKEN');
   return csrftoken;
 }
@@ -37,9 +35,9 @@ export default function Profile() {
         axios.defaults.xsrfCookieName = csrftoken;
         
         
-        // const response1 = await axios.get("/get_author_id/");
-        // const authorId = response1.data.author_id;
-        const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
+        const response1 = await axios.get("/get_author_id/");
+        const authorId = response1.data.author_id;
+        // const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
         const response2 = await axios.get("/authors/"+authorId+"/");
         setAuthorData(response2.data);
         setLoading(false);
