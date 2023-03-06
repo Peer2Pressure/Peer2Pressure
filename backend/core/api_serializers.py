@@ -24,7 +24,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "displayName": f"{author.first_name} {author.last_name}",
             "username": author.username,
             "email": author.email,
-            "profileImage": f"{author.host}{author.avatar.url}",
+            "profileImage": author.avatar,
             }
         return author_data
     
