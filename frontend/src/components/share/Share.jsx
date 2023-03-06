@@ -44,9 +44,9 @@ const Share = () => {
         axios
         .post("http://localhost:8000/authors/" + authorId + "/posts/", {
             "content": content,
-            "author" : authorId,
+            "author_id" : authorId,
             "is_private": false,
-            "image": files  // or test with null
+            "image": null  // determine how to upload image
         })
         .then(response => console.log('Posting data', response))
         .catch(error => console.log(error));
