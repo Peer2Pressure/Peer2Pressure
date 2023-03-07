@@ -24,6 +24,24 @@ export default function Profile() {
 
   const {data: responseData1} = useFetch("/get_author_id/", {method: "get"});
   useEffect(() => {
+
+    let self = this
+
+    Promise.all(axios.get(), axios.get()).then(function (results){
+      results[0]
+    })
+
+    axios.get("/get_author_id/", {method: "get"}).then(function(response){
+      console.log(response)
+      setAuthorData(reponse.data)
+      self.setAuthorData(response.data)
+
+      
+
+    }).catch(function (err){
+      //handle err
+    })
+
     console.log("count: ", count);
     setCount(count+1);
     if (responseData1){
