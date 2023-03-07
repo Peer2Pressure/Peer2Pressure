@@ -52,15 +52,22 @@ class PostSerializer(serializers.ModelSerializer):
             image_encoded = request_data["image"]
             image_file = ContentFile(base64.b64decode(image_encoded), name=image_filename)
             defaults["image"] = image_file
-        
-        print("Defaults:  ")
-        print(defaults)
-        print()
 
         post = Post.objects.create(**defaults)
 
         return post.id
 
-
-
-
+    def get_author_post(self, author_id, post_id):
+        author = None
+        post = None
+        try:
+            author = author_serializer.get_author_by_id(author_id)
+        except ValueError:
+            raise ValueError("Auhtor does not exist.")
+        
+        try:
+            post = Post.objects.get(pk=post_id, author=author)
+        except Post.DoesNotExist:
+            raise ValueError("Post does not exist.")
+        
+        return post

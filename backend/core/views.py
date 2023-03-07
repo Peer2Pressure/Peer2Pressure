@@ -14,6 +14,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from drf_yasg.utils import swagger_auto_schema
 
 # Local Libraries
 from .api_serializers import *
@@ -30,7 +31,7 @@ relation_serializer = RelationSerializer()
 relation_api_serializer = RelationAPISerializer()
 post_serializer = PostSerializer()
 post_api_serializer = PostAPISerializer()
-comment_serializer = CommentSerializer()
+comment_api_serializer = CommentAPISerializer()
 
 class CurrentAuthorID(GenericAPIView):
     authentication_classes = [SessionAuthentication]
@@ -49,9 +50,16 @@ class AuthorListAPI(GenericAPIView):
         authors = author_api_serializer.get_all_authors()
         return Response(authors)
         
+# class MySerializer(serializers.Serializer):
+#     username = serializers.CharField()
+#     email = serializers.EmailField()
+
+
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer
+    # swagger_schema = None
+    
     def get(self, request, author_id):
         author = author_api_serializer.get_single_author(author_id)
         if author:
@@ -59,6 +67,7 @@ class AuthorAPI(GenericAPIView):
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     # discuss if we need to change to PUT request
+    # @swagger_auto_schema(request_body=MySerializer)
     def post(self, request, author_id):
         update_author = author_api_serializer.create_or_update_author(author_id, request.data)
         
@@ -169,17 +178,14 @@ class CommentAPI(GenericAPIView):
     serializer_class = CommentSerializer
 
     def get(self, request, author_id, post_id):
-        try:
-            author = Author.objects.get(pk=author_id)
-            post = Post.objects.get(pk=post_id)
-            comments = post.comments
-        except (Author.DoesNotExist, Post.DoesNotExist, Comment.DoesNotExist):
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CommentSerializer(comments, many=True)
-        data = list(serializer.data)
-        return Response(data)
+        comments = comment_api_serializer.get_post_comments(author_id, post_id)
+        if comments:
+            return Response(comments)
+        return Response(data={"msg": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, author_id, post_id):
+        comments = comment_api_serializer.add_new_comment(author_id, post_id, request.data)
+
         comment = request.data["comment"]
         new_comment = CommentSerializer.create_comment(author_id=author_id, post_id=post_id, comment=comment)
         if new_comment is None:
