@@ -4,11 +4,13 @@ from varname import nameof
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.relationserializer import RelationSerializer
 from .serializers.postserializer import PostSerializer
+from .serializers.commentserializer import CommentSerializer
 
 
 author_serializer = AuthorSerializer()
 relation_serializer = RelationSerializer()
 post_serializer = PostSerializer()
+comment_serializer = CommentSerializer()
 
 class AuthorAPISerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,8 +26,8 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "displayName": f"{author.first_name} {author.last_name}",
             "username": author.username,
             "email": author.email,
-            "profileImage": f"{author.host}{author.avatar.url}",
-            }    
+            "profileImage": author.avatar,
+            }
         return author_data
     
     def get_single_author(self, author_id):
@@ -54,7 +56,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
 
         return result_dict
 
-    def update_author(self, author_id, request_data):
+    def create_or_update_author(self, author_id, request_data):
         author = None
         updatable_fields = ["first_name", "last_name", "username", "email", "avatar"]
         try:
@@ -134,8 +136,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_post_data(self, post):
-        
-        author_data = author_serializer.get_author_data(post.author)
+        author_data = author_api_serializer.get_author_data(post.author)
 
         post_data = {
             "type": "post",
@@ -143,12 +144,37 @@ class PostAPISerializer(serializers.ModelSerializer):
             "url": post.url,
             "title": post.title,
             "content": post.content,
-            "image": post.image,
             "visibility": "private"if post.is_private else "public", 
+            "image": f"{author_data['host']}{post.image.url}" if post.image else None,
             "author": author_data,
             }
         
         return post_data
+    
+    # def create_post(self, author_id)
+
+
+    def get_all_author_posts(self, author_id):
+        author = None
+        try:
+            author = author_serializer.get_author_by_id(author_id)
+        except ValueError:
+            return None
+        
+        posts = Post.objects.filter(author=author)
+
+        result_dict = {}
+        result_dict["type"] = "posts"
+
+        posts_list = []
+
+        for post in posts:
+            curr_post_data = self.get_post_data(post)
+            posts_list.append(curr_post_data)
+
+        result_dict["items"] = posts_list
+
+        return result_dict
     
     def get_a_post(self, authorid, postid):
         result_dict = {}
@@ -196,3 +222,52 @@ class PostAPISerializer(serializers.ModelSerializer):
         result_dict["unlisted"] = False
 
         return result_dict
+
+
+class CommentAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = "__all__"
+    
+    def get_post_data(self, comment):
+        author_data = author_api_serializer.get_author_data(comment.author)
+
+        comment_data = {
+            "type": "comment",
+            "id": comment.id,
+            "url": comment.url,
+            "comment": comment.caption,
+            "published": comment.created_at,
+            "author": author_data,
+            }
+        
+        return comment_data
+    
+    def get_post_comments(self, author_id, post_id):
+        post = None
+        try:
+            post = post_serializer.get_author_post(author_id, post_id)
+        except ValueError:
+            return None
+        
+        comments = post.comments
+        
+        result_dict = {}
+        result_dict["type"] = "comments"
+        result_dict["post"] = post.url
+        result_dict["id"] = f"{post.url}/comments"
+
+        comments_list = []
+
+        for comment in comments:
+            curr_comment_data = self.get_post_data(comment)
+            comments_list.append(curr_comment_data)
+ 
+        result_dict["comments"] = comments_list
+
+        return result_dict
+    
+    # def add_new_comment(self, author_id, post_id, request_data):
+    #     try:
+    #         author = author_serializer.get_author_by_id(author_id)
+    #         post = post_serializer.get_author_post(author_id, post_id)
