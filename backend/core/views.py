@@ -49,16 +49,9 @@ class AuthorListAPI(GenericAPIView):
     def get(self, request):
         authors = author_api_serializer.get_all_authors()
         return Response(authors)
-        
-# class MySerializer(serializers.Serializer):
-#     username = serializers.CharField()
-#     email = serializers.EmailField()
-
-
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer
-    # swagger_schema = None
     
     def get(self, request, author_id):
         author = author_api_serializer.get_single_author(author_id)
@@ -67,7 +60,6 @@ class AuthorAPI(GenericAPIView):
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     # discuss if we need to change to PUT request
-    # @swagger_auto_schema(request_body=MySerializer)
     def post(self, request, author_id):
         update_author = author_api_serializer.create_or_update_author(author_id, request.data)
         
