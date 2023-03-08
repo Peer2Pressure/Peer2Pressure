@@ -11,7 +11,7 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = "__all__"
 
-    def create_author(self, username, firstname, lastname, email, password, host = None, id = None):
+    def create_author(self, username, firstname, lastname, email, password, host = None, id = None, user=None):
 
         defaults = {
             nameof(Author.username): username,
@@ -29,6 +29,11 @@ class AuthorSerializer(serializers.ModelSerializer):
 
         if host is not None:
             defaults[nameof(Author.host)] = host
+
+        if user is not None:
+            defaults[nameof(Author.user)] = user
+
+        # print("Defautls: ", defaults)
 
         author_obj= Author.objects.create(**defaults)
 
