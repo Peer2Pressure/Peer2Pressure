@@ -39,7 +39,7 @@ class Author(AbstractModel):
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    avatar = models.ImageField(upload_to="profile_images", null=True, blank=True, default="/profile_images/default-user.jpeg")
+    avatar = models.URLField(null=True, blank=True, default=None)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["username", "email", "password"], name="Unique user properties")]
@@ -89,12 +89,12 @@ class Post(AbstractModel):
         return [nameof(cls.author)]
 
     def __str__(self):
-        return self.url
+        return str(self.id)
     
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            self.url = f"{self.author.url}/{self.id}"
+            self.url = f"{self.author.url}/posts/{self.id}"
         super().save(*args, **kwargs)
 
 class Like(AbstractModel):
@@ -112,10 +112,17 @@ class Like(AbstractModel):
     def __str__(self):
         return self.author
 
+    # def save(self, *args, **kwargs):
+    #     if not self.url:
+    #         # Generate a URL based on the object's ID
+    #         self.url = f"{self.post.url}/likes/{self.id}"
+    #     super().save(*args, **kwargs)
+
 class Comment(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     comment = models.TextField(default="")
+    url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
 
@@ -125,3 +132,9 @@ class Comment(AbstractModel):
     
     def __str__(self):
         return self.author
+
+    def save(self, *args, **kwargs):
+        if not self.url:
+            # Generate a URL based on the object's ID
+            self.url = f"{self.post.url}/comments/{self.id}"
+        super().save(*args, **kwargs)
