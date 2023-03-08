@@ -1,4 +1,4 @@
-import Share from "../share/share";
+import Share from "../share/Share";
 import Flipmove from "react-flip-move";
 
 import "./stream.css";
@@ -11,13 +11,13 @@ function Stream() {
   return (
     <div className="stream">
       <div className="stream__header">
-        <h2>Home</h2>
-      <Share/>
+        {/* <h2>Home</h2> */}
+        {/* <Share/> */}
       </div>
-      <div className="stream__posts">
+      <div  >
       <Flipmove>
       {posts.map((post) => (
-        <div key={post.id}>
+        <div className="stream__posts" key={post.id}>
           <Post
             key={post.id}
             displayName={post.displayName}
