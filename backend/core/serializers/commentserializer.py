@@ -42,4 +42,3 @@ class CommentSerializer(serializers.ModelSerializer):
             raise ValueError("Comment does not exist")
         
         return comment  
-    
