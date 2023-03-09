@@ -21,8 +21,7 @@ from ..models import *
 from ..serializers.postserializer import PostSerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 
-
-post_serializer = PostSerializer()
+# API serializer
 post_api_serializer = PostAPISerializer()
 
 class SinglePostAPI(GenericAPIView):
@@ -88,5 +87,7 @@ class PostAPI(GenericAPIView):
         return Response(data={"msg": "Author does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, author_id):
-        post_id = post_serializer.create_post(author_id, request.data)
-        return Response(data={"msg": "hello world"})
+        post = post_api_serializer.add_new_post(author_id, request.data)
+        if post:
+            return Response(post)
+        return Response(data={"msg": "Unable to create post"}, status=status.HTTP_404_NOT_FOUND)

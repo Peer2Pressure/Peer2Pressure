@@ -15,7 +15,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
     def get_author_data(self, author):
         author_data = {
             "type": "author",
-            "id": author.id,
+            "id": author.url,
             "url": author.url,
             "host": author.host,
             "displayName": f"{author.first_name} {author.last_name}",

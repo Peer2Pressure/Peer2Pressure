@@ -27,14 +27,38 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         post_data = {
             "type": "post",
-            "id": post.id,
-            "url": post.url,
+            "id": post.url,
             "title": post.title,
             "content": post.content,
             "visibility": "private"if post.is_private else "public", 
             "image": f"{author_data['host']}{post.image.url}" if post.image else None,
             "author": author_data,
             }
+        
+        return post_data
+
+    def add_new_post(self, author_id, request_data):
+        keys = list(request_data.keys())
+        if "image" not in keys and "content" not in keys:
+            print("Require either content or image for the post")
+            return None
+
+        title = request_data["title"] if "title" in keys else None
+        content = request_data["content"] if "content" in keys else None
+        image = request_data["image"] if "image" in keys else None
+        is_private = request_data["is_private"] if "is_private" in keys else False
+
+        post_id = post_serializer.create_post(author_id=author_id, title=title, content=content, image=image, is_private=is_private)
+
+        return self.get_single_post(author_id, post_id)
+    
+    def get_single_post(self, author_id, post_id):
+        post_data = {}
+        try:
+            post = post_serializer.get_author_post(author_id, post_id)
+            post_data = self.get_post_data(post)
+        except ValueError:
+            return None
         
         return post_data
 
@@ -45,7 +69,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         except ValueError:
             return None
         
-        posts = Post.objects.filter(author=author)
+        posts = author.post.all()
 
         result_dict = {}
         result_dict["type"] = "posts"
@@ -57,52 +81,5 @@ class PostAPISerializer(serializers.ModelSerializer):
             posts_list.append(curr_post_data)
 
         result_dict["items"] = posts_list
-
-        return result_dict
-    
-    def get_a_post(self, authorid, postid):
-        result_dict = {}
-
-        result_dict["type"] = "post"
-        # TODO: Need to add title to POST Model
-        result_dict["title"] = ""
-
-        # TODO: Need to handle the case if post or author doesn't exist
-        post_obj = post_serializer.get_post(authorid, postid)
-        author = author_serializer.get_author_by_id(authorid)
-
-        result_dict["id"] = str(author.host) + "/authors/" + str(authorid) + "/posts/" + str(postid)
-
-        # TODO: Need to find source and origin
-        result_dict["origin"] = ""
-        result_dict["source"] = ""
-
-        # TODO: Need to add Description for POST Model
-        result_dict["description"] = ""
-
-        # TODO: Need to support multiple formats
-        result_dict["contentType"] = "text/plain"
-
-        result_dict["content"] = post_obj.caption
-
-        result_dict["author"] = author_api_serializer.get_single_author(authorid)
-
-        # TODO: Need to add way to organize the post to categories
-        result_dict["categories"] = []
-
-        # TODO: Need to get the serailzier with get_count for number of comments for post
-        result_dict["count"] = 0
-
-        # TODO: Need to get the first page of comments
-        result_dict["comments"] = ""
-
-        # TODO: Need to convert the created_at to ISO 8601 TIMESTAMP
-        result_dict["published"] = post_obj.created_at
-
-        # TODO: Need to set the visibility to actual visibility
-        result_dict["visibility"] = "PUBLIC"
-
-        # TODO: Need to find what unlisted mean
-        result_dict["unlisted"] = False
 
         return result_dict

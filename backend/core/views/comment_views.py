@@ -35,14 +35,10 @@ class CommentAPI(GenericAPIView):
         return Response(data={"msg": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, author_id, post_id):
-        comments = comment_api_serializer.add_new_comment(author_id, post_id, request.data)
-
-        comment = request.data["comment"]
-        new_comment = CommentSerializer.create_comment(author_id=author_id, post_id=post_id, comment=comment)
+        new_comment = comment_api_serializer.add_new_comment(author_id, post_id, request.data)
         if new_comment is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CommentSerializer(new_comment)
-        return Response(serializer.data)
+            return Response(data={"msg": "Unable comment on post"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(new_comment)
 
 # # incomplete: might have to change to like_vies.py
 # class CommentLikeAPI(GenericAPIView):

@@ -15,22 +15,45 @@ author_api_serializer = AuthorAPISerializer()
 class CommentAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = "__all__"
-    
-    def get_post_data(self, comment):
+        fields = ("comment")
+
+    def get_comment_data(self, comment):
         author_data = author_api_serializer.get_author_data(comment.author)
 
         comment_data = {
             "type": "comment",
-            "id": comment.id,
-            "url": comment.url,
-            "comment": comment.caption,
-            "published": comment.created_at,
             "author": author_data,
+            "comment": comment.comment,
+            # TODO: Might have to add contentT_type to model
+            "contentType": "",      
+            "id": comment.url,
+            "published": comment.created_at,
             }
         
         return comment_data
     
+    def get_single_comment(self, comment_id):
+        author_data = {}
+        try:
+            comment = comment_serializer.get_comment_by_id(comment_id)
+            comment_data = self.get_comment_data(comment)
+        except ValueError:
+            return None
+        
+        return comment_data
+    
+    def add_new_comment(self, author_id, post_id, request_data):
+        """
+        Add new comment to the post
+        """
+        if "comment" in list(request_data.keys()):
+            if request_data["comment"] != "":
+                comment_id = comment_serializer.create_comment(author_id, post_id, request_data["comment"])
+                return self.get_single_comment(comment_id)
+        
+        return None
+
+
     def get_post_comments(self, author_id, post_id):
         post = None
         try:
@@ -38,7 +61,7 @@ class CommentAPISerializer(serializers.ModelSerializer):
         except ValueError:
             return None
         
-        comments = post.comments
+        comments = post.comment.all()
         
         result_dict = {}
         result_dict["type"] = "comments"
@@ -48,14 +71,9 @@ class CommentAPISerializer(serializers.ModelSerializer):
         comments_list = []
 
         for comment in comments:
-            curr_comment_data = self.get_post_data(comment)
+            curr_comment_data = self.get_comment_data(comment)
             comments_list.append(curr_comment_data)
  
         result_dict["comments"] = comments_list
 
         return result_dict
-    
-    # def add_new_comment(self, author_id, post_id, request_data):
-    #     try:
-    #         author = author_serializer.get_author_by_id(author_id)
-    #         post = post_serializer.get_author_post(author_id, post_id)

@@ -35,7 +35,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
         # print("Defautls: ", defaults)
 
-        author_obj= Author.objects.create(**defaults)
+        author_obj = Author.objects.create(**defaults)
 
         return author_obj.id
     
@@ -48,7 +48,6 @@ class AuthorSerializer(serializers.ModelSerializer):
         return author_obj.id
 
     def get_author_by_id(self, author_id):
-
         try:
             author_obj = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
