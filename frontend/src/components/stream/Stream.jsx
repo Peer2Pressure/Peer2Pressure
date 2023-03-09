@@ -4,6 +4,7 @@ import Flipmove from "react-flip-move";
 import "./stream.css";
 import Post from "../post/Post";
 import usePosts from "../../usePosts";
+import samplePosts from "../../mockPost.json"
 
 function Stream() {
   const posts = usePosts();
