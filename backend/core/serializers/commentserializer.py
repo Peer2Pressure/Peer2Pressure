@@ -18,7 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
         try:
             author = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
-            raise ValueError("Comment Author does not exist")
+            raise ValueError("Author does not exist")
         
         try:
             post = Post.objects.get(pk=post_id)
@@ -26,12 +26,19 @@ class CommentSerializer(serializers.ModelSerializer):
             raise ValueError("Post does not exist")
         
         defaults = {
-            nameof(Comment.comment_author): author,
+            nameof(Comment.author): author,
             nameof(Comment.post): post,
-            nameof(comment): comment
+            nameof(Comment.comment): comment
         }
 
-        comment_obj, comment_created = Comment.objects.create(defaults=defaults)
+        comment_obj = Comment.objects.create(**defaults)
 
-        return comment_obj.id, comment_created     
-    
+        return comment_obj.id
+
+    def get_comment_by_id(self, comment_id):
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            raise ValueError("Comment does not exist")
+        
+        return comment  

@@ -1,6 +1,9 @@
-from .models import *
+# Third-party libraries
 from django.test import TestCase
-from .api_serializers import *
+
+# Local libraries
+from .models import *
+from .api_serializers.author_api_serializer import AuthorAPISerializer
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
 from .serializers.relationserializer import RelationSerializer

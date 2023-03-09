@@ -54,7 +54,7 @@ class Author(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            self.url = f"{HOST}/{self.id}"
+            self.url = f"{HOST}/authors/{self.id}"
         super().save(*args, **kwargs)
 
 class Relation(AbstractModel):
@@ -76,7 +76,7 @@ class Relation(AbstractModel):
 
 
 class Post(AbstractModel):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="posts")
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     image = models.ImageField(upload_to='post_images', blank=True, null=True)
@@ -99,7 +99,7 @@ class Post(AbstractModel):
 
 class Like(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="like")
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -120,7 +120,7 @@ class Like(AbstractModel):
 
 class Comment(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
     comment = models.TextField(default="")
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
