@@ -34,12 +34,12 @@ export default function Profile() {
       try {
         const csrftoken = getCsrfToken();
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        axios.defaults.xsrfCookieName = csrftoken;
+        axios.defaults.xsrfCookieName = 'csrftoken';
         
         
-        // const response1 = await axios.get("/get_author_id/");
-        // const authorId = response1.data.author_id;
-        const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
+        const response1 = await axios.get("/get_author_id/");
+        const authorId = response1.data.author_id;
+        // const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
         const response2 = await axios.get("/authors/"+authorId+"/");
         setAuthorData(response2.data);
         setLoading(false);

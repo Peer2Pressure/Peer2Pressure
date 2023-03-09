@@ -20,14 +20,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
         extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
-    def create_post(self, author_id, request_data):
-        field_names = [field.name for field in Post._meta.get_fields()]
-
-        if "image" not in list(request_data.keys()) and "content" not in list(request_data.keys()):
-            print("Require either contetn or image for the post")
-            return None
-            # raise ValueError("Require either caption or image for the post")
-
+    def create_post(self, author_id, title=None, content=None, image=None, is_private=False):
         try:
             author = author_serializer.get_author_by_id(author_id)
         except ValueError:
@@ -37,20 +30,19 @@ class PostSerializer(serializers.ModelSerializer):
 
         defaults = {
             nameof(Post.author): author,
+            nameof(Post.title): title,
+            nameof(Post.content): content,
+            nameof(Post.image): image,
+            nameof(Post.is_private): is_private
         }
-
-        for key in request_data:
-            if key in field_names:
-                defaults[key] = request_data[key]
-
-        if "image" in list(request_data.keys()) and request_data["image"] is not None:
+    
+        if image is not None:
             image_name = uuid4()
             extension = "png"
 
             image_filename = f"{image_name}.{extension}"
 
-            image_encoded = request_data["image"]
-            image_file = ContentFile(base64.b64decode(image_encoded), name=image_filename)
+            image_file = ContentFile(base64.b64decode(image), name=image_filename)
             defaults["image"] = image_file
 
         post = Post.objects.create(**defaults)
@@ -63,7 +55,7 @@ class PostSerializer(serializers.ModelSerializer):
         try:
             author = author_serializer.get_author_by_id(author_id)
         except ValueError:
-            raise ValueError("Auhtor does not exist.")
+            raise ValueError("Author does not exist.")
         
         try:
             post = Post.objects.get(pk=post_id, author=author)
