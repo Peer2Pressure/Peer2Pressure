@@ -1,9 +1,8 @@
 import "./profile.css"
-import useFetch from "../../useFetch"
+
 import Cookies from 'js-cookie';
 import axios from "axios";
 import { useEffect, useState } from 'react';
-import GitHubIcon from '@mui/icons-material/GitHub';
 import { Avatar, Button } from "@mui/material";
 import { Navigate, useNavigate } from "react-router-dom";
 
