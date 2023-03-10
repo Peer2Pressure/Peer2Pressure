@@ -2,10 +2,12 @@
 from rest_framework import serializers
 
 # Local libraries
+from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 from ..serializers.postserializer import PostSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
+from ..api_serializers.comment_api_serializer import CommentAPISerializer
 
 # Serializers
 author_serializer = AuthorSerializer()
@@ -13,7 +15,7 @@ post_serializer = PostSerializer()
 
 # API Serializer
 author_api_serializer = AuthorAPISerializer()
-
+comment_api_serializer = CommentAPISerializer()
 
 class PostAPISerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,20 +24,32 @@ class PostAPISerializer(serializers.ModelSerializer):
 
     def get_post_data(self, post):
         author_data = author_api_serializer.get_author_data(post.author)
+        comments_data = comment_api_serializer.get_post_comments(post.author.id, post.id, page=1, size=5)
 
         post_data = {
             "type": "post",
-            "id": post.url,
             "title": post.title,
+            "id": post.url,
+            "source": "",
+            "origin": "",
+            "description": "",
+            "contentType": "",
             "content": post.content,
-            "visibility": "private"if post.is_private else "public", 
-            "image": f"{author_data['host']}{post.image.url}" if post.image else None,
             "author": author_data,
+            "categories": [],
+            # comments count
+            "count": "",
+            "comments": f"{post.url}/comments",           
+            "commentsSrc": comments_data,
+            "published": post.created_at,
+            "visibility": "FRIENDS"if post.is_private else "PUBLIC", 
+            # "image": f"{author_data['host']}{post.image.url}" if post.image else None,
+            
             }
         
         return post_data
 
-    def add_new_post(self, author_id, request_data):
+    def add_new_post(self, author_id, request_data, post_id=None):
         keys = list(request_data.keys())
         if "image" not in keys and "content" not in keys:
             print("Require either content or image for the post")
@@ -46,21 +60,21 @@ class PostAPISerializer(serializers.ModelSerializer):
         image = request_data["image"] if "image" in keys else None
         is_private = request_data["is_private"] if "is_private" in keys else False
 
-        post_id = post_serializer.create_post(author_id=author_id, title=title, content=content, image=image, is_private=is_private)
+        new_post_id = post_serializer.create_post(post_id=post_id, author_id=author_id, title=title, content=content, image=image, is_private=is_private)
 
-        return self.get_single_post(author_id, post_id)
+        return self.get_single_post(author_id, new_post_id)
     
     def get_single_post(self, author_id, post_id):
-        post_data = {}
+        # Get post by author_id and post_id
         try:
             post = post_serializer.get_author_post(author_id, post_id)
-            post_data = self.get_post_data(post)
         except ValueError:
             return None
-        
+
+        post_data = self.get_post_data(post)
         return post_data
 
-    def get_all_author_posts(self, author_id):
+    def get_all_author_posts(self, author_id, page=None, size=None):
         author = None
         try:
             author = author_serializer.get_author_by_id(author_id)
@@ -78,6 +92,13 @@ class PostAPISerializer(serializers.ModelSerializer):
             curr_post_data = self.get_post_data(post)
             posts_list.append(curr_post_data)
 
-        result_dict["items"] = posts_list
+        if page and size:
+            paginated_posts = utils.paginate_list(posts_list, page, size)
+            
+            result_dict["page"] = page
+            result_dict["size"] = size
+            result_dict["items"] = paginated_posts
+        else:
+            result_dict["items"] = posts_list
 
         return result_dict

@@ -20,7 +20,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
         extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
-    def create_post(self, author_id, title=None, content=None, image=None, is_private=False):
+    def create_post(self, author_id, post_id=None, title=None, content=None, image=None, is_private=False):
         try:
             author = author_serializer.get_author_by_id(author_id)
         except ValueError:
@@ -35,7 +35,10 @@ class PostSerializer(serializers.ModelSerializer):
             nameof(Post.image): image,
             nameof(Post.is_private): is_private
         }
-    
+
+        if post_id:
+            defaults["id"] = post_id
+
         if image is not None:
             image_name = uuid4()
             extension = "png"

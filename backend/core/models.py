@@ -16,6 +16,7 @@ class AbstractModel(models.Model):
         abstract = True
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    # id = models.CharField(max_length=MAX_CHARFIELD_LENGTH, primary_key=True, default=str(uuid.uuid4()))
 
     @abstractclassmethod
     def get_default_fields(cls) -> List[str]:
