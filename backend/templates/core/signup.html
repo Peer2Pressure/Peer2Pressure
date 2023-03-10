@@ -26,8 +26,7 @@
                 <div class="registerBox">
                     <form action="{% url 'signup' %}" method="post">
                     {% csrf_token %}
-                        <input type="text" name="first_name" placeholder="First Name" class="registerInput" />
-                        <input type="text" name="last_name" placeholder="Last Name" class="registerInput" />    
+                        <input type="text" name="name" placeholder="Name" class="registerInput" />
                         <input type="text" name="username" placeholder="Username" class="registerInput" />
                         <input type="email" name="email" placeholder="Email" class="registerInput" />
                         <input type="password" name="password" placeholder="Password" class="registerInput" />

@@ -4,9 +4,7 @@ from rest_framework import serializers
 # Local libraries
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.relationserializer import RelationSerializer
 from ..serializers.postserializer import PostSerializer
-from ..serializers.commentserializer import CommentSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 
 # Serializers

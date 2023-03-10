@@ -16,8 +16,7 @@ export default function ProfileSetting() {
     const [userData, setUserData] = useState({
         username: '',
         title: '',
-        first_name: '',
-        last_name: '',
+        name: '',
         email: '',
         password: '',
         avatar: null
@@ -41,8 +40,7 @@ export default function ProfileSetting() {
         formData.append('username', userData.username || data?.username);
         formData.append('email', userData.email || data?.email);
         formData.append('password', userData.password || data?.password);
-        formData.append('first_name', userData.first_name || data?.first_name);
-        formData.append('last_name', userData.last_name || data?.last_name);
+        formData.append('name', userData.name || data?.name);
         if (userData.avatar) {
             formData.append('avatar', userData.avatar, userData.avatar.name);
         }
@@ -83,8 +81,7 @@ export default function ProfileSetting() {
     // console.log("forData: "+formData);
     console.log("username: "+userData.username);
     console.log("email: " + userData.email);    
-    console.log('first_namne: '+userData.first_name);
-    console.log('last_name: '+userData.last_name);
+    console.log('name: '+userData.name);
 
     return (
         <form onSubmit={handleSubmit}>
@@ -104,8 +101,7 @@ export default function ProfileSetting() {
                     </div>
                     <div className="fullNameBox">
                         <h2 className="fieldTitle">Full Name</h2>
-                        <TextField label="First Name" placeholder={data?.first_name} value={userData.first_name} onChange={(e) => handleChange2("first_name", e.target.value)} />
-                        <TextField label="Last Name" placeholder={data?.last_name} value={userData.last_name} onChange={(e) => handleChange2("last_name", e.target.value)}/>
+                        <TextField label="Name" placeholder={data?.name} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
                         {/* <TextField label="First Name" placeholder={data??.displayName} />
                         <TextField label="Last Name" placeholder={data??.type} /> */}
                     </div>

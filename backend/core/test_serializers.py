@@ -4,7 +4,7 @@ from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
 from .serializers.relationserializer import RelationSerializer
 from .serializers.commentserializer import CommentSerializer
-from .serializers.likeserializer import LikeSerializer
+from .serializers.postlikeserializer import PostLikeSerializer
 from django.contrib.auth.models import User, auth
 
 class AuthorSerializerTest(TestCase):
@@ -14,11 +14,10 @@ class AuthorSerializerTest(TestCase):
     def test_author_create(self):
         user = User.objects.create_user(username="authorusername", email="author@gamil.com", password="authorpassword")
         user.save()
-        author_id = self.serializer.create_author("authorusername", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=user)
+        author_id = self.serializer.create_author("authorusername", "author name", "author@gamil.com", "authorpassword", user=user)
         created_author = Author.objects.get(id=author_id)
         self.assertTrue(created_author.username == "authorusername")
-        self.assertTrue(created_author.first_name == "author firstname")
-        self.assertTrue(created_author.last_name == "author lastname")
+        self.assertTrue(created_author.name == "author firstname")
         self.assertTrue(created_author.email == "author@gamil.com")
         self.assertTrue(created_author.password == "authorpassword")
         
