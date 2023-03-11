@@ -19,32 +19,12 @@ from drf_yasg.utils import swagger_auto_schema
 # Local Libraries
 from .api_serializers import *
 from .serializers.commentserializer import CommentSerializer
-from .serializers.likeserializer import LikeSerializer
+from .serializers.postlikeserializer import LikeSerializer
 from .models import *
 
 
 
-class LikeAPI(GenericAPIView):
-    serializer_class = LikeSerializer
 
-    def get(self, request, author_id, post_id):
-        try:
-            author = Author.objects.get(pk=author_id)
-            post = Post.objects.get(pk=post_id)
-            likes = post.likes
-        except (Author.DoesNotExist, Post.DoesNotExist, Like.DoesNotExist):
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = LikeSerializer(likes, many=True)
-        data = list(serializer.data)
-        return Response(data)
-    
-    def post(self, request, author_id, post_id):
-        comment = request.data["comment"]
-        new_comment = CommentSerializer.create_comment(author_id=author_id, post_id=post_id, comment=comment)
-        if new_comment is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CommentSerializer(new_comment)
-        return Response(serializer.data)
 
 class LikedAPI(GenericAPIView):
     serializer_class = LikeSerializer

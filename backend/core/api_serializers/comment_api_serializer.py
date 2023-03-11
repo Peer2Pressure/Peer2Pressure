@@ -32,10 +32,10 @@ class CommentAPISerializer(serializers.ModelSerializer):
         
         return comment_data
     
-    def get_single_comment(self, comment_id):
+    def get_single_comment(self, author_id, post_id, comment_id):
         author_data = {}
         try:
-            comment = comment_serializer.get_comment_by_id(comment_id)
+            comment = comment_serializer.get_comment_by_id(author_id, post_id, comment_id)
             comment_data = self.get_comment_data(comment)
         except ValueError:
             return None
@@ -49,7 +49,7 @@ class CommentAPISerializer(serializers.ModelSerializer):
         if "comment" in list(request_data.keys()):
             if request_data["comment"] != "":
                 comment_id = comment_serializer.create_comment(author_id, post_id, request_data["comment"])
-                return self.get_single_comment(comment_id)
+                return self.get_single_comment(author_id, post_id, comment_id)
         
         return None
 

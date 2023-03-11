@@ -4,7 +4,7 @@ from drf_yasg import openapi
 from django.urls import path, re_path
 from django.shortcuts import redirect, render
 
-from .views import account_views, author_views, follower_views, post_views, comment_views
+from .views import account_views, author_views, follower_views, post_views, comment_views, like_views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -45,11 +45,13 @@ urlpatterns = [
     path('authors/<uuid:author_id>/posts/', post_views.PostAPI.as_view(), name="post"),
 
     # Comment views
-    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/', comment_views.CommentAPI.as_view(), name="comment"),
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/', comment_views.CommentAPI.as_view(), name="comments"),
     
    #  # Like views
-   #  path('authors/<uuid:author_id>/posts/<uuid:post_id>/likes/', views1.LikeAPI.as_view(), name="like"),
-   #  path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', views1.CommentLikeAPI.as_view(), name="comment_like"),
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/likes/', like_views.PostLikeAPI.as_view(), name="post_likes"),
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', like_views.CommentLikeAPI.as_view(), name="comment_likes"),
+
+   # Inbox views
    #  path('authors/<uuid:author_id>/inbox/', views1.InboxLike.as_view(), name="inbox_like"),
 
    #  path('authors/<uuid:author_id>/liked/', views1.InboxLike.as_view(), name="author_liked")     

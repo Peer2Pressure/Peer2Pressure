@@ -11,12 +11,11 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = "__all__"
 
-    def create_author(self, username, firstname, lastname, email, password, host = None, id = None, user=None):
+    def create_author(self, username, name, email, password, host = None, id = None, user=None):
 
         defaults = {
             nameof(Author.username): username,
-            nameof(Author.first_name): firstname,
-            nameof(Author.last_name): lastname,
+            nameof(Author.name): name,
             nameof(Author.email): email,
             nameof(Author.password): password
         }

@@ -52,8 +52,7 @@ def signin(request):
 def signup(request):
 
     if request.method == "POST":
-        first_name = request.POST["first_name"]
-        last_name = request.POST["last_name"]
+        name = request.POST["name"]
         username = request.POST["username"]
         email = request.POST["email"]
         password = request.POST["password"]
@@ -67,16 +66,12 @@ def signup(request):
                 messages.info(request, "Username Taken")
                 return redirect("signup")
             else:
-                user = User.objects.create_user(username=username, email=email, password=password)
+                user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
                 user.save()
 
-                #log user in and redirect to settings page
-                user_login = auth.authenticate(username=username, password=password)
-                auth.login(request, user_login)
-
-                #create a Profile object for the new user
                 user_model = User.objects.get(username=username)
-                new_author_profile = Author.objects.create(user=user_model, first_name=first_name, last_name=last_name, username=username, email=email, password=password)
+
+                new_author_profile = Author.objects.create(user=user_model, name=name, username=username, email=email, password=password)
                 new_author_profile.save()
                 return redirect("/signin")
         else:

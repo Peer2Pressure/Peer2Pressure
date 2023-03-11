@@ -7,7 +7,7 @@ from .api_serializers.author_api_serializer import AuthorAPISerializer
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
 from .serializers.relationserializer import RelationSerializer
-from .serializers.likeserializer import LikeSerializer
+from .serializers.postlikeserializer import PostLikeSerializer
 from .serializers.commentserializer import CommentSerializer
 
 class AuthorAPISerializerTest(TestCase):
@@ -30,7 +30,7 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue("author" == single_author_response["type"])
         self.assertTrue(author_obj.username == single_author_response["username"])
         self.assertTrue(author_obj.email == single_author_response["email"])
-        self.assertTrue(author_obj.first_name + " " + author_obj.last_name == single_author_response["displayName"])
+        self.assertTrue(author_obj.name == single_author_response["displayName"])
         self.assertTrue(author_obj.host == single_author_response["host"])
         user.delete()
 
@@ -59,12 +59,12 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue(first_author_obj.username == all_authors_response["items"][0]["username"])
         self.assertTrue(first_author_obj.id == all_authors_response["items"][0]["id"])
         self.assertTrue(first_author_obj.email == all_authors_response["items"][0]["email"])
-        self.assertTrue(first_author_obj.first_name + " " + first_author_obj.last_name == all_authors_response["items"][0]["displayName"])
+        self.assertTrue(first_author_obj.name == all_authors_response["items"][0]["displayName"])
         self.assertTrue(first_author_obj.host == all_authors_response["items"][0]["host"])
         self.assertTrue(second_author_obj.username == all_authors_response["items"][1]["username"])
         self.assertTrue(second_author_obj.id == all_authors_response["items"][1]["id"])
         self.assertTrue(second_author_obj.email == all_authors_response["items"][1]["email"])
-        self.assertTrue(second_author_obj.first_name + " " + second_author_obj.last_name == all_authors_response["items"][1]["displayName"])
+        self.assertTrue(second_author_obj.name == all_authors_response["items"][1]["displayName"])
         self.assertTrue(second_author_obj.host == all_authors_response["items"][1]["host"])
 
         user1.delete()

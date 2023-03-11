@@ -1,13 +1,11 @@
 import uuid
 from abc import abstractclassmethod
-from datetime import datetime
 from varname import nameof
 from typing import List
 
 from django.db import models
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.utils import timezone
-from django.contrib.auth.models import AnonymousUser
 
 
 MAX_CHARFIELD_LENGTH = 300
@@ -30,12 +28,12 @@ class AbstractModel(models.Model):
     def __repr__(self):
         return str(self)
 
+
 class Author(AbstractModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
     host = models.URLField(default=HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    first_name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    last_name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
@@ -46,7 +44,7 @@ class Author(AbstractModel):
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.username), nameof(cls.first_name), nameof(cls.last_name), nameof(cls.host)]
+        return [nameof(cls.username), nameof(cls.name), nameof(cls.host)]
 
     def __str__(self):
         return self.username
@@ -57,9 +55,11 @@ class Author(AbstractModel):
             self.url = f"{HOST}/authors/{self.id}"
         super().save(*args, **kwargs)
 
+
 class Relation(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
     from_author_request = models.BooleanField(default=False)
     to_author_request = models.BooleanField(default=False)
@@ -97,26 +97,6 @@ class Post(AbstractModel):
             self.url = f"{self.author.url}/posts/{self.id}"
         super().save(*args, **kwargs)
 
-class Like(AbstractModel):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="like")
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["author", "post"], name="A user can only like post onces")]
-
-    @classmethod
-    def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.author), nameof(cls.post)]
-    
-    def __str__(self):
-        return self.author
-
-    # def save(self, *args, **kwargs):
-    #     if not self.url:
-    #         # Generate a URL based on the object's ID
-    #         self.url = f"{self.post.url}/likes/{self.id}"
-    #     super().save(*args, **kwargs)
 
 class Comment(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
@@ -129,12 +109,38 @@ class Comment(AbstractModel):
     @classmethod
     def get_default_fields(cls) -> List[str]:
         return [nameof(cls.author), nameof(cls.post), nameof(cls.comment)]
-    
-    def __str__(self):
-        return self.author
 
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
             self.url = f"{self.post.url}/comments/{self.id}"
         super().save(*args, **kwargs)
+
+
+class PostLike(AbstractModel):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post_like")
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["author", "post"], name="A user can only like post onces")]
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.author), nameof(cls.post)]
+
+
+class CommentLike(AbstractModel):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="comment_like")
+    created_at = models.DateTimeField(default=timezone.now)
+
+    @classmethod
+    def get_default_fields(cls) -> List[str]:
+        return [nameof(cls.author), nameof(cls.post)]
+
+
+class Inbox(AbstractModel):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
