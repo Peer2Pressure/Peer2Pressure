@@ -4,6 +4,7 @@ from uuid import uuid4
 
 # Third-party libraries
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from varname import nameof        
 
 # Local libraries
@@ -57,12 +58,12 @@ class PostSerializer(serializers.ModelSerializer):
         post = None
         try:
             author = author_serializer.get_author_by_id(author_id)
-        except ValueError:
-            raise ValueError("Author does not exist.")
+        except ValidationError:
+            raise ValidationError("Author does not exist.")
         
         try:
             post = Post.objects.get(pk=post_id, author=author)
         except Post.DoesNotExist:
-            raise ValueError("Post does not exist.")
+            raise ValidationError("Post does not exist.")
         
         return post

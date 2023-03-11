@@ -1,5 +1,6 @@
 # Third-party libraries
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 # Local libraries
 from .. import utils
@@ -102,3 +103,22 @@ class PostAPISerializer(serializers.ModelSerializer):
             result_dict["items"] = posts_list
 
         return result_dict
+
+    def update(self, author_id, post_id, request_data):
+        try:
+            post = post_serializer.get_author_post(author_id, post_id)
+        except ValidationError:
+            return None
+        
+        keys = list(request_data.keys())
+
+        title = request_data["title"] if "title" in keys else None
+        content = request_data["content"] if "content" in keys else None
+        image = request_data["image"] if "image" in keys else None
+        is_private = request_data["is_private"] if "is_private" in keys else False
+
+        new_post_id = post_serializer.create_post(post_id=post_id, author_id=author_id, title=title, content=content, image=image, is_private=is_private)
+
+        return self.get_single_post(author_id, new_post_id)
+        
+
