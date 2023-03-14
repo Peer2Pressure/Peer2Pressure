@@ -104,21 +104,20 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         return result_dict
 
-    def update(self, author_id, post_id, request_data):
-        try:
-            post = post_serializer.get_author_post(author_id, post_id)
-        except ValidationError:
-            return None
-        
+    # TODO: needs update
+    def update_post(self, author_id, post_id, request_data):
         keys = list(request_data.keys())
-
+        
         title = request_data["title"] if "title" in keys else None
         content = request_data["content"] if "content" in keys else None
         image = request_data["image"] if "image" in keys else None
         is_private = request_data["is_private"] if "is_private" in keys else False
 
-        new_post_id = post_serializer.create_post(post_id=post_id, author_id=author_id, title=title, content=content, image=image, is_private=is_private)
-
-        return self.get_single_post(author_id, new_post_id)
+        updated_post = post_serializer.update_post(author_id=author_id, post_id=post_id, title=title, content=content, image=image, is_private=is_private)
+        
         
 
+    def delete_author_post(self, author_id, post_id):
+        deleted_post = post_serializer.delete_post(author_id)
+
+        return deleted_post

@@ -49,26 +49,16 @@ class SinglePostAPI(GenericAPIView):
     
     # must be authenticated
     def post(self, request, author_id, post_id):
-        try:
-            author = Author.objects.get(pk=author_id)
-            author_id = author.id
-            post = Post.objects.get(pk=post_id)
-        except (Author.DoesNotExist, Post.DoesNotExist):
-            return Response(status=status.HTTP_404_NOT_FOUND)    
-        serializer = PostSerializer(post, data=request.data)
-        if serializer.is_valid(): 
-            serializer.save() 
-            return Response(serializer.data) 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        post = post_api_serializer.update_author_post(author_id, post_id)
+        if post:
+            return Response({"msg": f"Post: {post_id} has be deleted"})
+        return Response(data={"msg": "Unable to delete post"}, status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, author_id, post_id):
-        try:
-            author_id = Author.objects.get(pk=author_id)
-            post = Post.objects.get(pk=post_id)
-            post.delete()
-        except (Author.DoesNotExist, Post.DoesNotExist):
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        return Response({"msg": f"Post {post_id} has been deleted successfuly."})
+        post = post_api_serializer.delete_author_post(author_id, post_id)
+        if post:
+            return Response({"msg": f"Post: {post_id} has be deleted"})
+        return Response(data={"msg": "Unable to delete post"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PostAPI(GenericAPIView):
