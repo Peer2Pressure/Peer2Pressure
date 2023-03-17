@@ -2,16 +2,18 @@ import { Avatar, Button, TextField } from "@mui/material";
 import "./profileSetting.css";
 import useFetch from "../../useFetch";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-
+import useGetAuthorID from "../../useGetAuthorID.js"
+import useGetAuthorData from "../../useGetAuthorData";
 
 
 
 export default function ProfileSetting() {
+    
+    // grabbing data from /get_author_id/ and /authors/author_id APIs
+    const {data, loading1, error1, authorID} = useGetAuthorData("/get_author_id/");
 
-    const {data, loading, error} = useFetch("http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/");
-    if (data) console.log(data);
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         username: '',
@@ -21,10 +23,8 @@ export default function ProfileSetting() {
         password: '',
         avatar: null
     });
-    if (loading) return <h1>Loading...</h1>;
-    if (error) console.log(error);
-
-
+    // if (loading1) return <h1>Loading...</h1>;
+    // if (error1) console.log(error1);
     const handleFileChange = (event) => {
         setUserData({
             ...userData,
@@ -46,10 +46,10 @@ export default function ProfileSetting() {
         }
     
         console.log("usernameeeee: "+userData);
-    
+        // console.log("/authors/" + authorID + '/');
         axios
         .post(
-            "http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/", 
+            "/authors/"+ authorID + "/", 
             formData,
             {
                 headers: {
@@ -72,16 +72,18 @@ export default function ProfileSetting() {
     // };
 
     const handleChange2 = (username, value) => {
-        setUserData({
-            ...userData,
-            [username] : value
-        });
+        if (value !== "") {
+            setUserData({
+                ...userData,
+                [username] : value
+            });
+        };
     };
 
-    // console.log("forData: "+formData);
-    console.log("username: "+userData.username);
-    console.log("email: " + userData.email);    
-    console.log('name: '+userData.name);
+    // // console.log("forData: "+formData);
+    // console.log("username: "+userData.username);
+    // console.log("email: " + userData.email);    
+    // console.log('name: '+userData.name);
 
     return (
         <form onSubmit={handleSubmit}>
