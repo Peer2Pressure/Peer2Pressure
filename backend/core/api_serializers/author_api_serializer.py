@@ -18,7 +18,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             "id": author.url,
             "url": author.url,
             "host": author.host,
-            "displayName": f"{author.first_name} {author.last_name}",
+            "displayName": f"{author.name}",
             "username": author.username,
             "email": author.email,
             "profileImage": author.avatar,
@@ -51,9 +51,9 @@ class AuthorAPISerializer(serializers.ModelSerializer):
 
         return result_dict
 
-    def create_or_update_author(self, author_id, request_data):
+    def update_author(self, author_id, request_data):
         author = None
-        updatable_fields = ["first_name", "last_name", "username", "email", "avatar"]
+        updatable_fields = ["name", "username", "email", "avatar"]
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
         except ValueError:
