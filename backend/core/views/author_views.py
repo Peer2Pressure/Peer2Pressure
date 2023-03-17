@@ -52,7 +52,6 @@ class AuthorAPI(GenericAPIView):
     
     # discuss if we need to change to PUT request
     def post(self, request, author_id):
-        # update_author = author_api_serializer.create_or_update_author(author_id, request.data)
         update_author = author_api_serializer.update_author(author_id, request.data)
         
         if update_author:
