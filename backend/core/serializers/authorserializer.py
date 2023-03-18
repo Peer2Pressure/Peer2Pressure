@@ -2,6 +2,7 @@
 from .. models import Author
 
 # Third-party libraries
+from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from varname import nameof
 
@@ -50,6 +51,6 @@ class AuthorSerializer(serializers.ModelSerializer):
         try:
             author_obj = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
-            raise ValueError("Author does not exist")
+            raise ValidationError("Author does not exist")
         
         return author_obj

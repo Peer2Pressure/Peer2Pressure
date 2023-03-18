@@ -53,7 +53,8 @@ class AuthorAPISerializer(serializers.ModelSerializer):
 
     def update_author(self, author_id, request_data):
         author = None
-        updatable_fields = ["name", "username", "email", "avatar"]
+        updatable_fields = ["name", "username", "avatar"]
+
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
         except ValueError:
@@ -63,9 +64,13 @@ class AuthorAPISerializer(serializers.ModelSerializer):
 
         defaults = {}
         for key in request_data:
-            if key in updatable_fields:
-                defaults[key] = request_data[key]
-
+            if key == "displayName":
+                defaults["name"] = request_data[key]
+            elif key == "username":
+                defaults["username"] = request_data[key]
+            elif key == "profileImage":
+                defaults["profileImage"] = request_data[key]
+                
         Author.objects.filter(pk=author_id).update(**defaults)
 
         return self.get_single_author(author_id)

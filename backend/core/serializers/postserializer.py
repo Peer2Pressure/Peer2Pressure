@@ -4,6 +4,7 @@ from uuid import uuid4
 
 # Third-party libraries
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from varname import nameof        
 
 # Local libraries
@@ -20,7 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
         extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
-    def create_post(self, author_id, title=None, content=None, image=None, is_private=False):
+    def create_post(self, author_id, post_id=None, title=None, content=None, image=None, is_private=False):
         try:
             author = author_serializer.get_author_by_id(author_id)
         except ValueError:
@@ -35,7 +36,10 @@ class PostSerializer(serializers.ModelSerializer):
             nameof(Post.image): image,
             nameof(Post.is_private): is_private
         }
-    
+
+        if post_id:
+            defaults["id"] = post_id
+
         if image is not None:
             image_name = uuid4()
             extension = "png"
@@ -54,12 +58,43 @@ class PostSerializer(serializers.ModelSerializer):
         post = None
         try:
             author = author_serializer.get_author_by_id(author_id)
-        except ValueError:
-            raise ValueError("Author does not exist.")
+        except ValidationError:
+            raise ValidationError("Author does not exist.")
         
         try:
             post = Post.objects.get(pk=post_id, author=author)
         except Post.DoesNotExist:
-            raise ValueError("Post does not exist.")
+            raise ValidationError("Post does not exist.")
         
         return post
+    
+    def update_post(self, author_id, post_id, defaults=None, title=None, content=None, image=None, is_private=False):
+        try:
+            post = self.get_author_post(author_id, post_id)
+        except ValidationError:
+            return None
+        
+        if not defaults:
+            defaults = {
+                nameof(Post.title): title,
+                nameof(Post.content): content,
+                nameof(Post.image): image,
+                nameof(Post.is_private): is_private
+            }
+
+        updated_post = Post.objects.filter(pk=post_id).update(**defaults)
+
+        updated_post = self.get_author_post(author_id, post_id)
+
+        return updated_post
+
+    def delete_post(self, author_id, post_id):
+        try:
+            post = self.get_author_post(author_id, post_id)
+        except ValidationError:
+            return None
+
+        post.delete()
+
+        return post
+
