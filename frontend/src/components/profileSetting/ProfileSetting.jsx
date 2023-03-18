@@ -12,7 +12,7 @@ import useGetAuthorData from "../../useGetAuthorData";
 export default function ProfileSetting() {
     
     // grabbing data from /get_author_id/ and /authors/author_id APIs
-    const {data, loading1, error1, authorID} = useGetAuthorData("/get_author_id/");
+    const {data, loading1, error1, authorID} = useGetAuthorData();
 
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
