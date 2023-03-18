@@ -105,19 +105,21 @@ class PostAPISerializer(serializers.ModelSerializer):
         return result_dict
 
     # TODO: needs update
-    def update_post(self, author_id, post_id, request_data):
-        keys = list(request_data.keys())
-        
-        title = request_data["title"] if "title" in keys else None
-        content = request_data["content"] if "content" in keys else None
-        image = request_data["image"] if "image" in keys else None
-        is_private = request_data["is_private"] if "is_private" in keys else False
+    def update_author_post(self, author_id, post_id, request_data):
+        defaults = {}
+        for key in request_data:
+            if key == "title":
+                defaults["title"] = request_data[key]
+            elif key == "content":
+                defaults["content"] = request_data[key]
+            elif key == "visibility":
+                defaults["is_private"] = request_data[key]
 
-        updated_post = post_serializer.update_post(author_id=author_id, post_id=post_id, title=title, content=content, image=image, is_private=is_private)
-        
-        
+        updated_post = post_serializer.update_post(author_id=author_id, post_id=post_id, defaults=defaults)
+
+        return self.get_post_data(updated_post)
 
     def delete_author_post(self, author_id, post_id):
-        deleted_post = post_serializer.delete_post(author_id)
+        deleted_post = post_serializer.delete_post(author_id, post_id)
 
         return deleted_post

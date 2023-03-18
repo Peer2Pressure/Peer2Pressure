@@ -68,20 +68,23 @@ class PostSerializer(serializers.ModelSerializer):
         
         return post
     
-    def update_post(self, author_id, post_id, title=None, content=None, image=None, is_private=False):
+    def update_post(self, author_id, post_id, defaults=None, title=None, content=None, image=None, is_private=False):
         try:
             post = self.get_author_post(author_id, post_id)
         except ValidationError:
             return None
         
-        defaults = {
-            nameof(Post.title): title,
-            nameof(Post.content): content,
-            nameof(Post.image): image,
-            nameof(Post.is_private): is_private
-        }
+        if not defaults:
+            defaults = {
+                nameof(Post.title): title,
+                nameof(Post.content): content,
+                nameof(Post.image): image,
+                nameof(Post.is_private): is_private
+            }
 
-        updated_post = Post.objects.update(**defaults)
+        updated_post = Post.objects.filter(pk=post_id).update(**defaults)
+
+        updated_post = self.get_author_post(author_id, post_id)
 
         return updated_post
 

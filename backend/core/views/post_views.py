@@ -49,10 +49,10 @@ class SinglePostAPI(GenericAPIView):
     
     # must be authenticated
     def post(self, request, author_id, post_id):
-        post = post_api_serializer.update_author_post(author_id, post_id)
-        if post:
-            return Response({"msg": f"Post: {post_id} has be deleted"})
-        return Response(data={"msg": "Unable to delete post"}, status=status.HTTP_404_NOT_FOUND)
+        updated_post = post_api_serializer.update_author_post(author_id, post_id, request.data)
+        if updated_post:
+            return Response(updated_post)
+        return Response(data={"msg": "Unable to update post"}, status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, author_id, post_id):
         post = post_api_serializer.delete_author_post(author_id, post_id)
