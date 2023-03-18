@@ -2,6 +2,7 @@
 from rest_framework import serializers
 
 # Local libraries
+from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 
@@ -34,7 +35,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             return None
         return author_data
     
-    def get_all_authors(self):
+    def get_all_authors(self, page=None, size=None):
 
         authors = Author.objects.all()
         
@@ -46,8 +47,15 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         for author in authors:
             curr_author_data = self.get_author_data(author)
             authors_list.append(curr_author_data)
-
-        result_dict["items"] = authors_list
+        
+        if page and size:
+            paginated_authors = utils.paginate_list(authors_list, page, size)
+            
+            result_dict["page"] = page
+            result_dict["size"] = size
+            result_dict["items"] = paginated_authors
+        else:
+            result_dict["items"] = authors_list
 
         return result_dict
 
