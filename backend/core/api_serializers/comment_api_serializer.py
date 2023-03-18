@@ -77,11 +77,11 @@ class CommentAPISerializer(serializers.ModelSerializer):
  
 
         if page and size:
-            paginated_posts = utils.paginate_list(comments_list, page, size)
+            paginated_comments = utils.paginate_list(comments_list, page, size)
             
             result_dict["page"] = page
             result_dict["size"] = size
-            result_dict["items"] = paginated_posts
+            result_dict["items"] = paginated_comments
         else:
             result_dict["comments"] = comments_list
 
