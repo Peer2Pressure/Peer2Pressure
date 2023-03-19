@@ -2,6 +2,7 @@
 from rest_framework import serializers
 
 # Local libraries
+from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 
@@ -34,7 +35,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             return None
         return author_data
     
-    def get_all_authors(self):
+    def get_all_authors(self, page=None, size=None):
 
         authors = Author.objects.all()
         
@@ -46,14 +47,22 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         for author in authors:
             curr_author_data = self.get_author_data(author)
             authors_list.append(curr_author_data)
-
-        result_dict["items"] = authors_list
+        
+        if page and size:
+            paginated_authors = utils.paginate_list(authors_list, page, size)
+            
+            result_dict["page"] = page
+            result_dict["size"] = size
+            result_dict["items"] = paginated_authors
+        else:
+            result_dict["items"] = authors_list
 
         return result_dict
 
     def update_author(self, author_id, request_data):
         author = None
-        updatable_fields = ["name", "username", "email", "avatar"]
+        updatable_fields = ["name", "username", "avatar"]
+
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
         except ValueError:
@@ -63,9 +72,13 @@ class AuthorAPISerializer(serializers.ModelSerializer):
 
         defaults = {}
         for key in request_data:
-            if key in updatable_fields:
-                defaults[key] = request_data[key]
-
+            if key == "displayName":
+                defaults["name"] = request_data[key]
+            elif key == "username":
+                defaults["username"] = request_data[key]
+            elif key == "profileImage":
+                defaults["profileImage"] = request_data[key]
+                
         Author.objects.filter(pk=author_id).update(**defaults)
 
         return self.get_single_author(author_id)

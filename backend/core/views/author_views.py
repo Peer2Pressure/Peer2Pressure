@@ -12,11 +12,13 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 
 # Local Libraries
+from .. import utils
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..serializers.authorserializer import AuthorSerializer
 
@@ -38,7 +40,12 @@ class AuthorListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
     def get(self, request):
-        authors = author_api_serializer.get_all_authors()
+        try:
+            page, size = utils.get_pagination_variables(request.query_params)
+        except ValidationError:
+            return Response(data={"msg": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+        authors = author_api_serializer.get_all_authors(page, size)
         return Response(authors)
 
 class AuthorAPI(GenericAPIView):
