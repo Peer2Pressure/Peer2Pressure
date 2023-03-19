@@ -27,10 +27,6 @@ class AuthorAPISerializerTest(TestCase):
 
         single_author_response = self.apiserializer.get_single_author(author_id)
 
-        # print(author_id)
-        # print(single_author_response)
-        # print(single_author_response["id"].split('/')[-1])
-
         self.assertTrue(author_obj.id == single_author_response["id"])
         self.assertTrue(author_obj.id == author_id)        
         self.assertTrue("author" == single_author_response["type"])
@@ -96,6 +92,7 @@ class AuthorAPISerializerTest(TestCase):
 class RelationAPISerializerTest(TestCase):
     def setUp(self) -> None:
         self.authorserializer = AuthorSerializer()
+        self.authorapiserializer = AuthorAPISerializer()
         self.user_1 = User.objects.create_user(username="authorusername1", email="author@gamil.com", password="authorpassword")
         self.user_1.save()
         self.author_id1 = self.authorserializer.create_author("authorusername1", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=self.user_1)
@@ -109,10 +106,42 @@ class RelationAPISerializerTest(TestCase):
         self.user_1.delete()
         self.user_2.delete()
 
-    # def test_single_follower():
+    def test_single_follower(self):
+        
+        relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
+        self.serializer.update_follow_status(self.author_id1, self.author_id2, True)
+        follower_data = self.apiserializer.get_single_follower(self.author_id1, self.author_id2)
+        author_id2_data = self.authorapiserializer.get_single_author(self.author_id2)
 
-    #     follower_data = 
+        self.assertTrue(author_id2_data["type"] == follower_data["type"])
+        self.assertTrue(author_id2_data["id"] == follower_data["id"])
+        self.assertTrue(author_id2_data["url"] == follower_data["url"])
+        self.assertTrue(author_id2_data["host"] == follower_data["host"])
+        self.assertTrue(author_id2_data["displayName"] == follower_data["displayName"])
+        self.assertTrue(author_id2_data["username"] == follower_data["username"])
 
+    def test_get_all_followers(self):
+        relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
+        self.serializer.update_follow_status(self.author_id1, self.author_id2, True)
+        
+        followers_data = self.apiserializer.get_all_followers(self.author_id1)
+        author_id2_data = self.authorapiserializer.get_single_author(self.author_id2)
+
+        self.assertTrue(len(followers_data["items"]) == 1)
+        self.assertTrue(author_id2_data["type"] == followers_data["items"][0]["type"])
+        self.assertTrue(author_id2_data["id"] == followers_data["items"][0]["id"])
+        self.assertTrue(author_id2_data["url"] == followers_data["items"][0]["url"])
+        self.assertTrue(author_id2_data["host"] == followers_data["items"][0]["host"])
+        self.assertTrue(author_id2_data["displayName"] == followers_data["items"][0]["displayName"])
+        self.assertTrue(author_id2_data["username"] == followers_data["items"][0]["username"])
+
+    def test_without_followers(self):
+        relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
+        followers_data = self.apiserializer.get_all_followers(self.author_id1)
+        follower_data = self.apiserializer.get_single_follower(self.author_id1, self.author_id2)
+
+        self.assertTrue(len(followers_data["items"]) == 0)
+        self.assertTrue(follower_data is None)
 
     # def test_get_single_author(self):
     #     user = User.objects.create_user(username="authorusername", email="author@gamil.com", password="authorpassword")
