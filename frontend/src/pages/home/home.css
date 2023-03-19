@@ -1,8 +1,16 @@
-.homeContainer {
-    padding-top: 100px;
-    display: flex;
-    justify-content: center;
-    column-gap: 125px;
-    align-items: flex-start;
-}
+    .homeContainer {
+        display: flex;
+        flex-direction: column;
+        margin:0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .bodyContainer {
+        padding-top: 50px;
+        display: flex;
+        justify-content: center;
+        column-gap: 125px;
+        align-items: flex-start;
+    }
 

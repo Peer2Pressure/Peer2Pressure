@@ -1,0 +1,14 @@
+
+.navBarContainer {
+    width: 100%;
+    align-items: center;
+    position: fixed;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-around;
+    column-gap: 70%;
+    align-items: center;
+    padding-top: 10px;
+}
