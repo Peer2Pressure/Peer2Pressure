@@ -25,9 +25,16 @@ from ..api_serializers.relation_api_serializer import RelationAPISerializer
 relation_serializer = RelationSerializer()
 relation_api_serializer = RelationAPISerializer()
 
+@swagger_auto_schema(
+    tags=['Follower'],
+    operation_summary='Your Operation Summary',
+    operation_description='Your Operation Description'
+)
 class FollowerListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
+    @swagger_auto_schema(tags=['Followers'])
+          
     def get(self, request, author_id):
         followers = relation_api_serializer.get_all_followers(author_id)
         if followers:
@@ -38,13 +45,14 @@ class FollowerListAPI(GenericAPIView):
 class FollowerAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
+    @swagger_auto_schema(tags=['Followers'])
     def get(self, request, author_id, foreign_author_id):
         follower = relation_api_serializer.get_single_follower(author_id, foreign_author_id)
         if follower:
             return Response(follower)
         return Response({"msg": "Follower not found"}, status=status.HTTP_404_NOT_FOUND) 
-    
 
+    @swagger_auto_schema(tags=['Followers'])
     def put(self, request, author_id, foreign_author_id):
         new_relation_id = relation_serializer.create_relations(author_id, foreign_author_id)
         if new_relation_id:
@@ -52,6 +60,7 @@ class FollowerAPI(GenericAPIView):
             return Response({"msg": f"{new_relation.from_author.username} is following {new_relation.to_author.username}"})
         return Response(data={"msg": f"Unable to follow author: {author_id}"}, status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(tags=['Followers'])
     def delete(self, request, author_id, foreign_author_id):
         relation = relation_api_serializer.remove_follower(author_id, foreign_author_id)
         if relation:

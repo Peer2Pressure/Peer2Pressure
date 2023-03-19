@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid4
 from abc import abstractclassmethod
 from varname import nameof
 from typing import List
@@ -15,9 +15,8 @@ class AbstractModel(models.Model):
     class Meta:
         abstract = True
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    # id = models.CharField(max_length=MAX_CHARFIELD_LENGTH, primary_key=True, default=str(uuid.uuid4()))
-
+    id = models.UUIDField(primary_key=True, default=uuid4)
+    
     @abstractclassmethod
     def get_default_fields(cls) -> List[str]:
         """
@@ -31,6 +30,7 @@ class AbstractModel(models.Model):
 
 
 class Author(AbstractModel):
+    # id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
     host = models.URLField(default=HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
@@ -38,8 +38,9 @@ class Author(AbstractModel):
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    avatar = models.URLField(null=True, blank=True, default=None)
-
+    avatar = models.URLField(null=True, blank=True, default="")
+    github = models.URLField(default="", blank=True)
+    
     class Meta:
         constraints = [models.UniqueConstraint(fields=["username", "email", "password"], name="Unique user properties")]
 
@@ -53,6 +54,7 @@ class Author(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
+            # self.id = f"{HOST}/authors/{self.id}"
             self.url = f"{HOST}/authors/{self.id}"
         super().save(*args, **kwargs)
 
@@ -77,6 +79,7 @@ class Relation(AbstractModel):
 
 
 class Post(AbstractModel):
+    # id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
@@ -84,6 +87,11 @@ class Post(AbstractModel):
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     is_private = models.BooleanField(default=False)
+    source = models.URLField(blank=True)
+    origin = models.URLField(blank=True)
+    description = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
+    content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    # categories = models.ArrayField(models.CharField)
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
@@ -95,6 +103,7 @@ class Post(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
+            # self.id = f"{self.author.url}/posts/{self.id}"
             self.url = f"{self.author.url}/posts/{self.id}"
         super().save(*args, **kwargs)
 
@@ -114,6 +123,7 @@ class Comment(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
+            # self.id = f"{self.post.url}/comments/{self.id}"
             self.url = f"{self.post.url}/comments/{self.id}"
         super().save(*args, **kwargs)
 
@@ -144,4 +154,4 @@ class CommentLike(AbstractModel):
 
 class Inbox(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="inbox_post")

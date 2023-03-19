@@ -20,7 +20,7 @@ from drf_yasg.utils import swagger_auto_schema
 # Local Libraries
 from .. import utils
 from ..models import *
-from ..serializers.postserializer import PostSerializer
+from ..serializers.postserializer import PostSerializer, PostListSerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 
 # API serializer
@@ -29,12 +29,14 @@ post_api_serializer = PostAPISerializer()
 class SinglePostAPI(GenericAPIView):
     serializer_class = PostSerializer
 
+    @swagger_auto_schema(tags=['Posts'])
     def get(self, request, author_id, post_id):
         post = post_api_serializer.get_single_post(author_id, post_id)
         if post:
             return Response(post)
         return Response(data={"msg": "Unable to get post."}, status=status.HTTP_404_NOT_FOUND)
-        
+    
+    @swagger_auto_schema(tags=['Posts'])
     def put(self, request, author_id, post_id):
         # if request.user.is_authenticated:
         #     pass
@@ -48,12 +50,14 @@ class SinglePostAPI(GenericAPIView):
 
     
     # must be authenticated
+    @swagger_auto_schema(tags=['Posts'])
     def post(self, request, author_id, post_id):
         updated_post = post_api_serializer.update_author_post(author_id, post_id, request.data)
         if updated_post:
             return Response(updated_post)
         return Response(data={"msg": "Unable to update post"}, status=status.HTTP_404_NOT_FOUND)
     
+    @swagger_auto_schema(tags=['Posts'])
     def delete(self, request, author_id, post_id):
         post = post_api_serializer.delete_author_post(author_id, post_id)
         if post:
@@ -64,6 +68,7 @@ class SinglePostAPI(GenericAPIView):
 class PostAPI(GenericAPIView):
     serializer_class = PostSerializer
 
+    @swagger_auto_schema(tags=['Posts'])
     def get(self, request, author_id):
         try:
             page, size = utils.get_pagination_variables(request.query_params)
@@ -76,6 +81,7 @@ class PostAPI(GenericAPIView):
         
         return Response(data={"msg": "Unable to get post."}, status=status.HTTP_404_NOT_FOUND)
     
+    @swagger_auto_schema(tags=['Posts'])
     def post(self, request, author_id):
         post = post_api_serializer.add_new_post(author_id, request.data)
         if post:

@@ -19,32 +19,33 @@ from drf_yasg.utils import swagger_auto_schema
 
 # Local Libraries
 from .. import utils
-from ..api_serializers.comment_api_serializer import CommentAPISerializer
-from ..serializers.commentserializer import CommentSerializer
 from ..models import *
+from ..serializers.postserializer import PostSerializer
+from ..api_serializers.post_api_serializer import PostAPISerializer
+from ..api_serializers.inbox_api_serializer import InboxAPISerializer
 
 # API serializer
-comment_api_serializer = CommentAPISerializer()
+inbox_api_serializer = InboxAPISerializer()
 
+class InboxAPI(GenericAPIView):
+    serializer_class = PostSerializer
 
-class CommentAPI(GenericAPIView):
-    serializer_class = CommentSerializer
-
-    @swagger_auto_schema(tags=['Comments'])
-    def get(self, request, author_id, post_id):
+    def get(self, request, author_id):
         try:
             page, size = utils.get_pagination_variables(request.query_params)
         except ValidationError:
             return Response(data={"msg": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
 
-        comments = comment_api_serializer.get_post_comments(author_id, post_id, page, size)
-        if comments:
-            return Response(comments)
-        return Response(data={"msg": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
-    
-    @swagger_auto_schema(tags=['Comments'])
-    def post(self, request, author_id, post_id):
-        new_comment = comment_api_serializer.add_new_comment(author_id, post_id, request.data)
-        if new_comment is None:
-            return Response(data={"msg": "Unable comment on post"}, status=status.HTTP_404_NOT_FOUND)
-        return Response(new_comment)
+        inbox_posts = inbox_api_serializer.get_all_inbox_posts(author_id, page, size)
+        if inbox_posts:
+            return Response(inbox_posts)
+        
+        return Response(data={"msg": "Unable to get inbox posts."}, status=status.HTTP_404_NOT_FOUND)
+
+    # TODO: Only if user is authenticated
+    def post(self, request, author_id):
+        # if request.user.is_authenticated:
+        #     pass
+        # else:
+        #     pass
+        pass

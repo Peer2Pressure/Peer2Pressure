@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.postserializer import PostSerializer
+from ..serializers.postserializer import PostSerializer, PostListSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.comment_api_serializer import CommentAPISerializer
 
@@ -45,7 +45,6 @@ class PostAPISerializer(serializers.ModelSerializer):
             "published": post.created_at,
             "visibility": "FRIENDS"if post.is_private else "PUBLIC", 
             # "image": f"{author_data['host']}{post.image.url}" if post.image else None,
-            
             }
         
         return post_data
@@ -79,10 +78,12 @@ class PostAPISerializer(serializers.ModelSerializer):
         author = None
         try:
             author = author_serializer.get_author_by_id(author_id)
-        except ValueError:
+        except ValidationError:
             return None
         
         posts = author.post.all()
+
+        # serializer = PostListSerializer(posts, many=True)
 
         result_dict = {}
         result_dict["type"] = "posts"

@@ -11,14 +11,31 @@ from varname import nameof
 from .. models import *
 from ..serializers.authorserializer import AuthorSerializer
 from django.core.files.base import ContentFile
-        
+
 
 author_serializer = AuthorSerializer()
 
 class PostSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(max_length=10, default="post", read_only=True)
+    title = serializers.CharField(max_length=300)
+    id = serializers.URLField(read_only=True, required=False)
+    source = serializers.URLField(default="", required=False)
+    origin = serializers.CharField(source="url", default="", required=False)
+    description = serializers.CharField(default="", required=False)
+    contentType = serializers.CharField(default="", required=False)
+    content = serializers.CharField(default="", required=False)
+    # commentSrc = 
+    author = AuthorSerializer(read_only=True)
+    # categories = serializers.ListField(child=serializers.CharField(max_length=100), required=False)
+    comments = serializers.CharField(required=False)
+    published = serializers.DateTimeField(source="created_at", required=False)
+    visibility = serializers.CharField(max_length=10, default="PUBLIC", required=False)
+    
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ["type", "title", "id", "source", "origin", "description", "contentType",
+                "content", "author", "comments", "published", "visibility" ]
+        # fields = "__all__"
         extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
     def create_post(self, author_id, post_id=None, title=None, content=None, image=None, is_private=False):
@@ -98,3 +115,8 @@ class PostSerializer(serializers.ModelSerializer):
 
         return post
 
+class PostListSerializer(serializers.Serializer):
+    type = serializers.CharField(default="posts" , max_length=10, read_only=True)
+    page = serializers.IntegerField(allow_null=True)
+    size = serializers.IntegerField(allow_null=True)
+    items = PostSerializer(many=True)
