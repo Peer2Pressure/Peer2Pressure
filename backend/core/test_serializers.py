@@ -17,7 +17,7 @@ class AuthorSerializerTest(TestCase):
         author_id = self.serializer.create_author("authorusername", "author name", "author@gamil.com", "authorpassword", user=user)
         created_author = Author.objects.get(id=author_id)
         self.assertTrue(created_author.username == "authorusername")
-        self.assertTrue(created_author.name == "author firstname")
+        self.assertTrue(created_author.name == "author name")
         self.assertTrue(created_author.email == "author@gamil.com")
         self.assertTrue(created_author.password == "authorpassword")
         

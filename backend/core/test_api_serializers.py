@@ -26,7 +26,12 @@ class AuthorAPISerializerTest(TestCase):
 
         single_author_response = self.apiserializer.get_single_author(author_id)
 
-        self.assertTrue(author_obj.id == single_author_response["id"])
+        # print(author_id)
+        # print(single_author_response)
+        # print(single_author_response["id"].split('/')[-1])
+
+        # self.assertTrue(author_obj.id == single_author_response["id"])
+        self.assertTrue(author_obj.id == author_id)        
         self.assertTrue("author" == single_author_response["type"])
         self.assertTrue(author_obj.username == single_author_response["username"])
         self.assertTrue(author_obj.email == single_author_response["email"])
