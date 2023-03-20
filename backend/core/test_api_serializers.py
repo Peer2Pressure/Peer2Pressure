@@ -6,7 +6,7 @@ from .models import *
 from .api_serializers.author_api_serializer import AuthorAPISerializer
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
-from .serializers.relationserializer import RelationSerializer
+from .serializers.followerserializer import FollowerSerializer
 from .serializers.postlikeserializer import PostLikeSerializer
 from .serializers.commentserializer import CommentSerializer
 

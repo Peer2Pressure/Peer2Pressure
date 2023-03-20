@@ -1,3 +1,6 @@
+import requests
+from urllib.parse import urlparse
+
 # Third-party libraries
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -6,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
+from ..serializers.postserializer import PostSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 
@@ -38,12 +42,55 @@ class InboxAPISerializer(serializers.ModelSerializer):
     def get_all_inbox_posts(self, author_id, page=None, size=None):
         try:
             author = author_serializer.get_author_by_id(author_id)
-        except ValidationError:
-            return None
+        except ValidationError as e:
+            return {"msg": str(e)}, 404 
         
         inbox_posts = author.inbox_posts.all()
 
         inbox_posts_data = self.get_inbox_posts_data(author, inbox_posts)
 
         return inbox_posts_data
+    
+    def save_post(self, author_id, request_data):
+        try:
+            author = author_serializer.get_author_by_id(author_id)
+        except ValidationError as e:
+            return {"msg": str(e)}, 404
 
+        serializer = PostSerializer(data=request_data)
+
+        post = None
+        if serializer.is_valid():
+            validated_post_data = serializer.validated_data
+            
+            # post_author = validated_post_data["author"]
+            # post_author_url = urlparse(post_author["id"]).path
+
+            # post_author_id = post_author_url.path.split('/')[-1]
+
+            post_id_url = urlparse(validated_post_data["id"]).path.split('/')
+            post_author_id = post_id_url[2]
+            post_id = post_id_url[4]
+
+            print("id ", post_author_id)
+
+            # response = 
+
+            try:
+                post_author_obj = author_serializer.get_author_by_id(post_author_id)
+            except ValidationError as e:
+                return {"msg": str(e)}, 404
+            
+            validated_post_data["author"] = post_author_obj
+            print(validated_post_data)
+
+            post = serializer.create(validated_post_data)
+            post.save()
+
+            
+
+            return {"msg": f"Post has been send to {author_id} inbox"}, 201
+        else:
+            return serializer.errors, 400
+        
+        

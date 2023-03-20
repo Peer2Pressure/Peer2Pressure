@@ -87,13 +87,13 @@ class PostAPI(GenericAPIView):
         except ValidationError:
             return Response(data={"msg": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
 
-        posts, _ = post_api_serializer.get_all_author_posts(author_id, page, size)
-        if _:
+        posts, code = post_api_serializer.get_all_author_posts(author_id, page, size)
+        if code == 201:
             return Response(posts, status=status.HTTP_200_OK)
-        elif _ == 0:
+        elif code == 400:
             return Response(posts, status=status.HTTP_400_BAD_REQUEST)
-        elif _ is None:
-            return Response(data={"msg": "Invalid author_id"}, status=status.HTTP_400_BAD_REQUEST)
+        elif code == 404:
+            return Response(posts, status=status.HTTP_400_BAD_REQUEST)
     
     @swagger_auto_schema(
             tags=['Posts'],

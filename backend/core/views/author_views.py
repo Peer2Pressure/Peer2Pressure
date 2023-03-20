@@ -33,6 +33,16 @@ class CurrentAuthorID(GenericAPIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     
+    @swagger_auto_schema(
+            tags=["Authors"],
+            operation_description='Get currently logged in author\'s id.',
+            responses={
+            200: openapi.Response(
+                description='OK',
+                schema=AuthorSerializer()
+                )   
+            }
+        )
     def get(self, request):
         print("USER:   ",request.user)
         author_id = request.user.author_profile.id

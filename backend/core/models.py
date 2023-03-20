@@ -59,7 +59,7 @@ class Author(AbstractModel):
         super().save(*args, **kwargs)
 
 
-class Relation(AbstractModel):
+class Follower(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)

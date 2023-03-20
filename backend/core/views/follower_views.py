@@ -19,11 +19,11 @@ from drf_yasg.utils import swagger_auto_schema
 # Local Libraries
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.relationserializer import RelationSerializer
-from ..api_serializers.relation_api_serializer import RelationAPISerializer
+from ..serializers.followerserializer import FollowerSerializer
+from ..api_serializers.follower_api_serializer import FollowerAPISerializer
 
-relation_serializer = RelationSerializer()
-relation_api_serializer = RelationAPISerializer()
+relation_serializer = FollowerSerializer()
+relation_api_serializer = FollowerAPISerializer()
 
 @swagger_auto_schema(
     tags=['Follower'],

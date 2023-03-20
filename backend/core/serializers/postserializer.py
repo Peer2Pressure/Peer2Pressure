@@ -22,7 +22,7 @@ class PostSerializer(serializers.ModelSerializer):
     source = serializers.URLField(required=False, allow_blank=True)
     origin = serializers.URLField(required=False, allow_blank=True)
     description = serializers.CharField(required=False, allow_blank=True)
-    contentType = serializers.CharField(source="content_type", required=True)
+    contentType = serializers.CharField(source="content_type", required=False)
     content = serializers.CharField(required=False)
     # image = serializers.ImageField(required=False, default="")
     author = AuthorSerializer(required=False)
@@ -41,6 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Post.objects.create(**validated_data)
+
 
     def create_post(self, author_id, post_id=None, title=None, content=None, image=None, is_private=False):
         try:

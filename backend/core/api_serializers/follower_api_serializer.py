@@ -5,19 +5,19 @@ from rest_framework import serializers
 from ..models import *
 from .author_api_serializer import AuthorAPISerializer
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.relationserializer import RelationSerializer
+from ..serializers.followerserializer import FollowerSerializer
 
 # Model Serializers 
 author_serializer = AuthorSerializer()
-relation_serializer = RelationSerializer()
+follower_serializer = FollowerSerializer()
 
 # API serializers
 author_api_serializer = AuthorAPISerializer()
 
 
-class RelationAPISerializer(serializers.ModelSerializer):
+class FollowerAPISerializer(serializers.ModelSerializer):
     class Meta:
-        model = Relation
+        model = Follower
         fields = "__all__"
     
     def get_all_followers(self, author_id):
@@ -27,13 +27,13 @@ class RelationAPISerializer(serializers.ModelSerializer):
         Params:
             author_id (str): uuid of the the author 
         """
-        follower_relations = None
+        followers = None
         try:
-            follower_relations = author_serializer.get_author_by_id(author_id).follower.all()
+            followers = author_serializer.get_author_by_id(author_id).follower.all()
         except ValueError:
             return None
         
-        followers = [follower.from_author for follower in follower_relations]
+        followers = [follower.from_author for follower in followers]
 
         result_dict = {}
         result_dict["type"] = "followers"
@@ -51,7 +51,7 @@ class RelationAPISerializer(serializers.ModelSerializer):
     def get_single_follower(self, author_id, foreign_author_id):
         relation = None
         try:
-            relation = relation_serializer.get_relation_by_ids(author_id, foreign_author_id)
+            relation = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
         except ValueError:
             return None
         
@@ -63,7 +63,7 @@ class RelationAPISerializer(serializers.ModelSerializer):
     def remove_follower(self, author_id, foreign_author_id):
         relation = None
         try:
-            relation = relation_serializer.get_relation_by_ids(author_id, foreign_author_id)
+            relation = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
         except ValueError:
             return None
         

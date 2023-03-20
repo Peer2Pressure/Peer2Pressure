@@ -59,14 +59,14 @@ class PostAPISerializer(serializers.ModelSerializer):
         valid_content_types = ["text/markdown", "text/plain", "application/base64"]
         valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
-        post_serializer = PostSerializer(data=request_data)
+        serializer = PostSerializer(data=request_data)
 
         errors = {}
-        if post_serializer.is_valid():
-            validated_post_data = post_serializer.validated_data
-            print(validated_post_data)
-            print()
-            print(validated_post_data["content_type"])
+        if serializer.is_valid():
+            validated_post_data = serializer.validated_data
+            # print(validated_post_data)
+            # print()
+            # print(validated_post_data["content_type"])
 
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["contentType"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
@@ -79,8 +79,9 @@ class PostAPISerializer(serializers.ModelSerializer):
                 validated_post_data["author"] = author
                 if post_id:
                     validated_post_data["m_id"] = post_id
-
-                post = post_serializer.create(validated_post_data)
+                print(validated_post_data)        
+                post = serializer.create(validated_post_data)
+                print(post)
                 post.save()
                 return PostSerializer(post).data, 201
             return errors, 0
@@ -103,7 +104,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         try:
             author = author_serializer.get_author_by_id(author_id)
         except ValidationError:
-            return None, None
+            return {"msg": str(e)}, 404
         
         posts = author.post.all()
 
@@ -121,35 +122,23 @@ class PostAPISerializer(serializers.ModelSerializer):
                     })
 
         if serializer.is_valid():
-            return serializer.data, 1
+            return serializer.data, 200
         else:
-            return serializer.errors, 0
+            return serializer.errors, 400
 
-    # TODO: needs update
     def update_author_post(self, author_id, post_id, request_data):
         try:
             post = post_serializer.get_author_post(author_id, post_id)
-        except ValidationError:
-            return None
+        except ValidationError as e:
+            return {"msg": str(e)}, 404
         
         serializer = PostSerializer(post, request_data)
 
         if serializer.is_valid():
-            print(serializer.validated_data)
-
-
-        defaults = {}
-        for key in request_data:
-            if key == "title":
-                defaults["title"] = request_data[key]
-            elif key == "content":
-                defaults["content"] = request_data[key]
-            elif key == "visibility":
-                defaults["is_private"] = request_data[key]
-
-        updated_post = post_serializer.update_post(author_id=author_id, post_id=post_id, defaults=defaults)
-
-        return self.get_post_data(updated_post)
+            serializer.save()
+            return PostSerializer(post).data, 201
+        else:
+            return post_serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):
         deleted_post = post_serializer.delete_post(author_id, post_id)

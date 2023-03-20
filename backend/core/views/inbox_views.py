@@ -48,4 +48,16 @@ class InboxAPI(GenericAPIView):
         #     pass
         # else:
         #     pass
-        pass
+        response = None
+        code = None
+        if "type" in list(request.data.keys()):
+            if request.data["type"].lower() == "post":
+                response, code = inbox_api_serializer.save_post(author_id, request.data)
+
+        if code == 201:
+            return Response(response, status=status.HTTP_201_CREATED)
+        elif code == 400:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        elif code == 404:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        
