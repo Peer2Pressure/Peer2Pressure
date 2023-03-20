@@ -5,14 +5,12 @@ from .. models import Author
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from varname import nameof
-from collections import OrderedDict
-
-
 
 class AuthorSerializer(serializers.ModelSerializer):
     type = serializers.CharField(default="author" , max_length=10, read_only=True)
     host = serializers.URLField(required=False)
-    id = serializers.URLField(source="url", required=False)
+    id = serializers.URLField(required=False)
+    url = serializers.URLField(required=False)
     displayName = serializers.CharField(source="name", max_length=100, required=False)
     # username = serializers.CharField(max_length=300, required=False)
     github = serializers.URLField(allow_blank=True, required=False)
@@ -26,7 +24,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Author
-        fields = ["type", "id", "host", "displayName", "github", "profileImage"]
+        fields = ["type", "id", "url", "host", "displayName", "github", "profileImage"]
         # extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
     def update(self, instance, validated_data):
@@ -87,12 +85,13 @@ class AuthorSerializer(serializers.ModelSerializer):
         try:
             author_obj = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
+            print("Erorr")
             raise ValidationError("Author does not exist")
         
         return author_obj
 
 class AllAuthorSerializer(serializers.Serializer):
-    type = serializers.CharField(default="authors" , max_length=10, read_only=True)
+    type = serializers.CharField(default="authors" , max_length=10, read_only=True, required=False)
     page = serializers.IntegerField(allow_null=True, required=False)
     size = serializers.IntegerField(allow_null=True, required=False)
     # items = serializers.ListField()

@@ -41,26 +41,13 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         return serializer.data
     
     def get_all_authors(self, page=None, size=None):
-        
         authors = Author.objects.all()
         
         if page and size:
             paginator = Paginator(authors, size)
             authors = paginator.get_page(page)
 
-        # authors_list = []
-
-        # for author in authors:
-        #     serializer = AuthorSerializer(author)
-        #     authors_list.append(serializer.data)
-        # print(authors_list)
-        # print(authors)
-        # x = AuthorSerializer(authors[0])
-        # print("2222",x.data, type(x))
-
-
         authors_serializer = AuthorSerializer(authors, many=True)
-
         
         serializer = AllAuthorSerializer(data={
                         'type': 'authors',
@@ -69,9 +56,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
                         'items': authors_serializer.data
                     })
 
-
         if serializer.is_valid():
-            print(serializer.data)
             return serializer.data, 1
         else:
             return serializer.errors, 0
@@ -83,10 +68,12 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         except ValidationError:
             # TODO : If author does not exist create new author. Will need to create new User object too !!!
             # author = author_serializer.create_author()
-            return None
+            return None, None
         
         serializer = AuthorSerializer(author, request_data)
 
         if serializer.is_valid():
             serializer.update(author, serializer.validated_data)
-            return serializer.data
+            return serializer.data, 1
+        else:
+            return serializer.errors, 0

@@ -15,7 +15,7 @@ class AbstractModel(models.Model):
     class Meta:
         abstract = True
 
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    m_id = models.UUIDField(primary_key=True, default=uuid4)
     
     @abstractclassmethod
     def get_default_fields(cls) -> List[str]:
@@ -30,15 +30,15 @@ class AbstractModel(models.Model):
 
 
 class Author(AbstractModel):
-    # id = models.URLField()
+    id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
     host = models.URLField(default=HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    url = models.URLField()
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    avatar = models.URLField(null=True, blank=True, default="")
+    avatar = models.URLField(default="", blank=True)
     github = models.URLField(default="", blank=True)
     
     class Meta:
@@ -54,8 +54,8 @@ class Author(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            # self.id = f"{HOST}/authors/{self.id}"
-            self.url = f"{HOST}/authors/{self.id}"
+            self.id = f"{HOST}/authors/{self.m_id}"
+            self.url = f"{HOST}/authors/{self.m_id}"
         super().save(*args, **kwargs)
 
 
@@ -79,19 +79,20 @@ class Relation(AbstractModel):
 
 
 class Post(AbstractModel):
-    # id = models.URLField()
+    id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
-    url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    url = models.URLField()
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     image = models.ImageField(upload_to='post_images', blank=True, null=True)
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
-    is_private = models.BooleanField(default=False)
+    visibility = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="PUBLIC")
     source = models.URLField(blank=True)
     origin = models.URLField(blank=True)
     description = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
-    content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=False, null=False)
     # categories = models.ArrayField(models.CharField)
+    unlisted = models.BooleanField(default=False)
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
@@ -103,16 +104,17 @@ class Post(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            # self.id = f"{self.author.url}/posts/{self.id}"
-            self.url = f"{self.author.url}/posts/{self.id}"
+            self.id = f"{self.author.url}/posts/{self.m_id}"
+            self.url = f"{self.author.url}/posts/{self.m_id}"
         super().save(*args, **kwargs)
 
 
 class Comment(AbstractModel):
+    id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
     comment = models.TextField(default="")
-    url = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
+    url = models.URLField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
 
@@ -123,8 +125,8 @@ class Comment(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            # self.id = f"{self.post.url}/comments/{self.id}"
-            self.url = f"{self.post.url}/comments/{self.id}"
+            self.id = f"{self.post.url}/comments/{self.m_id}"
+            self.url = f"{self.post.url}/comments/{self.m_id}"
         super().save(*args, **kwargs)
 
 
