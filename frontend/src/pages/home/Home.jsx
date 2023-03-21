@@ -2,6 +2,8 @@ import "./home.css";
 import Share from "../../components/share/Share";
 import Profile from "../../components/profile/Profile";
 import Stream from "../../components/stream/Stream";
+import NavBar from "../../components/navBar/NavBar";
+
 
 const Home = () => {
     return (
@@ -10,12 +12,19 @@ const Home = () => {
       //   <Share/>
       //   <Stream/>
       // </div>
+
       <div className="homeContainer">
-        <Profile/>
-        <div className="streamContainer">
-          <Share/>
-          <Stream/>
+        <div className="navBarContainer">
+          <NavBar/>
         </div>
+        <div className="bodyContainer">
+          <Profile/>
+          <div className="streamContainer">
+            <Share/>
+            <Stream/>
+          </div>
+        </div>
+        
       </div>
     )
   }
