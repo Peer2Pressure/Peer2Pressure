@@ -18,7 +18,7 @@ author_serializer = AuthorSerializer()
 class PostSerializer(serializers.ModelSerializer):
     type = serializers.CharField(required=False, max_length=10, default="post", read_only=True)
     title = serializers.CharField(required=False, max_length=300)
-    id = serializers.URLField(required=False, source="url")
+    id = serializers.URLField(required=False)
     source = serializers.URLField(required=False, allow_blank=True)
     origin = serializers.URLField(required=False, allow_blank=True)
     description = serializers.CharField(required=False, allow_blank=True)

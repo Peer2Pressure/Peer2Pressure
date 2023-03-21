@@ -57,40 +57,55 @@ class InboxAPISerializer(serializers.ModelSerializer):
         except ValidationError as e:
             return {"msg": str(e)}, 404
 
-        serializer = PostSerializer(data=request_data)
+        # get post author id 
+        post_id_url = urlparse(request_data["id"]).path.split('/')
+        post_id = post_id_url[4]
 
-        post = None
-        if serializer.is_valid():
-            validated_post_data = serializer.validated_data
+        url = f"http://localhost:8000/authors/{author_id}/posts/{post_id}"
+        res = requests.post(url, data=request_data)
+        print(res.status_code)
+
+        return {"msg": f"Post has been send to {author_id} inbox"}, 201
+        # serializer = PostSerializer(data=request_data)
+
+        # post = None
+        # if serializer.is_valid():
+        #     validated_post_data = serializer.validated_data
+        #     print(validated_post_data["id"])
+
+        #     # get post author id 
+        #     post_id_url = urlparse(validated_post_data["id"]).path.split('/')
+        #     post_author_id = post_id_url[2]
+        #     print(post_author_id)
             
-            # post_author = validated_post_data["author"]
-            # post_author_url = urlparse(post_author["id"]).path
-
-            # post_author_id = post_author_url.path.split('/')[-1]
-
-            post_id_url = urlparse(validated_post_data["id"]).path.split('/')
-            post_author_id = post_id_url[2]
-            post_id = post_id_url[4]
-
-            print("id ", post_author_id)
-
-            # response = 
-
-            try:
-                post_author_obj = author_serializer.get_author_by_id(post_author_id)
-            except ValidationError as e:
-                return {"msg": str(e)}, 404
+            # # validate current author follows post author
+            # url = f"http://localhost:8000/authors/{post_author_id}/followers/{author_id}"
+            # res = requests.get(url)
+            # print("res: ", res)
+            # if res != 200:
+            #     return None, res.status_code
             
-            validated_post_data["author"] = post_author_obj
-            print(validated_post_data)
-
-            post = serializer.create(validated_post_data)
-            post.save()
-
+            # create new post for post_author
             
 
-            return {"msg": f"Post has been send to {author_id} inbox"}, 201
-        else:
-            return serializer.errors, 400
+            
+            # print(res.text)
+
+            # try:
+            #     post_author_obj = author_serializer.get_author_by_id(post_author_id)
+            # except ValidationError as e:
+            #     return {"msg": str(e)}, 404
+            
+            # validated_post_data["author"] = post_author_obj
+            # print(validated_post_data)
+
+            # post = serializer.create(validated_post_data)
+            # post.save()
+
+            
+
+        #     return {"msg": f"Post has been send to {author_id} inbox"}, 201
+        # else:
+        #     return serializer.errors, 400
         
         

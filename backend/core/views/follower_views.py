@@ -25,16 +25,14 @@ from ..api_serializers.follower_api_serializer import FollowerAPISerializer
 relation_serializer = FollowerSerializer()
 relation_api_serializer = FollowerAPISerializer()
 
-@swagger_auto_schema(
-    tags=['Follower'],
-    operation_summary='Your Operation Summary',
-    operation_description='Your Operation Description'
-)
 class FollowerListAPI(GenericAPIView):
     serializer_class = AuthorSerializer
 
-    @swagger_auto_schema(tags=['Followers'])
-          
+    @swagger_auto_schema(
+        tags=["Followers"],
+        # operation_summary='Your Operation Summary',
+        operation_description="Get all follower for an author"
+    )
     def get(self, request, author_id):
         followers = relation_api_serializer.get_all_followers(author_id)
         if followers:
@@ -49,7 +47,7 @@ class FollowerAPI(GenericAPIView):
     def get(self, request, author_id, foreign_author_id):
         follower = relation_api_serializer.get_single_follower(author_id, foreign_author_id)
         if follower:
-            return Response(follower)
+            return Response(follower, status=status.HTTP_200_OK)
         return Response({"msg": "Follower not found"}, status=status.HTTP_404_NOT_FOUND) 
 
     @swagger_auto_schema(tags=['Followers'])

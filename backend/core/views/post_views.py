@@ -88,7 +88,9 @@ class PostAPI(GenericAPIView):
             return Response(data={"msg": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
 
         posts, code = post_api_serializer.get_all_author_posts(author_id, page, size)
-        if code == 201:
+
+        print(posts, code)
+        if code == 200:
             return Response(posts, status=status.HTTP_200_OK)
         elif code == 400:
             return Response(posts, status=status.HTTP_400_BAD_REQUEST)

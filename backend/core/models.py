@@ -28,6 +28,11 @@ class AbstractModel(models.Model):
     def __repr__(self):
         return str(self)
 
+class ItemModel(models.Model):
+    item_id = models.UUIDField(default=uuid4)
+    
+    def __repr__(self):
+        return str(self)
 
 class Author(AbstractModel):
     id = models.URLField()
@@ -59,13 +64,11 @@ class Author(AbstractModel):
         super().save(*args, **kwargs)
 
 
-class Follower(AbstractModel):
+class Follower(AbstractModel, ItemModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
-    from_author_request = models.BooleanField(default=False)
-    to_author_request = models.BooleanField(default=False)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["from_author", "to_author"], name="There can only be this relation between two authors")]
@@ -78,7 +81,7 @@ class Follower(AbstractModel):
         return self.from_author.username + " : " + self.to_author.username
 
 
-class Post(AbstractModel):
+class Post(AbstractModel, ItemModel):
     id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.URLField()
@@ -109,7 +112,7 @@ class Post(AbstractModel):
         super().save(*args, **kwargs)
 
 
-class Comment(AbstractModel):
+class Comment(AbstractModel, ItemModel):
     id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
@@ -155,5 +158,7 @@ class CommentLike(AbstractModel):
 
 
 class Inbox(AbstractModel):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="inbox_post")
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="post")
+    item = models.ForeignKey(ItemModel, on_delete=models.CASCADE)
+
+

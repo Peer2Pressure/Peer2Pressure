@@ -43,6 +43,10 @@ class InboxAPI(GenericAPIView):
         return Response(data={"msg": "Unable to get inbox posts."}, status=status.HTTP_404_NOT_FOUND)
 
     # TODO: Only if user is authenticated
+    @swagger_auto_schema(
+        tags=['Inbox'],
+        operation_description='Create a new post.',
+    )
     def post(self, request, author_id):
         # if request.user.is_authenticated:
         #     pass

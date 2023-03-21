@@ -56,6 +56,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         except ValidationError as e:
             return {"msg": str(e)}, 404
         
+        print(request_data)
         valid_content_types = ["text/markdown", "text/plain", "application/base64"]
         valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
@@ -79,9 +80,9 @@ class PostAPISerializer(serializers.ModelSerializer):
                 validated_post_data["author"] = author
                 if post_id:
                     validated_post_data["m_id"] = post_id
-                print(validated_post_data)        
+                # print(validated_post_data)        
                 post = serializer.create(validated_post_data)
-                print(post)
+                # print(post)
                 post.save()
                 return PostSerializer(post).data, 201
             return errors, 0
@@ -103,7 +104,7 @@ class PostAPISerializer(serializers.ModelSerializer):
     def get_all_author_posts(self, author_id, page=None, size=None):
         try:
             author = author_serializer.get_author_by_id(author_id)
-        except ValidationError:
+        except ValidationError as e:
             return {"msg": str(e)}, 404
         
         posts = author.post.all()

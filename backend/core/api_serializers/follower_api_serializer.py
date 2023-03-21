@@ -29,7 +29,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         """
         followers = None
         try:
-            followers = author_serializer.get_author_by_id(author_id).follower.all()
+            followers = author_serializer.get_author_by_id(author_id).follower.filter(approved=True)
         except ValueError:
             return None
         
