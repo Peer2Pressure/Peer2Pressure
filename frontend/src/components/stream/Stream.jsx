@@ -3,10 +3,12 @@ import Flipmove from "react-flip-move";
 
 import "./stream.css";
 import Post from "../post/Post";
-import usePosts from "../../usePosts";
+// import usePosts from "../../usePosts";
+import usePostAuthorPosts from "../../useGetAuthorPosts";
 
 function Stream() {
-  const posts = usePosts();
+  // const posts = usePosts();
+  const {posts, error} = usePostAuthorPosts();
 
   return (
     <div className="stream">
@@ -33,6 +35,7 @@ function Stream() {
       </Flipmove>
       </div>
     </div>
+
   );
 }
 
