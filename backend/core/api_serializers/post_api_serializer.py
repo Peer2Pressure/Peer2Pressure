@@ -65,9 +65,9 @@ class PostAPISerializer(serializers.ModelSerializer):
         errors = {}
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
-            # print(validated_post_data)
-            # print()
-            # print(validated_post_data["content_type"])
+            print(validated_post_data)
+            print()
+            print(validated_post_data["content_type"])
 
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["contentType"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
@@ -133,12 +133,35 @@ class PostAPISerializer(serializers.ModelSerializer):
         except ValidationError as e:
             return {"msg": str(e)}, 404
         
+        valid_content_types = ["text/markdown", "text/plain", "application/base64"]
+        valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
+
         serializer = PostSerializer(post, request_data)
 
+        errors = {}
+
         if serializer.is_valid():
-            serializer.save()
-            return PostSerializer(post).data, 201
+            print("insnsnisnsi")
+            validated_post_data = serializer.validated_data
+            # print(type(validated_post_data))
+            # print(type(serializer.data))
+            # print(json.dumps(validated_post_data, indent=4))
+            # print(json.dumps(serializer.data, indent=4))
+            if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
+                errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
+            
+            if validated_post_data["content_type"] not in valid_image_content_types:
+                if validated_post_data["content"] == "":
+                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+            
+            if len(errors) == 0:
+                serializer.save()
+                post = post_serializer.get_author_post(author_id, post_id)
+                return PostSerializer(post).data, 201
+            
+            return errors, 400
         else:
+            print("sadsadas")
             return post_serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):

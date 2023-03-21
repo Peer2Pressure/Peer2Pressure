@@ -6,6 +6,8 @@ from typing import List
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 MAX_CHARFIELD_LENGTH = 300
@@ -25,12 +27,6 @@ class AbstractModel(models.Model):
         """
         raise NotImplementedError()
 
-    def __repr__(self):
-        return str(self)
-
-class ItemModel(models.Model):
-    item_id = models.UUIDField(default=uuid4)
-    
     def __repr__(self):
         return str(self)
 
@@ -54,7 +50,7 @@ class Author(AbstractModel):
         return [nameof(cls.username), nameof(cls.name), nameof(cls.host)]
 
     def __str__(self):
-        return self.username
+        return str(self.id)
 
     def save(self, *args, **kwargs):
         if not self.url:
@@ -64,7 +60,7 @@ class Author(AbstractModel):
         super().save(*args, **kwargs)
 
 
-class Follower(AbstractModel, ItemModel):
+class Follower(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
@@ -81,7 +77,7 @@ class Follower(AbstractModel, ItemModel):
         return self.from_author.username + " : " + self.to_author.username
 
 
-class Post(AbstractModel, ItemModel):
+class Post(AbstractModel):
     id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.URLField()
@@ -112,7 +108,7 @@ class Post(AbstractModel, ItemModel):
         super().save(*args, **kwargs)
 
 
-class Comment(AbstractModel, ItemModel):
+class Comment(AbstractModel):
     id = models.URLField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
@@ -124,6 +120,9 @@ class Comment(AbstractModel, ItemModel):
     @classmethod
     def get_default_fields(cls) -> List[str]:
         return [nameof(cls.author), nameof(cls.post), nameof(cls.comment)]
+
+    def __str__(self):
+        return str(self.id)
 
     def save(self, *args, **kwargs):
         if not self.url:
@@ -159,6 +158,7 @@ class CommentLike(AbstractModel):
 
 class Inbox(AbstractModel):
     type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="post")
-    item = models.ForeignKey(ItemModel, on_delete=models.CASCADE)
-
-
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, default=None)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.UUIDField()
+    content_object = GenericForeignKey('content_type', 'object_id')

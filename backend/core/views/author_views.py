@@ -72,7 +72,7 @@ class AuthorListAPI(GenericAPIView):
         authors, _ = author_api_serializer.get_all_authors(page, size)
         if _:
             return Response(authors, status=status.HTTP_200_OK)
-        return Response(authors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(authors, status=status.HTTP_404_NOT_FOUND)
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer

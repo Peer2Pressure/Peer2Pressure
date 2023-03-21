@@ -44,8 +44,8 @@ class InboxAPI(GenericAPIView):
 
     # TODO: Only if user is authenticated
     @swagger_auto_schema(
-        tags=['Inbox'],
-        operation_description='Create a new post.',
+        tags=["Inbox"],
+        operation_description="Send an object to an author's obj",
     )
     def post(self, request, author_id):
         # if request.user.is_authenticated:
@@ -58,10 +58,9 @@ class InboxAPI(GenericAPIView):
             if request.data["type"].lower() == "post":
                 response, code = inbox_api_serializer.save_post(author_id, request.data)
 
-        if code == 201:
-            return Response(response, status=status.HTTP_201_CREATED)
+        if code == 200:
+            return Response(response, status=status.HTTP_200_OK)
         elif code == 400:
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
-            return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response, status=status.HTTP_404_NOT_FOUND)

@@ -45,20 +45,23 @@ class SinglePostAPI(GenericAPIView):
         #     pass
 
         post, code = post_api_serializer.add_new_post(author_id, request.data, post_id=post_id)
+        if 201:
+            return Response(post, status=status.HTTP_201_CREATED)
+        elif code == 400:
+            return Response(post, status=status.HTTP_400_BAD_REQUEST)
+        elif code == 404:
+            return Response(post, status=status.HTTP_404_NOT_FOUND)
+    
+    # must be authenticated
+    @swagger_auto_schema(tags=['Posts'])
+    def post(self, request, author_id, post_id):
+        post, code = post_api_serializer.update_author_post(author_id, post_id, request.data)
         if 200:
             return Response(post, status=status.HTTP_200_OK)
         elif code == 400:
             return Response(post, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
-            return Response(post, status=status.HTTP_400_BAD_REQUEST)
-    
-    # must be authenticated
-    @swagger_auto_schema(tags=['Posts'])
-    def post(self, request, author_id, post_id):
-        updated_post = post_api_serializer.update_author_post(author_id, post_id, request.data)
-        if updated_post:
-            return Response(updated_post)
-        return Response(data={"msg": "Unable to update post"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(post, status=status.HTTP_404_NOT_FOUND)
     
     @swagger_auto_schema(tags=['Posts'])
     def delete(self, request, author_id, post_id):
@@ -95,7 +98,7 @@ class PostAPI(GenericAPIView):
         elif code == 400:
             return Response(posts, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
-            return Response(posts, status=status.HTTP_400_BAD_REQUEST)
+            return Response(posts, status=status.HTTP_404_NOT_FOUND)
     
     @swagger_auto_schema(
             tags=['Posts'],
@@ -107,5 +110,5 @@ class PostAPI(GenericAPIView):
         elif code == 400:
             return Response(post, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
-            return Response(post, status=status.HTTP_400_BAD_REQUEST)
+            return Response(post, status=status.HTTP_404_NOT_FOUND)
     
