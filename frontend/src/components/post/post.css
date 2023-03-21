@@ -3,13 +3,20 @@
     align-items: flex-start;
     border-bottom: 1px solid var(--main-background);
     padding-bottom: 10px;
-   
+
     background-color: white;
+  }
+
+  .post_headerTop {
+    /* border: 1px solid green; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .post__body {
     flex: 1;
-    
     padding: 10px;
   }
 
