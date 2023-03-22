@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import './widgets.css';
 
 function Widgets() {
@@ -15,13 +16,16 @@ function Widgets() {
 
   const fetchAllUsers = async () => {
     try {
-      // Replace this with the actual API endpoint that returns all users.
-      const response = await fetch('http://localhost:8000/authors/');
+      const response = await fetch('http://localhost:8001/authors/');
       const data = await response.json();
-
-      // Assumes the API returns an array of users. Adjust as needed
-      setAllUsers(data);
-      setIsLoading(false);
+      console.log('fetchAllUsers:', data);
+      if (Array.isArray(data)) {
+        setAllUsers(data);
+        setIsLoading(false);
+      } else {
+        console.error('Error fetching users: response data is not an array');
+        setIsLoading(false);
+      }
     } catch (error) {    
       console.error('Error fetching users:', error);
       setIsLoading(false);
@@ -30,19 +34,15 @@ function Widgets() {
 
   const filterUsers = useCallback((query) => {
     // Filter users based on the search term
+    console.log('allUsers:', allUsers);
     if (allUsers) {
-      if (query) {
-        const filteredUsers = allUsers.filter((user) => {
-          return user.username.toLowerCase().includes(query.toLowerCase());
-        });
-        console.log('Search term:', query);
-        setSearchResults(filteredUsers);
-      } else {
-        setSearchResults([]);
-      }
+      const filteredUsers = allUsers.filter((user) => {      
+        return user.username.toLowerCase().includes(query.toLowerCase());
+      });
+      console.log('Search term:', query);
+      setSearchResults(filteredUsers);
     }
   }, [allUsers]);
-  
 
   useEffect(() => {
     // Filter users whenever the search term changes
@@ -51,7 +51,6 @@ function Widgets() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
     filterUsers(searchTerm);
   };
 
@@ -71,13 +70,20 @@ function Widgets() {
         <div>Loading...</div>
       ) : (
         <div className="searchResults">
-          {searchResults.map((user) => (
-            <div key={user.id}>
-              {/* Render user details here */}
-              {user.username}
-            </div>
-          ))}
-          {searchResults.length === 0 && <div></div>}
+          {searchTerm === '' ? (
+            <div>Enter a search term to find users.</div>
+          ) : searchResults.length === 0 ? (
+            <div>No results found.</div>
+          ) : (
+            searchResults.map((user) => (
+              <div key={user.id} className="userResult">
+                <span>{user.username}</span>
+                <button className="followButton">
+                  <PersonAddIcon />
+                </button>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
