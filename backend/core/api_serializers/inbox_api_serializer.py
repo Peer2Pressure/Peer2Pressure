@@ -5,6 +5,8 @@ import uuid
 import pprint
 
 # Third-party libraries
+from django.core.paginator import Paginator
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -14,6 +16,7 @@ from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 from ..serializers.postserializer import PostSerializer
 from ..serializers.followerserializer import FollowerSerializer
+from ..serializers.inboxserializer import InboxItemsSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 
@@ -52,11 +55,26 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
         author = author_serializer.get_author_by_id(author_id)
         
-        inbox_posts = author.inbox_posts.all()
+        inbox = author.inbox.all().filter(type="post")
+        
+        inbox_posts = [inbox_obj.c_object for inbox_obj in inbox]
 
-        inbox_posts_data = self.get_inbox_posts_data(author, inbox_posts)
+        if page and size:
+            paginator = Paginator(inbox_posts, size)
+            inbox_posts = paginator.get_page(page)
 
-        return inbox_posts_data
+        post_serializer = PostSerializer(inbox_posts, many=True)
+
+        serializer = InboxItemsSerializer(data={
+                        'page': page,
+                        'size': size,
+                        'items': post_serializer.data
+                    })
+
+        if serializer.is_valid():
+            return serializer.data, 200
+        else:
+            return serializer.errors, 400
     
     def handle_post(self, author_id, request_data):
         if not author_serializer.author_exists(author_id):
@@ -82,7 +100,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if res.status_code in [200, 201]:
             # create new inbox entry
             post = post_serializer.get_author_post(author_id, post_id)
-            inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+            inbox_post = Inbox.objects.create(c_object=post, author=author, type="post")
             inbox_post.save()
             return {"msg": f"Post has been send to {author_id} inbox"}, 200
         else:
@@ -99,7 +117,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
         if follow_serializer.is_valid():
             # get post author id 
-            print(request_data)
             actor_id_path = urlparse(request_data["actor"]["id"]).path.split('/')
             actor_id = actor_id_path[2]
 
@@ -111,7 +128,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 follow = follow_serializer.get_relation_by_ids(author_id, actor_id)
-                inbox_post = Inbox.objects.create(content_object=follow, author=author, type="follow")
+                inbox_post = Inbox.objects.create(c_object=follow, author=author, type="follow")
                 inbox_post.save()
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
             else:

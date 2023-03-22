@@ -36,9 +36,13 @@ class InboxAPI(GenericAPIView):
         except ValidationError:
             return Response(data={"msg": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
 
-        inbox_posts = inbox_api_serializer.get_all_inbox_posts(author_id, page, size)
-        if inbox_posts:
-            return Response(inbox_posts)
+        response, code = inbox_api_serializer.get_all_inbox_posts(author_id, page, size)
+        if code == 200:
+            return Response(response, status=status.HTTP_200_OK)
+        elif code == 400:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        elif code == 404:
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
         
         return Response(data={"msg": "Unable to get inbox posts."}, status=status.HTTP_404_NOT_FOUND)
 
