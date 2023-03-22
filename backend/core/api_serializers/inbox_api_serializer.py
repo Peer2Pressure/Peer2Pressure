@@ -57,7 +57,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
         inbox = author.inbox.all().filter(type="post")
         
-        inbox_posts = [inbox_obj.c_object for inbox_obj in inbox]
+        inbox_posts = [inbox_obj.content_object for inbox_obj in inbox]
 
         if page and size:
             paginator = Paginator(inbox_posts, size)
@@ -100,7 +100,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if res.status_code in [200, 201]:
             # create new inbox entry
             post = post_serializer.get_author_post(author_id, post_id)
-            inbox_post = Inbox.objects.create(c_object=post, author=author, type="post")
+            inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
             inbox_post.save()
             return {"msg": f"Post has been send to {author_id} inbox"}, 200
         else:
@@ -128,7 +128,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 follow = follow_serializer.get_relation_by_ids(author_id, actor_id)
-                inbox_post = Inbox.objects.create(c_object=follow, author=author, type="follow")
+                inbox_post = Inbox.objects.create(content_object=follow, author=author, type="follow")
                 inbox_post.save()
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
             else:
