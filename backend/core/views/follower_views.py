@@ -47,15 +47,16 @@ class FollowerAPI(GenericAPIView):
 
     @swagger_auto_schema(tags=['Followers'])
     def get(self, request, author_id, foreign_author_id):
-        follower = follower_api_serializer.get_single_follower(author_id, foreign_author_id)
-        if follower:
+        follower, code = follower_api_serializer.get_single_follower(author_id, foreign_author_id)
+        if code == 200:
             return Response(follower, status=status.HTTP_200_OK)
-        return Response({"msg": "Follower not found"}, status=status.HTTP_404_NOT_FOUND) 
+        elif code == 404:
+            return Response(follower, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(tags=['Followers'])
     def put(self, request, author_id, foreign_author_id):
         response, code = follower_api_serializer.create_follow_request(author_id, foreign_author_id, request.data)
-        if 200:
+        if code == 200:
             return Response(response, status=status.HTTP_200_OK)
         elif code == 400:
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
@@ -64,7 +65,8 @@ class FollowerAPI(GenericAPIView):
     
     @swagger_auto_schema(tags=['Followers'])
     def delete(self, request, author_id, foreign_author_id):
-        relation = follower_api_serializer.remove_follower(author_id, foreign_author_id)
-        if relation:
-            return Response({"msg": "Follower has been removed successfully"})
-        return Response(data={"msg": f"Unable to remover follower: {foreign_author_id}"}, status=status.HTTP_404_NOT_FOUND)
+        follower, code = follower_api_serializer.remove_follower(author_id, foreign_author_id)
+        if code == 200:
+            return Response(follower, status=status.HTTP_200_OK)
+        elif code == 404:
+            return Response(follower, status=status.HTTP_404_NOT_FOUND)

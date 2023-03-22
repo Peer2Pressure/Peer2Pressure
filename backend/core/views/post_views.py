@@ -55,7 +55,7 @@ class SinglePostAPI(GenericAPIView):
     @swagger_auto_schema(tags=['Posts'])
     def post(self, request, author_id, post_id):
         post, code = post_api_serializer.update_author_post(author_id, post_id, request.data)
-        if 200:
+        if code == 200:
             return Response(post, status=status.HTTP_200_OK)
         elif code == 400:
             return Response(post, status=status.HTTP_400_BAD_REQUEST)

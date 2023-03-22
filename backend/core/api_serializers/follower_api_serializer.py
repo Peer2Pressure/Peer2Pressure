@@ -52,22 +52,22 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     def get_single_follower(self, author_id, foreign_author_id):
-        try:
-            follower = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
-        except ValidationError:
-            return None
+        if not follower_serializer.follower_exists(author_id, foreign_author_id):
+            return {"msg": "Follow relation does not exist"}, 404
         
-        follower = follower.from_author
-        follower_serialized = author_api_serializer.get_author_data(follower)
-
-        return follower_serialized
+        follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        
+        follower = follow.from_author
+        serializer = AuthorSerializer(follower)
+        
+        return serializer.data, 200
 
     def create_follow_request(self, author_id, foreign_author_id, request_data):
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist"}, 404
-            
+        
         if follower_serializer.follower_exists(author_id, foreign_author_id):
-            return {"msg": f"Unable to follow. Follow relation already exists"}, 400
+            return {"msg": f"Friend request already send. Cannot send again."}, 400
         
         # If request is from a different server, validate and create
         # an author profile for foreign author.
@@ -96,15 +96,13 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         return {"msg": f"Follow request has been send to {author_id}"}, 200
 
 
-
-
     def remove_follower(self, author_id, foreign_author_id):
-        relation = None
-        try:
-            relation = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
-        except ValueError:
-            return None
+        if not follower_serializer.follower_exists(author_id, foreign_author_id):
+            return {"msg": "Follow relation does not exist"}, 404
         
-        relation.delete()
+        follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        
+        
+        follow.delete()
 
-        return relation
+        return follow, 200
