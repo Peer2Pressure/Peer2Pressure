@@ -4,10 +4,10 @@ from django.test import TestCase
 # Local libraries
 from .models import *
 from .api_serializers.author_api_serializer import AuthorAPISerializer
-from .api_serializers.relation_api_serializer import RelationAPISerializer
+from .api_serializers.follower_api_serializer import FollowerAPISerializer
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
-from .serializers.relationserializer import RelationSerializer
+from .serializers.followerserializer import FollowerSerializer
 from .serializers.postlikeserializer import PostLikeSerializer
 from .serializers.commentserializer import CommentSerializer
 
@@ -99,8 +99,8 @@ class RelationAPISerializerTest(TestCase):
         self.user_2 = User.objects.create_user(username="authorusername2", email="author@gamil.com", password="authorpassword")
         self.user_2.save()
         self.author_id2 = self.authorserializer.create_author("author username2", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=self.user_2)        
-        self.serializer = RelationSerializer()
-        self.apiserializer = RelationAPISerializer()
+        self.serializer = FollowerSerializer()
+        self.apiserializer = FollowerAPISerializer()
 
     def tearDown(self) -> None:
         self.user_1.delete()
