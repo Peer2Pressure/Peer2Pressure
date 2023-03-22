@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from .. import utils
 from ..models import *
 from ..serializers.postserializer import PostSerializer
 from ..serializers.commentserializer import CommentSerializer
@@ -54,7 +55,7 @@ class CommentAPISerializer(serializers.ModelSerializer):
         return None
 
 
-    def get_post_comments(self, author_id, post_id):
+    def get_post_comments(self, author_id, post_id, page=None, size=None):
         post = None
         try:
             post = post_serializer.get_author_post(author_id, post_id)
@@ -74,6 +75,14 @@ class CommentAPISerializer(serializers.ModelSerializer):
             curr_comment_data = self.get_comment_data(comment)
             comments_list.append(curr_comment_data)
  
-        result_dict["comments"] = comments_list
+
+        if page and size:
+            paginated_comments = utils.paginate_list(comments_list, page, size)
+            
+            result_dict["page"] = page
+            result_dict["size"] = size
+            result_dict["items"] = paginated_comments
+        else:
+            result_dict["comments"] = comments_list
 
         return result_dict

@@ -4,13 +4,14 @@ import useFetch from "../../useFetch";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import useGetAuthorID from "../../useGetAuthorID.js"
+// import useGetAuthorID from "../../useGetAuthorID.js";
 import useGetAuthorData from "../../useGetAuthorData";
-
-
 
 export default function ProfileSetting() {
     
+    // grabbing data from /get_author_id/ and /authors/author_id APIs
+    const {data, loading1, error1, authorID} = useGetAuthorData();
+
     // grabbing data from /get_author_id/ and /authors/author_id APIs
     const {data, loading1, error1, authorID} = useGetAuthorData();
 
@@ -35,6 +36,7 @@ export default function ProfileSetting() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
 
         const formData = new FormData();
         formData.append('username', userData.username || data?.username);
@@ -47,6 +49,7 @@ export default function ProfileSetting() {
     
         console.log("usernameeeee: "+userData);
         // console.log("/authors/" + authorID + '/');
+        
         axios
         .post(
             "/authors/"+ authorID + "/", 
