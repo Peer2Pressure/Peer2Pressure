@@ -24,8 +24,11 @@ const options = [
 
 const Post = forwardRef(
 
-  ({ id,displayName, username, text, image, avatar, likes, comments }, ref) => {
-
+  ({ id, displayName, username, text, image, avatar, likes, comments }, ref) => {
+    const [like, setLike] = useState(false);
+    const [likeCount, setLikeCount] = useState(likes);
+    const [commentText, setCommentText] = useState("");
+    const [showCommentArea, setShowCommentArea] = useState(false);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -35,13 +38,6 @@ const Post = forwardRef(
     const handleClose = () => {
       setAnchorEl(null);
     };
-
-
-  ({ id, displayName, username, text, image, avatar, likes, comments }, ref) => {
-    const [like, setLike] = useState(false);
-    const [likeCount, setLikeCount] = useState(likes);
-    const [commentText, setCommentText] = useState("");
-    const [showCommentArea, setShowCommentArea] = useState(false);
 
     const handleLikeClick = () => {
       setLike(!like);
@@ -70,7 +66,6 @@ const Post = forwardRef(
         </div>
         <div className="post__body">
           <div className="post__header">
-
             <div className="post_headerTop">
               <div className="post__headerText">
                 <h3>
@@ -113,7 +108,7 @@ const Post = forwardRef(
                       ))}
                     </Menu>
               </span>
-
+            </div>
             <div className="post__headerText">
               <h3>
                 {displayName}{" "}
@@ -124,7 +119,6 @@ const Post = forwardRef(
               <p>{text}</p>
             </div>
           </div>
-
           <img src={image} alt="" />
           <div className="post__footer">
             <div className="post__likes" onClick={handleLikeClick}>

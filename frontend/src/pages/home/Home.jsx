@@ -4,6 +4,7 @@ import Profile from "../../components/profile/Profile";
 import Stream from "../../components/stream/Stream";
 import Widgets from "../../components/widgets/Widgets";
 import Post from "../../components/post/Post";
+import NavBar from "../../components/navBar/NavBar";
 
 const Home = () => {
     return (
@@ -14,13 +15,18 @@ const Home = () => {
       // </div>
 
       <div className="homeContainer">
-        <Profile/>
-        <div className="streamContainer">
-          <Share/>
-          <Stream/>
-          <Post/>
+        <div className="navBarContainer">
+          <NavBar/>
         </div>
-        <Widgets/>
+        <div className="bodyContainer">
+          <Profile/>
+          <div className="streamContainer">
+            <Share/>
+            <Stream/>
+            <Post/>
+          </div>
+          <Widgets/>
+        </div>
       </div>
     )
   }

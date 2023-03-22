@@ -4,10 +4,24 @@
         margin:0;
         padding: 0;
         width: 100%;
+        background-image: url(https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?cs=srgb&dl=pexels-codioful-%28formerly-gradienta%29-7130560.jpg&fm=jpg); 
+        background-size: cover;
+        /* opacity: 20%;*/
+    }
+
+    /* .homeContainer::before {
+        background-color: rgba(0, 0, 0, 0.1);
+    } */
+
+    .navBarContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
     }
 
     .bodyContainer {
-        padding-top: 50px;
+        padding-top: 5em;
         display: flex;
         justify-content: center;
         column-gap: 125px;

@@ -7,15 +7,11 @@ import Post from "../post/Post";
 // import usePosts from "../../usePosts";
 import usePostAuthorPosts from "../../useGetAuthorPosts";
 
+
 function Stream() {
-  // const posts = usePosts();
+  // const posts = samplePosts;
+  // // const posts = usePosts();
   const {posts, error} = usePostAuthorPosts();
-
-import usePosts from "../../usePosts";
-import samplePosts from "../../mockPost.json"
-
-function Stream() {
-  const posts = samplePosts;
 
 
   return (

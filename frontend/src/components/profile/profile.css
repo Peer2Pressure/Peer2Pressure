@@ -12,10 +12,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    background-color: white;
+    /* background-color: white; */
     row-gap: 25px;
     padding: 25px;
     /* border: 1px solid black; */
+    border-radius: 20px;
+    background: #ebebeb;
+    box-shadow:  25px 25px 49px #c8c8c8,
+                -25px -25px 49px #ffffff;
     
 }
 
