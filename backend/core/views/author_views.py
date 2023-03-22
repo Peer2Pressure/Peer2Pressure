@@ -63,7 +63,6 @@ class AuthorListAPI(GenericAPIView):
         }
     )
     def get(self, request):
-        print(request)
         try:
             page, size = utils.get_pagination_variables(request.query_params)
         except ValidationError:

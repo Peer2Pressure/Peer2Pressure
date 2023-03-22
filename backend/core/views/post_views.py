@@ -44,7 +44,7 @@ class SinglePostAPI(GenericAPIView):
         # else:
         #     pass
         post, code = post_api_serializer.add_new_post(author_id, request.data, post_id=post_id)
-        if 201:
+        if code == 201:
             return Response(post, status=status.HTTP_201_CREATED)
         elif code == 400:
             return Response(post, status=status.HTTP_400_BAD_REQUEST)

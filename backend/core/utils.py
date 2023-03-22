@@ -27,8 +27,6 @@ def paginate_list(orig_list, page, size):
 
     return orig_list[start:stop]
 
-
-
 def validate_followers_url_path(value):
     """
     Validates that a string is a valid URL and its path matches the pattern '/authors/<uuid>/followers/<uuid>/'.

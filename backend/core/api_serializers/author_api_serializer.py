@@ -62,7 +62,6 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 0
 
     def update_author(self, author_id, request_data):
-
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
         except ValidationError:

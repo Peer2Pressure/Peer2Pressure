@@ -120,6 +120,16 @@ class PostSerializer(serializers.ModelSerializer):
 
         return post
 
+    def delete_post(self, author_id, post_id):
+        try:
+            post = self.get_author_post(author_id, post_id)
+        except ValidationError:
+            return None
+
+        post.delete()
+
+        return post
+
 class AllPostSerializer(serializers.Serializer):
     type = serializers.CharField(default="posts" , max_length=10, read_only=True, required=False)
     page = serializers.IntegerField(allow_null=True, required=False)
