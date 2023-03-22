@@ -1,0 +1,29 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ "temp" ]
+#   pull_request:
+#     branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: login
+      uses: actions/heroku@master
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      with:
+        args: container:login
+    - name: set remote
+      run: git remote set-url origin https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/peer2pressure.git
+    - name: push and deploy
+      run: git subtree push heroku --prefix backend/ main

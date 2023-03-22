@@ -1,0 +1,4 @@
+[  {    "id": 1,    "displayName": "John Doe",    "username": "johndoe",    "caption": "Lorem ipsum dolor sit amet.",    "image": "https://picsum.photos/200",    "avatar": "https://picsum.photos/50",    "likes": 10,    "comments": 5  },
+  {    "id": 2,    "displayName": "Jane Smith",    "username": "janesmith",    "caption": "Consectetur adipiscing elit.",    "image": "https://picsum.photos/200",    "avatar": "https://picsum.photos/50",    "likes": 20,    "comments": 7  }, 
+   {    "id": 3,    "displayName": "Bob Johnson",    "username": "bobjohnson",    "caption": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",    "image": "https://picsum.photos/200",    "avatar": "https://picsum.photos/50",    "likes": 5,    "comments": 2  }
+]

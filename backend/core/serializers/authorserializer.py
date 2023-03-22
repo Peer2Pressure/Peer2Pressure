@@ -88,7 +88,6 @@ class AuthorSerializer(serializers.ModelSerializer):
         try:
             author_obj = Author.objects.get(pk=author_id)
         except Author.DoesNotExist:
-            print("Erorr")
             raise ValidationError("Author does not exist")
         
         return author_obj
@@ -114,9 +113,3 @@ class AllAuthorSerializer(serializers.Serializer):
         if data['size'] is None:
             data.pop('size')
         return data
-    
-    # class Meta:
-    #     model = Author
-    #     fields = ["type", "page", "size", "items"]
-
-        

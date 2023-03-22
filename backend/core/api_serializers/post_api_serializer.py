@@ -51,7 +51,6 @@ class PostAPISerializer(serializers.ModelSerializer):
         return post_data
 
     def add_new_post(self, author_id, request_data, post_id=None):
-        
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist."}, 404
 
@@ -136,12 +135,8 @@ class PostAPISerializer(serializers.ModelSerializer):
         errors = {}
 
         if serializer.is_valid():
-            print("insnsnisnsi")
             validated_post_data = serializer.validated_data
-            # print(type(validated_post_data))
-            # print(type(serializer.data))
-            # print(json.dumps(validated_post_data, indent=4))
-            # print(json.dumps(serializer.data, indent=4))
+
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
             
