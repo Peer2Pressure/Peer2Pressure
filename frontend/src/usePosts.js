@@ -6,7 +6,7 @@ function usePosts() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/posts")
+      .get("http://localhost:8000/posts")
       .then((response) => setPosts(response.data))
       .catch((error) => console.error(error));
       
