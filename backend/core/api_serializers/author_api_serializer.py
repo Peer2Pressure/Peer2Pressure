@@ -1,9 +1,13 @@
 # Third-party libraries
+from django.core.paginator import Paginator
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 
 # Local libraries
+from .. import utils
 from ..models import *
-from ..serializers.authorserializer import AuthorSerializer
+from ..serializers.authorserializer import AuthorSerializer, AllAuthorSerializer
 
 author_serializer = AuthorSerializer()
 
@@ -15,7 +19,7 @@ class AuthorAPISerializer(serializers.ModelSerializer):
     def get_author_data(self, author):
         author_data = {
             "type": "author",
-            "id": author.url,
+            "id": author.id,
             "url": author.url,
             "host": author.host,
             "displayName": f"{author.name}",
@@ -29,43 +33,46 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         author_data = {}
         try:
             author = author_serializer.get_author_by_id(author_id)
-            author_data = self.get_author_data(author)
-        except ValueError:
+        except ValidationError:
             return None
-        return author_data
-    
-    def get_all_authors(self):
+        
+        serializer = AuthorSerializer(author)
 
+        return serializer.data
+    
+    def get_all_authors(self, page=None, size=None):
         authors = Author.objects.all()
         
-        result_dict = {}
-        result_dict["type"] = "authors"
+        if page and size:
+            paginator = Paginator(authors, size)
+            authors = paginator.get_page(page)
 
-        authors_list = []
+        authors_serializer = AuthorSerializer(authors, many=True)
+        
+        serializer = AllAuthorSerializer(data={
+                        'type': 'authors',
+                        'page': page,
+                        'size': size,
+                        'items': authors_serializer.data
+                    })
 
-        for author in authors:
-            curr_author_data = self.get_author_data(author)
-            authors_list.append(curr_author_data)
-
-        result_dict["items"] = authors_list
-
-        return result_dict
+        if serializer.is_valid():
+            return serializer.data, 1
+        else:
+            return serializer.errors, 0
 
     def update_author(self, author_id, request_data):
-        author = None
-        updatable_fields = ["name", "username", "email", "avatar"]
         try:
             author = author_serializer.get_author_by_id(author_id=author_id)
-        except ValueError:
+        except ValidationError:
             # TODO : If author does not exist create new author. Will need to create new User object too !!!
             # author = author_serializer.create_author()
-            return None
+            return None, None
+        
+        serializer = AuthorSerializer(author, request_data)
 
-        defaults = {}
-        for key in request_data:
-            if key in updatable_fields:
-                defaults[key] = request_data[key]
-
-        Author.objects.filter(pk=author_id).update(**defaults)
-
-        return self.get_single_author(author_id)
+        if serializer.is_valid():
+            serializer.update(author, serializer.validated_data)
+            return serializer.data, 1
+        else:
+            return serializer.errors, 0
