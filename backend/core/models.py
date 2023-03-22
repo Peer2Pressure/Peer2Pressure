@@ -161,7 +161,7 @@ class CommentLike(AbstractModel):
 
 class Inbox(AbstractModel):
     type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="post")
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, default=None)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, default=None, related_name="inbox")
+    c_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    c_object = GenericForeignKey('c_type', 'object_id')
