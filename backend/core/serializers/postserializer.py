@@ -11,15 +11,37 @@ from varname import nameof
 from .. models import *
 from ..serializers.authorserializer import AuthorSerializer
 from django.core.files.base import ContentFile
-        
+
 
 author_serializer = AuthorSerializer()
 
 class PostSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(required=False, max_length=10, default="post", read_only=True)
+    title = serializers.CharField(required=False, max_length=300)
+    id = serializers.URLField(required=False)
+    source = serializers.URLField(required=False, allow_blank=True)
+    origin = serializers.URLField(required=False, allow_blank=True)
+    description = serializers.CharField(required=False, allow_blank=True)
+    contentType = serializers.CharField(source="content_type", required=False)
+    content = serializers.CharField(required=False)
+    # image = serializers.ImageField(required=False, default="")
+    author = AuthorSerializer(required=False)
+    # categories = serializers.ListField(child=serializers.CharField(max_length=100), required=False)
+    comments = serializers.URLField(required=False, allow_blank=True)
+    # commentSrc = 
+    published = serializers.DateTimeField(source="created_at", required=False)
+    visibility = serializers.CharField(max_length=10, default="PUBLIC", required=False)
+    unlisted = serializers.BooleanField(default=False, required=False)
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ["type", "title", "id", "source", "origin", "description", "contentType",
+                "content", "author", "comments", "published", "visibility", "unlisted" ]
+        # fields = "__all__"
         extra_kwargs = {'image': {'required': False, 'allow_null': True}}
+
+    def create(self, validated_data):
+        return Post.objects.create(**validated_data)
+
 
     def create_post(self, author_id, post_id=None, title=None, content=None, image=None, is_private=False):
         try:
@@ -98,3 +120,26 @@ class PostSerializer(serializers.ModelSerializer):
 
         return post
 
+    def delete_post(self, author_id, post_id):
+        try:
+            post = self.get_author_post(author_id, post_id)
+        except ValidationError:
+            return None
+
+        post.delete()
+
+        return post
+
+class AllPostSerializer(serializers.Serializer):
+    type = serializers.CharField(default="posts" , max_length=10, read_only=True, required=False)
+    page = serializers.IntegerField(allow_null=True, required=False)
+    size = serializers.IntegerField(allow_null=True, required=False)
+    items = PostSerializer(many=True)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['page'] is None:
+            data.pop('page')
+        if data['size'] is None:
+            data.pop('size')
+        return data

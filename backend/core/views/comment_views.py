@@ -30,6 +30,7 @@ comment_api_serializer = CommentAPISerializer()
 class CommentAPI(GenericAPIView):
     serializer_class = CommentSerializer
 
+    @swagger_auto_schema(tags=['Comments'])
     def get(self, request, author_id, post_id):
         try:
             page, size = utils.get_pagination_variables(request.query_params)
@@ -41,6 +42,7 @@ class CommentAPI(GenericAPIView):
             return Response(comments)
         return Response(data={"msg": "Post does not exist."}, status=status.HTTP_404_NOT_FOUND)
     
+    @swagger_auto_schema(tags=['Comments'])
     def post(self, request, author_id, post_id):
         new_comment = comment_api_serializer.add_new_comment(author_id, post_id, request.data)
         if new_comment is None:
