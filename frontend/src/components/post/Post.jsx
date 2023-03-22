@@ -15,9 +15,28 @@ const options = [
   'Delete post',
 ];
 
+
+// TODO: include logic clicking delete post
+
+
+
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
+
+  ({ id,displayName, username, text, image, avatar, likes, comments }, ref) => {
+
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+
   ({ id, displayName, username, text, image, avatar, likes, comments }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
@@ -43,6 +62,7 @@ const Post = forwardRef(
       setCommentText("");
     };
 
+
     return (
       <div className="post" ref={ref}>
         <div className="post__avatar">
@@ -50,6 +70,50 @@ const Post = forwardRef(
         </div>
         <div className="post__body">
           <div className="post__header">
+
+            <div className="post_headerTop">
+              <div className="post__headerText">
+                <h3>
+                  {displayName}{" "}
+                  <span className="post__headerSpecial">
+                  @{username}
+                  </span>
+                </h3>
+              </div>
+              <span className="post_headerMenu">
+                    <IconButton
+                      aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+                      id="long-button"
+                      aria-controls={open ? 'long-menu' : undefined}
+                      aria-expanded={open ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleClick}
+                      >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="long-menu"
+                      MenuListProps={{
+                        'aria-labelledby': 'long-button',
+                      }}
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      PaperProps={{
+                        style: {
+                          // maxHeight: ITEM_HEIGHT * 4.5,
+                          width: '20ch',
+                        },
+                      }}
+                    >
+                      {options.map((option) => (
+                        <MenuItem key={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+              </span>
+
             <div className="post__headerText">
               <h3>
                 {displayName}{" "}

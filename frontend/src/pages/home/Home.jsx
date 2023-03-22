@@ -4,6 +4,8 @@ import Profile from "../../components/profile/Profile";
 import Stream from "../../components/stream/Stream";
 import Post from "../../components/post/Post";
 
+import Post from "../../components/post/Post";
+
 const Home = () => {
     return (
       // <div>
