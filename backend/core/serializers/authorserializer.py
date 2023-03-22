@@ -1,15 +1,18 @@
-# Local libraries
-from .. models import Author
+
 
 # Third-party libraries
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from varname import nameof
 
+# Local libraries
+from .. models import Author
+# from ..utils import validate_followers_url_path
+
 class AuthorSerializer(serializers.ModelSerializer):
     type = serializers.CharField(default="author" , max_length=10, read_only=True)
     host = serializers.URLField(required=False)
-    id = serializers.URLField(required=False)
+    id = serializers.URLField(required=True)
     url = serializers.URLField(required=False)
     displayName = serializers.CharField(source="name", max_length=100, required=False)
     # username = serializers.CharField(max_length=300, required=False)
@@ -89,6 +92,13 @@ class AuthorSerializer(serializers.ModelSerializer):
             raise ValidationError("Author does not exist")
         
         return author_obj
+    
+    def author_exists(self, author_id):
+        try:
+            author = self.get_author_by_id(author_id)
+        except ValidationError:
+            return False
+        return True
 
 class AllAuthorSerializer(serializers.Serializer):
     type = serializers.CharField(default="authors" , max_length=10, read_only=True, required=False)

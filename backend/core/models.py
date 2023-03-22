@@ -8,10 +8,12 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-
+from django.contrib.auth.models import AnonymousUser
 
 MAX_CHARFIELD_LENGTH = 300
 HOST = "http://127.0.0.1:8000"
+
+# default_user = User.objects.get(username="deafult_user")
 
 class AbstractModel(models.Model):
     class Meta:
@@ -32,7 +34,7 @@ class AbstractModel(models.Model):
 
 class Author(AbstractModel):
     id = models.URLField()
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)
     host = models.URLField(default=HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
@@ -63,6 +65,7 @@ class Author(AbstractModel):
 class Follower(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
+    summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -74,13 +77,13 @@ class Follower(AbstractModel):
         return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
     
     def __str__(self):
-        return self.from_author.username + " : " + self.to_author.username
+        return str(self.m_id)
 
 
 class Post(AbstractModel):
-    id = models.URLField()
+    id = models.URLField(default="")
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
-    url = models.URLField()
+    url = models.URLField(default="")
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     image = models.ImageField(upload_to='post_images', blank=True, null=True)
     content = models.TextField(blank=True, default="")

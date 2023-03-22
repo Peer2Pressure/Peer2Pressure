@@ -1,11 +1,14 @@
+import json
+import pprint
 # Third-party libraries
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 # Local libraries
 from ..models import *
 from .author_api_serializer import AuthorAPISerializer
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.followerserializer import FollowerSerializer
+from ..serializers.followerserializer import FollowerSerializer, AllFollowerSerializer
 
 # Model Serializers 
 author_serializer = AuthorSerializer()
@@ -14,6 +17,8 @@ follower_serializer = FollowerSerializer()
 # API serializers
 author_api_serializer = AuthorAPISerializer()
 
+
+pp = pprint.PrettyPrinter()
 
 class FollowerAPISerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,35 +35,68 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         followers = None
         try:
             followers = author_serializer.get_author_by_id(author_id).follower.filter(approved=True)
-        except ValueError:
-            return None
+        except ValidationError as e:
+            return {"msg": str(e)}, 404
         
         followers = [follower.from_author for follower in followers]
 
-        result_dict = {}
-        result_dict["type"] = "followers"
+        post_serializer = AuthorSerializer(followers, many=True)
 
-        followers_list = []
+        serializer = AllFollowerSerializer(data={
+                        'items': post_serializer.data
+                    })
 
-        for follower in followers:
-            follower_serialized = author_api_serializer.get_author_data(follower)
-            followers_list.append(follower_serialized)
-
-        result_dict["items"] = followers_list
-
-        return result_dict
+        if serializer.is_valid():
+            return serializer.data, 200
+        else:
+            return serializer.errors, 400
 
     def get_single_follower(self, author_id, foreign_author_id):
-        relation = None
         try:
-            relation = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
-        except ValueError:
+            follower = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        except ValidationError:
             return None
         
-        follower = relation.from_author
+        follower = follower.from_author
         follower_serialized = author_api_serializer.get_author_data(follower)
 
         return follower_serialized
+
+    def create_follow_request(self, author_id, foreign_author_id, request_data):
+        if not author_serializer.author_exists(author_id):
+            return {"msg": "Author does not exist"}, 404
+            
+        if follower_serializer.follower_exists(author_id, foreign_author_id):
+            return {"msg": f"Unable to follow. Follow relation already exists"}, 400
+        
+        # If request is from a different server, validate and create
+        # an author profile for foreign author.
+        if not author_serializer.author_exists(foreign_author_id):
+            serializer = AuthorSerializer(data=request_data["actor"])            
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
+                validated_data["m_id"] = foreign_author_id
+                serializer.save()
+            else:
+                return serializer.errors, 400
+
+        author = author_serializer.get_author_by_id(author_id)
+        foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+
+        serializer = FollowerSerializer(data=request_data)
+
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            validated_data["from_author"] = foreign_author
+            validated_data["to_author"] = author
+            serializer.save()
+        else:
+            return serializer.errors, 400
+                
+        return {"msg": f"Follow request has been send to {author_id}"}, 200
+
+
+
 
     def remove_follower(self, author_id, foreign_author_id):
         relation = None

@@ -43,7 +43,6 @@ class SinglePostAPI(GenericAPIView):
         #     pass
         # else:
         #     pass
-
         post, code = post_api_serializer.add_new_post(author_id, request.data, post_id=post_id)
         if 201:
             return Response(post, status=status.HTTP_201_CREATED)
@@ -92,7 +91,6 @@ class PostAPI(GenericAPIView):
 
         posts, code = post_api_serializer.get_all_author_posts(author_id, page, size)
 
-        print(posts, code)
         if code == 200:
             return Response(posts, status=status.HTTP_200_OK)
         elif code == 400:
@@ -104,6 +102,7 @@ class PostAPI(GenericAPIView):
             tags=['Posts'],
             operation_description='Create a new post.',)
     def post(self, request, author_id):
+
         post, code = post_api_serializer.add_new_post(author_id, request.data)
         if code == 201:
             return Response(post, status=status.HTTP_201_CREATED)

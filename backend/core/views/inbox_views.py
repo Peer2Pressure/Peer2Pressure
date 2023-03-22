@@ -52,12 +52,14 @@ class InboxAPI(GenericAPIView):
         #     pass
         # else:
         #     pass
+        print("aa111", type(request.data))
         response = None
         code = None
         if "type" in list(request.data.keys()):
             if request.data["type"].lower() == "post":
-                response, code = inbox_api_serializer.save_post(author_id, request.data)
-
+                response, code = inbox_api_serializer.handle_post(author_id, request.data)
+            elif request.data["type"].lower() == "follow":
+                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data)
         if code == 200:
             return Response(response, status=status.HTTP_200_OK)
         elif code == 400:
