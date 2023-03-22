@@ -4,14 +4,13 @@
         margin:0;
         padding: 0;
         width: 100%;
-        background-image: url(https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?cs=srgb&dl=pexels-codioful-%28formerly-gradienta%29-7130560.jpg&fm=jpg); 
-        background-size: cover;
+        /* background-image: url(https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?cs=srgb&dl=pexels-codioful-%28formerly-gradienta%29-7130560.jpg&fm=jpg); 
+        background-size: cover; */
         /* opacity: 20%;*/
+        background: linear-gradient(145deg, #f9fdff, #d2d4d7);
+        box-shadow:  25px 25px 49px #c6c9cb,
+             -25px -25px 49px #ffffff;
     }
-
-    /* .homeContainer::before {
-        background-color: rgba(0, 0, 0, 0.1);
-    } */
 
     .navBarContainer {
         display: flex;
