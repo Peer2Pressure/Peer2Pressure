@@ -2,12 +2,15 @@ import { Avatar, Button, TextField } from "@mui/material";
 import "./profileSetting.css";
 import useFetch from "../../useFetch";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 // import useGetAuthorID from "../../useGetAuthorID.js";
 import useGetAuthorData from "../../useGetAuthorData";
 
 export default function ProfileSetting() {
+    
+    // grabbing data from /get_author_id/ and /authors/author_id APIs
+    const {data, loading1, error1, authorID} = useGetAuthorData();
 
     // grabbing data from /get_author_id/ and /authors/author_id APIs
     const {data, loading1, error1, authorID} = useGetAuthorData();
@@ -43,8 +46,10 @@ export default function ProfileSetting() {
         if (userData.avatar) {
             formData.append('avatar', userData.avatar, userData.avatar.name);
         }
-        
     
+        console.log("usernameeeee: "+userData);
+        // console.log("/authors/" + authorID + '/');
+        
         axios
         .post(
             "/authors/"+ authorID + "/", 
