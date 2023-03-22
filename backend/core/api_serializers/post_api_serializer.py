@@ -1,4 +1,5 @@
 # Third-party libraries
+from django.core.paginator import Paginator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -6,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.postserializer import PostSerializer
+from ..serializers.postserializer import PostSerializer, AllPostSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.comment_api_serializer import CommentAPISerializer
 
@@ -45,79 +46,113 @@ class PostAPISerializer(serializers.ModelSerializer):
             "published": post.created_at,
             "visibility": "FRIENDS"if post.is_private else "PUBLIC", 
             # "image": f"{author_data['host']}{post.image.url}" if post.image else None,
-            
             }
         
         return post_data
 
     def add_new_post(self, author_id, request_data, post_id=None):
-        keys = list(request_data.keys())
-        if "image" not in keys and "content" not in keys:
-            print("Require either content or image for the post")
-            return None
+        if not author_serializer.author_exists(author_id):
+            return {"msg": "Author does not exist."}, 404
 
-        title = request_data["title"] if "title" in keys else None
-        content = request_data["content"] if "content" in keys else None
-        image = request_data["image"] if "image" in keys else None
-        is_private = request_data["is_private"] if "is_private" in keys else False
+        author = author_serializer.get_author_by_id(author_id)    
+        
+        valid_content_types = ["text/markdown", "text/plain", "application/base64"]
+        valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
-        new_post_id = post_serializer.create_post(post_id=post_id, author_id=author_id, title=title, content=content, image=image, is_private=is_private)
+        serializer = PostSerializer(data=request_data)
 
-        return self.get_single_post(author_id, new_post_id)
+        errors = {}
+        if serializer.is_valid():
+            validated_post_data = serializer.validated_data
+
+            if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
+                errors["contentType"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
+            
+            if validated_post_data["content_type"] not in valid_image_content_types:
+                if validated_post_data["content"] == "":
+                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+            
+            if len(errors) == 0:
+                validated_post_data["author"] = author
+                if post_id:
+                    validated_post_data["m_id"] = post_id
+                post = serializer.create(validated_post_data)
+                post.save()
+                return PostSerializer(post).data, 201
+            return errors, 0
+        else:
+            return post_serializer.errors, 400
+
     
     def get_single_post(self, author_id, post_id):
         # Get post by author_id and post_id
         try:
             post = post_serializer.get_author_post(author_id, post_id)
-        except ValueError:
+        except ValidationError:
             return None
 
-        post_data = self.get_post_data(post)
-        return post_data
+        serializer = PostSerializer(post)
+
+        return serializer.data
 
     def get_all_author_posts(self, author_id, page=None, size=None):
-        author = None
         try:
             author = author_serializer.get_author_by_id(author_id)
-        except ValueError:
-            return None
+        except ValidationError as e:
+            return {"msg": str(e)}, 404
         
         posts = author.post.all()
 
-        result_dict = {}
-        result_dict["type"] = "posts"
-
-        posts_list = []
-
-        for post in posts:
-            curr_post_data = self.get_post_data(post)
-            posts_list.append(curr_post_data)
-
         if page and size:
-            paginated_posts = utils.paginate_list(posts_list, page, size)
-            
-            result_dict["page"] = page
-            result_dict["size"] = size
-            result_dict["items"] = paginated_posts
+            paginator = Paginator(posts, size)
+            posts = paginator.get_page(page)
+
+        post_serializer = PostSerializer(posts, many=True)
+
+        serializer = AllPostSerializer(data={
+                        'type': 'posts',
+                        'page': page,
+                        'size': size,
+                        'items': post_serializer.data
+                    })
+
+        if serializer.is_valid():
+            return serializer.data, 200
         else:
-            result_dict["items"] = posts_list
+            return serializer.errors, 400
 
-        return result_dict
-
-    # TODO: needs update
     def update_author_post(self, author_id, post_id, request_data):
-        defaults = {}
-        for key in request_data:
-            if key == "title":
-                defaults["title"] = request_data[key]
-            elif key == "content":
-                defaults["content"] = request_data[key]
-            elif key == "visibility":
-                defaults["is_private"] = request_data[key]
+        try:
+            post = post_serializer.get_author_post(author_id, post_id)
+        except ValidationError as e:
+            return {"msg": str(e)}, 404
+        
+        valid_content_types = ["text/markdown", "text/plain", "application/base64"]
+        valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
-        updated_post = post_serializer.update_post(author_id=author_id, post_id=post_id, defaults=defaults)
+        serializer = PostSerializer(post, request_data)
 
-        return self.get_post_data(updated_post)
+        errors = {}
+
+        if serializer.is_valid():
+            validated_post_data = serializer.validated_data
+
+            if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
+                errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
+            
+            if validated_post_data["content_type"] not in valid_image_content_types:
+                if validated_post_data["content"] == "":
+                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+            
+            if len(errors) == 0:
+                serializer.save()
+                post = post_serializer.get_author_post(author_id, post_id)
+                return PostSerializer(post).data, 201
+            
+            return errors, 400
+        else:
+            print("sadsadas")
+            return post_serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):
         deleted_post = post_serializer.delete_post(author_id, post_id)
