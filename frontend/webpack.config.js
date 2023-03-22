@@ -9,7 +9,7 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api': {
+      '/': {
         target: 'http://localhost:8000', // change this to your backend server URL
         pathRewrite: {'^/api' : ''}, // remove the '/api' path prefix from the URL
         secure: false,
@@ -17,5 +17,10 @@ module.exports = {
     },
     port: 8000, // change this to the port you want to run your dev server on
   },
+  // devServer: {
+  //   proxy: {
+  //     '/get_author_id/': 'http://localhost:8000'
+  //   }
+  // }
   // add your other webpack configurations here
 };

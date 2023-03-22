@@ -2,30 +2,30 @@ import { Avatar, Button, TextField } from "@mui/material";
 import "./profileSetting.css";
 import useFetch from "../../useFetch";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-
-
-
+// import useGetAuthorID from "../../useGetAuthorID.js";
+import useGetAuthorData from "../../useGetAuthorData";
 
 export default function ProfileSetting() {
+    
+    // grabbing data from /get_author_id/ and /authors/author_id APIs
+    const {data, loading1, error1, authorID} = useGetAuthorData();
 
-    const {data, loading, error} = useFetch("http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/");
-    if (data) console.log(data);
+    // grabbing data from /get_author_id/ and /authors/author_id APIs
+    const {data, loading1, error1, authorID} = useGetAuthorData();
+
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         username: '',
         title: '',
-        first_name: '',
-        last_name: '',
+        name: '',
         email: '',
         password: '',
         avatar: null
     });
-    if (loading) return <h1>Loading...</h1>;
-    if (error) console.log(error);
-
-
+    // if (loading1) return <h1>Loading...</h1>;
+    // if (error1) console.log(error1);
     const handleFileChange = (event) => {
         setUserData({
             ...userData,
@@ -36,22 +36,23 @@ export default function ProfileSetting() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
 
         const formData = new FormData();
         formData.append('username', userData.username || data?.username);
         formData.append('email', userData.email || data?.email);
         formData.append('password', userData.password || data?.password);
-        formData.append('first_name', userData.first_name || data?.first_name);
-        formData.append('last_name', userData.last_name || data?.last_name);
+        formData.append('name', userData.name || data?.name);
         if (userData.avatar) {
             formData.append('avatar', userData.avatar, userData.avatar.name);
         }
     
         console.log("usernameeeee: "+userData);
-    
+        // console.log("/authors/" + authorID + '/');
+        
         axios
         .post(
-            "http://localhost:8000/authors/30061bd9-0e74-4cbd-a436-105d5712e28b/", 
+            "/authors/"+ authorID + "/", 
             formData,
             {
                 headers: {
@@ -74,17 +75,18 @@ export default function ProfileSetting() {
     // };
 
     const handleChange2 = (username, value) => {
-        setUserData({
-            ...userData,
-            [username] : value
-        });
+        if (value !== "") {
+            setUserData({
+                ...userData,
+                [username] : value
+            });
+        };
     };
 
-    // console.log("forData: "+formData);
-    console.log("username: "+userData.username);
-    console.log("email: " + userData.email);    
-    console.log('first_namne: '+userData.first_name);
-    console.log('last_name: '+userData.last_name);
+    // // console.log("forData: "+formData);
+    // console.log("username: "+userData.username);
+    // console.log("email: " + userData.email);    
+    // console.log('name: '+userData.name);
 
     return (
         <form onSubmit={handleSubmit}>
@@ -104,8 +106,7 @@ export default function ProfileSetting() {
                     </div>
                     <div className="fullNameBox">
                         <h2 className="fieldTitle">Full Name</h2>
-                        <TextField label="First Name" placeholder={data?.first_name} value={userData.first_name} onChange={(e) => handleChange2("first_name", e.target.value)} />
-                        <TextField label="Last Name" placeholder={data?.last_name} value={userData.last_name} onChange={(e) => handleChange2("last_name", e.target.value)}/>
+                        <TextField label="Name" placeholder={data?.name} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
                         {/* <TextField label="First Name" placeholder={data??.displayName} />
                         <TextField label="Last Name" placeholder={data??.type} /> */}
                     </div>

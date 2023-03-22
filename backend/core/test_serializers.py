@@ -2,9 +2,9 @@ from .models import *
 from django.test import TestCase
 from .serializers.authorserializer import AuthorSerializer
 from .serializers.postserializer import PostSerializer
-from .serializers.relationserializer import RelationSerializer
+from .serializers.followerserializer import FollowerSerializer
 from .serializers.commentserializer import CommentSerializer
-from .serializers.likeserializer import LikeSerializer
+from .serializers.postlikeserializer import PostLikeSerializer
 from django.contrib.auth.models import User, auth
 
 class AuthorSerializerTest(TestCase):
@@ -14,11 +14,10 @@ class AuthorSerializerTest(TestCase):
     def test_author_create(self):
         user = User.objects.create_user(username="authorusername", email="author@gamil.com", password="authorpassword")
         user.save()
-        author_id = self.serializer.create_author("authorusername", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=user)
+        author_id = self.serializer.create_author("authorusername", "author name", "author@gamil.com", "authorpassword", user=user)
         created_author = Author.objects.get(id=author_id)
         self.assertTrue(created_author.username == "authorusername")
-        self.assertTrue(created_author.first_name == "author firstname")
-        self.assertTrue(created_author.last_name == "author lastname")
+        self.assertTrue(created_author.name == "author name")
         self.assertTrue(created_author.email == "author@gamil.com")
         self.assertTrue(created_author.password == "authorpassword")
         
@@ -41,7 +40,7 @@ class AuthorSerializerTest(TestCase):
 
         user.delete()
 
-class RelationSerializerTest(TestCase):
+class FollowerSerializerTest(TestCase):
     def setUp(self) -> None:
         self.authorserializer = AuthorSerializer()
         user1 = User.objects.create_user(username="authorusername1", email="author@gamil.com", password="authorpassword")
@@ -50,11 +49,15 @@ class RelationSerializerTest(TestCase):
         user2 = User.objects.create_user(username="authorusername2", email="author@gamil.com", password="authorpassword")
         user2.save()
         self.author_id2 = self.authorserializer.create_author("author username2", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=user2)        
-        self.serializer = RelationSerializer()
+        self.serializer = FollowerSerializer()
+
+    def tearDown(self) -> None:
+        self.user_1.delete()
+        self.user_2.delete()
 
     def test_relation_create(self):
         relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
-        # relation_obj = Relation.objects.get(id = relation_id)
+        # relation_obj = Follower.objects.get(id = relation_id)
         created_relation = self.serializer.get_relation_by_ids(self.author_id1, self.author_id2)
         self.assertTrue(relation_id == created_relation.id)
         self.assertTrue(not created_relation.from_author_request)
