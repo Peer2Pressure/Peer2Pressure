@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "react-router-dom": "^6.8.1"
+    "js-cookie": "^3.0.1",
+    "react-flip-move": "^3.0.5",
+    "react-router-dom": "^6.8.2"
   }
+  
 }

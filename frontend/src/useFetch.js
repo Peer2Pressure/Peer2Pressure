@@ -12,7 +12,7 @@ export default function useFetch(url) {
     const [loading, setLoading] = useState(false);      // boolean; set to false initially becuase nothing is loading yet till we call something to load 
     const [error, setError] = useState(null);           // 
 
-  useEffect(() => {                                  // insert url to get in touch with the api
+  useEffect(() => {                                     // insert url to get in touch with the api
     setLoading(true);                                   // set loading to true after a call to an api is made 
     axios
     .get(url)
@@ -25,6 +25,6 @@ export default function useFetch(url) {
     });
   }, [url]);                                            // useEffect need dependency array which will have url 
 
-
+  // console.log(data);
   return {data, loading, error};                        // return an object containing the three      
 }

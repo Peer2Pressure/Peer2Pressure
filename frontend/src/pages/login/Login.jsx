@@ -1,7 +1,7 @@
 import "./login.css"
 import { Link } from "react-router-dom"
 
-const Login = () => {
+export default function Login() {
   return (
     <div className="signin">
         <div className="signinCard">
@@ -28,4 +28,4 @@ const Login = () => {
   )
 }
 
-export default Login
+// export default Login

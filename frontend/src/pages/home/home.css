@@ -1,7 +1,29 @@
-.homeContainer {
-    padding: 100px;
-    display: flex;
-    justify-content: space-evenly;
-    column-gap: 250px;
-}
+    .homeContainer {
+        display: flex;
+        flex-direction: column;
+        margin:0;
+        padding: 0;
+        width: 100%;
+        /* background-image: url(https://images.pexels.com/photos/7130560/pexels-photo-7130560.jpeg?cs=srgb&dl=pexels-codioful-%28formerly-gradienta%29-7130560.jpg&fm=jpg); 
+        background-size: cover; */
+        /* opacity: 20%;*/
+        background: linear-gradient(145deg, #f9fdff, #d2d4d7);
+        box-shadow:  25px 25px 49px #c6c9cb,
+             -25px -25px 49px #ffffff;
+    }
+
+    .navBarContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    .bodyContainer {
+        padding-top: 5em;
+        display: flex;
+        justify-content: center;
+        column-gap: 125px;
+        align-items: flex-start;
+    }
 
