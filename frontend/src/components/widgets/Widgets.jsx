@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import './widgets.css';
 
 function Widgets() {
@@ -8,6 +9,9 @@ function Widgets() {
   const [searchResults, setSearchResults] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  //for testing purposes, we will set the current user to 1
+  const [currentUserId, setCurrentUserId] = useState(1);
+
 
   useEffect(() => {
     // Fetch all users when the component mounts
@@ -16,11 +20,11 @@ function Widgets() {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('http://localhost:8001/authors/');
+      const response = await fetch('http://localhost:8000/authors/');
       const data = await response.json();
       console.log('fetchAllUsers:', data);
-      if (Array.isArray(data)) {
-        setAllUsers(data);
+      if (Array.isArray(data.items)) {
+        setAllUsers(data.items);
         setIsLoading(false);
       } else {
         console.error('Error fetching users: response data is not an array');
@@ -54,6 +58,22 @@ function Widgets() {
     filterUsers(searchTerm);
   };
 
+  const fetchFollows = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/follows/${userId}/`, {
+        // headers: {
+        //   Authorization: `Token ${accessToken}`,
+        // },
+      });
+      const data = await response.json();
+      console.log('fetchFollows:', data);
+      return data.following;
+    } catch (error) {
+      console.error('Error fetching follows:', error);
+      return false;
+    }
+  };
+  
   return (
     <div className="widgets">
       <form className="widgets__input" onSubmit={handleSubmit}>
@@ -78,9 +98,15 @@ function Widgets() {
             searchResults.map((user) => (
               <div key={user.id} className="userResult">
                 <span>{user.username}</span>
-                <button className="followButton">
-                  <PersonAddIcon />
+                {user.id !== currentUserId && (
+                  <button className="followButton">
+                    {user.followed ? (
+                      <HowToRegIcon/>
+                    ) : (
+                      <PersonAddIcon />
+                    )}
                 </button>
+                )}
               </div>
             ))
           )}
