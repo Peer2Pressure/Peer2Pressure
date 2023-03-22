@@ -2,14 +2,14 @@ body {
   --main-color: #0058A2;
   --main-background: #f8f8f8;
   background-color: #f7f8f9;
-  
+  font-family: "Montserrat";
 }
 
 .app {
   display: flex;
   height: 100vh;
-  max-width: 1300px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 10px;
+  /* padding: 0 10px; */
 }
