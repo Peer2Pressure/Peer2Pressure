@@ -91,7 +91,7 @@ function Widgets() {
       ) : (
         <div className="searchResults">
           {searchTerm === '' ? (
-            <div>Enter a search term to find users.</div>
+            <div></div>
           ) : searchResults.length === 0 ? (
             <div>No results found.</div>
           ) : (

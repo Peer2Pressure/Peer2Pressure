@@ -1,13 +1,16 @@
 .widgets {
-  background-color: #F7F9FA;
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
-  padding: 12px;
+  padding: 20px;
+  border-radius: 20px;  
+  box-shadow:  25px 25px 49px #e2dff0,
+                  -25px -25px 49px #ffffffe8;
 }
 
 .widgets__input {
   display: flex;
   align-items: center;
-  background-color: #FFFFFF;
+  background-color: rgba(222, 222, 222, 0.5);
   padding: 8px 12px;
   border-radius: 24px;
   margin-bottom: 12px;

@@ -28,8 +28,12 @@ from ..api_serializers.inbox_api_serializer import InboxAPISerializer
 inbox_api_serializer = InboxAPISerializer()
 
 class InboxAPI(GenericAPIView):
-    serializer_class = PostSerializer
+    # serializer_class = PostSerializer
 
+    @swagger_auto_schema(
+        tags=["Inbox"],
+        operation_description="Get a list of posts from the inbox.",
+    )
     def get(self, request, author_id):
         try:
             page, size = utils.get_pagination_variables(request.query_params)
@@ -49,7 +53,7 @@ class InboxAPI(GenericAPIView):
     # TODO: Only if user is authenticated
     @swagger_auto_schema(
         tags=["Inbox"],
-        operation_description="Send an object to an author's obj",
+        operation_description="Send an object to an author's obj.",
     )
     def post(self, request, author_id):
         # if request.user.is_authenticated:
