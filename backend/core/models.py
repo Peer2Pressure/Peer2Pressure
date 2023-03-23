@@ -59,8 +59,8 @@ class Author(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            self.id = f"{HOST}/authors/{self.m_id}"
-            self.url = f"{HOST}/authors/{self.m_id}"
+            self.id = f"{BASE_HOST}/authors/{self.m_id}"
+            self.url = f"{BASE_HOST}/authors/{self.m_id}"
         super().save(*args, **kwargs)
 
 
