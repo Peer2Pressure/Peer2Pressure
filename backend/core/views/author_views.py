@@ -45,7 +45,7 @@ class CurrentAuthorID(GenericAPIView):
         )
     def get(self, request):
         print("USER:   ",request.user)
-        author_id = request.user.author_profile.id
+        author_id = request.user.author_profile.m_id
         return Response({'author_id': author_id})
         
 
