@@ -1,12 +1,16 @@
-
 .post {
   display: flex;
   align-items: flex-start;
   border-bottom: 1px solid var(--main-background);
   padding-bottom: 10px;
-
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;  
+  box-shadow:  25px 25px 49px #dde3ede4,
+                /* 25px 25px 49px #dde3ede4, */
+                -25px -25px 49px #ffffff;
+    
 }
+
 
 .post_headerTop {
   /* border: 1px solid green; */
@@ -67,14 +71,7 @@
   padding: 20px;
 }
 
-  .post {
-    display: flex;
-    align-items: flex-start;
-    border-bottom: 1px solid var(--main-background);
-    padding-bottom: 10px;
-
-    background-color: white;
-  }
+  
 
   .post_headerTop {
     /* border: 1px solid green; */
@@ -84,15 +81,6 @@
     justify-content: space-between;
   }
 
-  .post__body {
-    flex: 1;
-    padding: 10px;
-  }
-
-  .post__body > img {
-    border-radius: 20px;
-    max-width: 100%;
-  }
 
   .post__footer {
     display: flex;

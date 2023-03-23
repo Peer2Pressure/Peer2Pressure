@@ -56,48 +56,17 @@ const Share = () => {
     return (
         <div className="share">
             <div className="shareCard">
-                <div className="top">
-                    <div className="shareText">
-                        <CreateOutlinedIcon 
-                            fontSize="small" 
-                            color="primary"
-                        /> <b>Create a Post</b>
-                    </div>
-                    <div className="shareImage">
-                        <input 
-                            type="file"
-                            id="file" 
-                            style={{display:"none"}} 
-                            onChange={handleFile}
-                        />
-                        <label htmlFor="file">
-                            <div className="uploadImg">
-                                <PhotoSizeSelectActualOutlinedIcon 
-                                    fontSize="small"     
-                                    color="primary"
-                                /> <b>Upload a Photo</b>
-                                <img src = {Image} alt="" /> 
-                            </div>
-                        </label>
-                    </div>
-                    <div className="isPrivateSwitch">
-                        <Switch
-                            private={isPrivate}
-                            onChange={(event) => setIsPrivate(event.target.checked)}
-                            color="primary"
-                        />
-                        <b>Private</b>  
-                    </div>
-                </div>
+                
 
-                <div className="bottom">
+                <div className="top">
                     <div className="textBox">
                         <textarea 
                             name="text" 
                             placeholder={"Write something..."}
                             value={content}
                             onChange={handleContentChange}
-                        />   
+                        />
+                          
                     </div>
                        
                     <div className="imgPreview" role="test">
@@ -114,9 +83,48 @@ const Share = () => {
                     </div>
 
                 </div>
-                <div className="postButtonBox">
-                    <button className="postButton" role="button" onClick={sendPost}>Post</button>
+                <div className="bottom">
+                    {/* <div className="shareText">
+                        <CreateOutlinedIcon 
+                            fontSize="small" 
+                            color="primary"
+                        /> <b>Create a Post</b>
+                    </div> */}
+                    <div className="postOptionsContainer">
+                        <div className="shareImage">
+                            <input 
+                                type="file"
+                                id="file" 
+                                style={{display:"none"}} 
+                                onChange={handleFile}
+                            />
+                            <label htmlFor="file">
+                                <div className="uploadImg">
+                                    <PhotoSizeSelectActualOutlinedIcon 
+                                        fontSize="small"     
+                                        color="primary"
+                                    /> <b> Upload a Photo</b>
+                                    <img src = {Image} alt="" /> 
+                                </div>
+                            </label>
+                        </div>
+                        <div className="isPrivateSwitch">
+                            <Switch
+                                private={isPrivate}
+                                onChange={(event) => setIsPrivate(event.target.checked)}
+                                color="primary"
+                            />
+                            <b>Private</b>  
+                        </div>
+                    </div>
+                    <div className="postButtonContainer">
+                        <div className="postButtonBox">
+                            <button className="postButton" role="button" onClick={sendPost}>Post</button>
+                        </div>
+                    </div>
+                    
                 </div>
+                
             </div>
         </div>
     );

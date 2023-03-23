@@ -18,9 +18,9 @@ const Home = () => {
 
       <div className="homeContainer">
 
-        <div className="navBarContainer">
+        {/* <div className="navBarContainer">
           <NavBar/>
-        </div>
+        </div> */}
         <div className="bodyContainer">
           <Profile/>
           <div className="streamContainer">

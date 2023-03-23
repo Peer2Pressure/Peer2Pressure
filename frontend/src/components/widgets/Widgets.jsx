@@ -22,7 +22,7 @@ function Widgets() {
     try {
       const response = await fetch('http://localhost:8000/authors/');
       const data = await response.json();
-      console.log('fetchAllUsers:', data.items);
+      console.log('fetchAllUsers:', data);
       if (Array.isArray(data.items)) {
         setAllUsers(data.items);
         setIsLoading(false);
@@ -60,7 +60,7 @@ function Widgets() {
 
   const fetchFollows = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:8000/${userId}/`, {
+      const response = await fetch(`http://localhost:8000/follows/${userId}/`, {
         // headers: {
         //   Authorization: `Token ${accessToken}`,
         // },
@@ -91,7 +91,7 @@ function Widgets() {
       ) : (
         <div className="searchResults">
           {searchTerm === '' ? (
-            <div>Enter a search term to find users.</div>
+            <div></div>
           ) : searchResults.length === 0 ? (
             <div>No results found.</div>
           ) : (
