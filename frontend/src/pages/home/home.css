@@ -11,10 +11,6 @@
         background-size: cover;
     }
 
-    /* .homeContainer::before {
-        background-color: rgba(0, 0, 0, 0.1);
-    } */
-
     .navBarContainer {
         display: flex;
         justify-content: center;
