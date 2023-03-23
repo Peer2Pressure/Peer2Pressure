@@ -92,12 +92,12 @@ class InboxAPISerializer(serializers.ModelSerializer):
             method = "POST"
         except ValidationError:
             method = "PUT"
-
+        print(method)
         url = f"http://localhost:8000/authors/{author_id}/posts/{post_id}/"
         headers = {"Content-Type": "application/json"}
         res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
-        if res.status_code in [200, 201]:
+        if res.status_code in [200, 201] and method == "PUT":
             # create new inbox entry
             post = post_serializer.get_author_post(author_id, post_id)
             inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
