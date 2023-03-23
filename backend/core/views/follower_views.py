@@ -26,7 +26,7 @@ follower_serializer = FollowerSerializer()
 follower_api_serializer = FollowerAPISerializer()
 
 class FollowerListAPI(GenericAPIView):
-    serializer_class = AuthorSerializer
+    serializer_class = AllFollowerSerializer
 
     @swagger_auto_schema(
         tags=["Followers"],
@@ -43,7 +43,7 @@ class FollowerListAPI(GenericAPIView):
 
 
 class FollowerAPI(GenericAPIView):
-    serializer_class = AuthorSerializer
+    serializer_class = FollowerSerializer
 
     @swagger_auto_schema(tags=['Followers'])
     def get(self, request, author_id, foreign_author_id):
