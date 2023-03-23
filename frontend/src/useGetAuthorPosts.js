@@ -23,8 +23,7 @@ function usePostAuthorPosts() {
         setError(error);
       };
     };
-    console.log("author ID: " + authorID);
-    console.log("hEYLO :","/authors/" + authorID + "/posts/");
+ 
     getPosts();
   },[]);
   return {posts, error};
