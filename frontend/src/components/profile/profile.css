@@ -20,6 +20,10 @@
     
 }
 
+.profileBox > Avatar {
+    padding-bottom: 1em;
+}
+
 .profileImage {
     width: 50%;
     border-radius: 100%;

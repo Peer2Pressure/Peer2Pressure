@@ -40,8 +40,7 @@ function Widgets() {
     // Filter users based on the search term
     console.log('allUsers:', allUsers);
     if (allUsers) {
-      const filteredUsers = allUsers.filter((user) => {     
-        console.log('user.username:', user); 
+      const filteredUsers = allUsers.filter((user) => {      
         return user.displayName.toLowerCase().includes(query.toLowerCase());
       });
       console.log('Search term:', query);
