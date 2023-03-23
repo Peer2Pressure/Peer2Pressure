@@ -19,11 +19,10 @@ const Home = () => {
           <NavBar/>
         </div> */}
         <div className="bodyContainer">
-          <Profile/>
+          {/* <Profile/> */}
           <div className="streamContainer">
-            <Share/>
+            {/* <Share/> */}
             <Stream/>
-            <Post/>
           </div>
           <Widgets/>
         </div>
