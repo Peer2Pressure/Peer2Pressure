@@ -17,24 +17,32 @@
     /* height: 250px; */
     height: fit-content;
     align-content: space-between;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;  
+    box-shadow:  25px 25px 49px #dde3ede4,
+                    -25px -25px 49px #ffffff;
 }
 
 .top {
     padding: 1rem;
     display: flex;
+    flex-direction: row;
     align-items: center;
-    column-gap: 2rem;
-    /* position: absolute; */
-    /* border: 1px solid green; */
     justify-content: center;
 }
 
 .bottom {
-    padding-top: 2rem;
+    padding-top: 0.5rem;
+    margin-bottom: 0.5em;
     display: flex;
-    flex-direction: column;
-    /* border: 1px solid black; */
-    /* align-content: flex-start; */
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.postOptionsContainer {
+    margin-left: 2em;
+    display: flex;
+    flex-direction: row;
 }
 
 .postButton{
@@ -50,11 +58,20 @@
     width: fit-content;
 }
 
+.textBox{
+    width: fit-content;
+    height: fit-content;
+}
+
 textarea {
     min-width: 30rem;
+    width: fit-content;
     padding: 2rem;
+    border-radius: 20px;
     border: none;
-    background-color: white;
+    /* background-color: rgba(190, 190, 190, 0.4); */
+    background-color: rgba(222, 222, 222, 0.5);
+
     resize: none;
 }
 
@@ -74,11 +91,7 @@ textarea:focus {
     justify-content: center;
 }
 
-/* .textBox{
-    border: 1px solid black;
-    width: fit-content;
-    height: fit-content;
-} */
+
 
 .postButtonBox {
     height: auto;

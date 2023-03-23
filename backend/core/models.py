@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 from abc import abstractclassmethod
 from varname import nameof
@@ -10,8 +11,9 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AnonymousUser
 
+from .config import *
+
 MAX_CHARFIELD_LENGTH = 300
-HOST = "http://127.0.0.1:8000"
 
 # default_user = User.objects.get(username="deafult_user")
 
@@ -35,7 +37,7 @@ class AbstractModel(models.Model):
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)
-    host = models.URLField(default=HOST)
+    host = models.URLField(default=BASE_HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     url = models.URLField()
@@ -57,8 +59,8 @@ class Author(AbstractModel):
     def save(self, *args, **kwargs):
         if not self.url:
             # Generate a URL based on the object's ID
-            self.id = f"{HOST}/authors/{self.m_id}"
-            self.url = f"{HOST}/authors/{self.m_id}"
+            self.id = f"{BASE_HOST}/authors/{self.m_id}"
+            self.url = f"{BASE_HOST}/authors/{self.m_id}"
         super().save(*args, **kwargs)
 
 

@@ -145,13 +145,15 @@ class PostAPISerializer(serializers.ModelSerializer):
                     errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
             
             if len(errors) == 0:
+                print(validated_post_data)
+                validated_post_data.pop("author")
+                print(validated_post_data)
                 serializer.save()
                 post = post_serializer.get_author_post(author_id, post_id)
-                return PostSerializer(post).data, 201
+                return PostSerializer(post).data, 200
             
             return errors, 400
         else:
-            print("sadsadas")
             return post_serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):

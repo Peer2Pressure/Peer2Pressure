@@ -12,7 +12,7 @@ author_serializer = AuthorSerializer()
 class FollowerSerializer(serializers.ModelSerializer):
     type = serializers.CharField(required=False, max_length=10, default="follow", read_only=True)
     summary = serializers.CharField(required=False)
-    actor = AuthorSerializer(source="from_author", required=False)
+    actor = AuthorSerializer(source="from_author", required=True)
     object = AuthorSerializer(source="to_author", required=False)
     approved = serializers.BooleanField(required=False)
 

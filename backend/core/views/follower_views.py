@@ -19,14 +19,14 @@ from drf_yasg.utils import swagger_auto_schema
 # Local Libraries
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.followerserializer import FollowerSerializer
+from ..serializers.followerserializer import FollowerSerializer, AllFollowerSerializer
 from ..api_serializers.follower_api_serializer import FollowerAPISerializer
 
 follower_serializer = FollowerSerializer()
 follower_api_serializer = FollowerAPISerializer()
 
 class FollowerListAPI(GenericAPIView):
-    serializer_class = AuthorSerializer
+    serializer_class = AllFollowerSerializer
 
     @swagger_auto_schema(
         tags=["Followers"],
@@ -43,7 +43,7 @@ class FollowerListAPI(GenericAPIView):
 
 
 class FollowerAPI(GenericAPIView):
-    serializer_class = AuthorSerializer
+    serializer_class = FollowerSerializer
 
     @swagger_auto_schema(tags=['Followers'])
     def get(self, request, author_id, foreign_author_id):

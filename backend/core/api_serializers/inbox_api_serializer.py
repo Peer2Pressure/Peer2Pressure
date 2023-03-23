@@ -19,6 +19,7 @@ from ..serializers.followerserializer import FollowerSerializer
 from ..serializers.inboxserializer import InboxItemsSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
+from ..config import *
 
 author_serializer = AuthorSerializer()
 author_api_serializer = AuthorAPISerializer()
@@ -92,12 +93,12 @@ class InboxAPISerializer(serializers.ModelSerializer):
             method = "POST"
         except ValidationError:
             method = "PUT"
-
-        url = f"http://localhost:8000/authors/{author_id}/posts/{post_id}/"
+        print(method)
+        url = f"{BASE_HOST}/authors/{author_id}/posts/{post_id}/"
         headers = {"Content-Type": "application/json"}
         res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
-        if res.status_code in [200, 201]:
+        if res.status_code in [200, 201] and method == "PUT":
             # create new inbox entry
             post = post_serializer.get_author_post(author_id, post_id)
             inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
@@ -121,7 +122,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             actor_id = actor_id_path[2]
 
             headers = {"Content-Type": "application/json"}
-            url = f"http://localhost:8000/authors/{author_id}/followers/{actor_id}/"
+            url = f"{{BASE_HOST}}/authors/{author_id}/followers/{actor_id}/"
 
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
             

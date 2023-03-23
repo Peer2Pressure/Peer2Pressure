@@ -1,16 +1,33 @@
-    .homeContainer {
-        display: flex;
-        flex-direction: column;
-        margin:0;
-        padding: 0;
-        width: 100%;
-    }
+.homeContainer {
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    margin:0;
+    padding: 0;
+    width: 100%;
+    background: white;
+    background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)), url("https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGdyYWRpZW50fGVufDB8fDB8fA%3D%3D&w=1000&q=80");
 
-    .bodyContainer {
-        padding-top: 50px;
-        display: flex;
-        justify-content: center;
-        column-gap: 125px;
-        align-items: flex-start;
-    }
+    /* background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)), url("https://mir-s3-cdn-cf.behance.net/project_modules/1400_opt_1/444dac86128681.5d909dad4c673.jpg"); */
+    background-size: cover;
+}
+
+/* .homeContainer::before {
+    background-color: rgba(0, 0, 0, 0.1);
+} */
+
+.navBarContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.bodyContainer {
+    padding-top: 5em;
+    display: flex;
+    justify-content: center;
+    column-gap: 125px;
+    align-items: flex-start;
+}
 
