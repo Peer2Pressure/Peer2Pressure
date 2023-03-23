@@ -23,7 +23,6 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-
   ({ id, displayName, username, text, image, avatar, likes, comments }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);

@@ -9,6 +9,7 @@ function usePostAuthorPosts() {
     const getPosts = async() => {
       try {
         // let's get the author ID 
+
         const response1 = await axios.get("/get_author_id/");
         const authorId = response1.data.author_id;
 
@@ -17,13 +18,14 @@ function usePostAuthorPosts() {
         // let's get all the posts under this author ID
         const response2 = await axios.get("/authors/" + authorId + "/inbox/");
         console.log("/authors/" + authorId + "/inbox/");
+
         setPosts(response2.data);
 
       } catch(error) {
         setError(error);
       };
     };
- 
+
     getPosts();
   },[]);
   return {posts, error};
