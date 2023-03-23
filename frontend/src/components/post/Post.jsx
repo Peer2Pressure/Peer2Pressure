@@ -109,12 +109,6 @@ const Post = forwardRef(
                     </Menu>
               </span>
             </div>
-            <div className="post__headerText">
-              <h3>
-                {displayName}{" "}
-                <span className="post__headerSpecial">@{username}</span>
-              </h3>
-            </div>
             <div className="post__headerDescription">
               <p>{text}</p>
             </div>
