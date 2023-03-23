@@ -41,7 +41,7 @@ function Widgets() {
     console.log('allUsers:', allUsers);
     if (allUsers) {
       const filteredUsers = allUsers.filter((user) => {      
-        return user.username.toLowerCase().includes(query.toLowerCase());
+        return user.displayName.toLowerCase().includes(query.toLowerCase());
       });
       console.log('Search term:', query);
       setSearchResults(filteredUsers);
@@ -97,7 +97,7 @@ function Widgets() {
           ) : (
             searchResults.map((user) => (
               <div key={user.id} className="userResult">
-                <span>{user.username}</span>
+                <span>{user.displayName}</span>
                 {user.id !== currentUserId && (
                   <button className="followButton">
                     {user.followed ? (
