@@ -1,7 +1,9 @@
 .homeContainer {
     background-attachment: fixed;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
     margin:0;
     padding: 0;
     width: 100%;
@@ -15,7 +17,6 @@
 /* .homeContainer::before {
     background-color: rgba(0, 0, 0, 0.1);
 } */
-
 .navBarContainer {
     display: flex;
     justify-content: center;
@@ -23,11 +24,25 @@
 
 }
 
+.profileContainer {
+    top: 2em;
+    left: 4em;
+    position: fixed;
+}
+
 .bodyContainer {
-    padding-top: 5em;
+    padding-top: 2em;
     display: flex;
     justify-content: center;
-    column-gap: 125px;
+    /* column-gap: 125px; */
     align-items: flex-start;
+    width: 100%;
+    /* border: 1px solid black; */
+}
+
+.widgetContainer {
+    top: 2em;
+    right: 4em;
+    position: fixed;
 }
 

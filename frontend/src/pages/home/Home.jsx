@@ -21,12 +21,16 @@ const Home = () => {
         {/* <div className="navBarContainer">
           <NavBar/>
         </div> */}
-        <div className="bodyContainer">
+        <div className="profileContainer">
           <Profile/>
+        </div>
+        <div className="bodyContainer">
           <div className="streamContainer">
             <Share/>
-            <Stream/>
+            {/* <Stream/> */}
           </div>
+        </div>
+        <div className="widgetContainer">
           <Widgets/>
         </div>
       </div>
