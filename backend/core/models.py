@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 from abc import abstractclassmethod
 from varname import nameof
@@ -12,7 +13,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
 
 MAX_CHARFIELD_LENGTH = 300
-HOST = "https://peer2pressure.herokuapp.com" if not settings.DEBUG else "http://127.0.0.1:8000"
+HEROKU_HOST = os.getenv("BASE_HOST")
+HOST = HEROKU_HOST if HEROKU_HOST else "http://127.0.0.1:8000"
 
 # default_user = User.objects.get(username="deafult_user")
 
