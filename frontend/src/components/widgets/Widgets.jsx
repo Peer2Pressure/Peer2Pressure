@@ -22,7 +22,7 @@ function Widgets() {
     try {
       const response = await fetch('http://localhost:8000/authors/');
       const data = await response.json();
-      console.log('fetchAllUsers:', data);
+      console.log('fetchAllUsers:', data.items);
       if (Array.isArray(data.items)) {
         setAllUsers(data.items);
         setIsLoading(false);
@@ -40,8 +40,9 @@ function Widgets() {
     // Filter users based on the search term
     console.log('allUsers:', allUsers);
     if (allUsers) {
-      const filteredUsers = allUsers.filter((user) => {      
-        return user.username.toLowerCase().includes(query.toLowerCase());
+      const filteredUsers = allUsers.filter((user) => {     
+        console.log('user.username:', user); 
+        return user.displayName.toLowerCase().includes(query.toLowerCase());
       });
       console.log('Search term:', query);
       setSearchResults(filteredUsers);
@@ -60,7 +61,7 @@ function Widgets() {
 
   const fetchFollows = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:8000/follows/${userId}/`, {
+      const response = await fetch(`http://localhost:8000/${userId}/`, {
         // headers: {
         //   Authorization: `Token ${accessToken}`,
         // },
@@ -97,7 +98,7 @@ function Widgets() {
           ) : (
             searchResults.map((user) => (
               <div key={user.id} className="userResult">
-                <span>{user.username}</span>
+                <span>{user.displayName}</span>
                 {user.id !== currentUserId && (
                   <button className="followButton">
                     {user.followed ? (

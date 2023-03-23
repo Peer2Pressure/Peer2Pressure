@@ -23,7 +23,6 @@ const Home = () => {
           <div className="streamContainer">
             <Share/>
             <Stream/>
-            <Post/>
           </div>
           <Widgets/>
         </div>

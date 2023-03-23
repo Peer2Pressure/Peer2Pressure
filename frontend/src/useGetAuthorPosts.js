@@ -16,13 +16,15 @@ function usePostAuthorPosts() {
 
         // let's get all the posts under this author ID
         const response2 = await axios.get("/authors/" + authorID + "/posts/");
-        console.log("/authors/" + authorID + "/posts/");
+        console.log("hEYLO :","/authors/" + authorID + "/posts/");
         setPosts(response2.data);
 
       } catch(error) {
         setError(error);
       };
     };
+    console.log("author ID: " + authorID);
+    console.log("hEYLO :","/authors/" + authorID + "/posts/");
     getPosts();
   },[]);
   return {posts, error};
