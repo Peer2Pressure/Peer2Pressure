@@ -9,9 +9,10 @@ from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AnonymousUser
+from django.conf import settings
 
 MAX_CHARFIELD_LENGTH = 300
-HOST = "http://127.0.0.1:8000"
+HOST = "https://peer2pressure.herokuapp.com" if not settings.DEBUG else "http://127.0.0.1:8000"
 
 # default_user = User.objects.get(username="deafult_user")
 

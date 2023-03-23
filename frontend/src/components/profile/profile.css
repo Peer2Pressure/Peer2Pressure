@@ -1,5 +1,6 @@
 
 .profileBox{
+    /* position: fix; */
     flex: 0.3;
     width: 15em;
     height: 30em;
