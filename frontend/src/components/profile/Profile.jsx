@@ -4,7 +4,8 @@ import Cookies from 'js-cookie';
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, IconButton } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 import { Navigate, useNavigate } from "react-router-dom";
 
 function getCsrfToken() {
@@ -63,16 +64,16 @@ export default function Profile() {
   return (
     <div>
         <div className="profileBox">
-            {/* <img class="profileImage" src={data?.profileImage} alt="profile of id.name"/> <-- what we actually need to display*/}
-            {/* <img class="profileImage" src="/assets/johnDoe.jpg" alt="profile of id.name"/> */}
+          <div className="editButtonContainer">
+            <IconButton aria-label="edit" color="primary" onClick={()=> navigate('/profilepage')}>
+              <EditIcon/>
+            </IconButton>
+          </div>
             <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
             <h1 className="nameTitle">
                 {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
-              <Button className="manageProfileButton" onClick={()=> navigate('/profilepage')}>
-                Manage profile
-              </Button>
         </div>
     </div>
   )
