@@ -30,6 +30,10 @@ inbox_api_serializer = InboxAPISerializer()
 class InboxAPI(GenericAPIView):
     serializer_class = PostSerializer
 
+    @swagger_auto_schema(
+        tags=["Inbox"],
+        operation_description="Get all posts from author's inbox.",
+    )
     def get(self, request, author_id):
         try:
             page, size = utils.get_pagination_variables(request.query_params)
