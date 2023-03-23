@@ -42,6 +42,7 @@ function Stream() {
   const inbox_posts = posts.items;
   console.log("inbox poss", inbox_posts);
 
+
   return (
     <div className="stream">
       <div className="stream__header">
@@ -67,6 +68,7 @@ function Stream() {
         </Flipmove>
       </div>
     </div>
+
   );
 }
 
