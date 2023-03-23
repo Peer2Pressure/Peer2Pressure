@@ -19,7 +19,7 @@ from drf_yasg.utils import swagger_auto_schema
 # Local Libraries
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
-from ..serializers.followerserializer import FollowerSerializer
+from ..serializers.followerserializer import FollowerSerializer, AllFollowerSerializer
 from ..api_serializers.follower_api_serializer import FollowerAPISerializer
 
 follower_serializer = FollowerSerializer()
