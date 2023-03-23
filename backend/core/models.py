@@ -10,11 +10,10 @@ from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AnonymousUser
-from django.conf import settings
+
+from .config import *
 
 MAX_CHARFIELD_LENGTH = 300
-HEROKU_HOST = os.getenv("BASE_HOST")
-HOST = HEROKU_HOST if HEROKU_HOST else "http://127.0.0.1:8000"
 
 # default_user = User.objects.get(username="deafult_user")
 
@@ -38,7 +37,7 @@ class AbstractModel(models.Model):
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)
-    host = models.URLField(default=HOST)
+    host = models.URLField(default=BASE_HOST)
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     name = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     url = models.URLField()
