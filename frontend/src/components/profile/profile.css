@@ -16,6 +16,7 @@
     border-radius: 20px;    
     box-shadow:  25px 25px 49px #dde3ede4,
                 -25px -25px 49px #ffffff;
+    /* border: 2px solid black */
 }
 
 .profileImage {

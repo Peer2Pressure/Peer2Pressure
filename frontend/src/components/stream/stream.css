@@ -8,8 +8,22 @@
     justify-items: center;
     overflow-y: scroll;
     margin-top: 2em;
+    width: 100%;
+  }
+
+  .xyz {
+    width: auto;
+    
+    /* border: 1px solid black; */
   }
   
+.flippy {
+  /* width: 1000px; */
+  border-radius: 20px;  
+  box-shadow:  25px 25px 49px #dde3ede4,
+                -25px -25px 49px #ffffff;
+}
+
   /* Hide scrollbar for Chrome, Safari and Opera */ 
   .feed::-webkit-scrollbar {
     display: none;
@@ -22,6 +36,7 @@
 }/* Firefox */
 
 .stream__posts {
+  margin-bottom: 2em;
   margin-top: 2em;
 }
 

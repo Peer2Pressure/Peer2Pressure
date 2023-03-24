@@ -25,6 +25,8 @@ author_serializer = AuthorSerializer()
 author_api_serializer = AuthorAPISerializer()
 post_api_serializer = PostAPISerializer()
 post_serializer = PostSerializer()
+follower_serializer = FollowerSerializer()
+
 
 pp = pprint.PrettyPrinter()
 
@@ -86,15 +88,20 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # TODO: Validate post_id is a UUID
         # get post author id
         post_id_url = urlparse(request_data["id"]).path.split('/')
+        foreign_author_id = post_id_url[2]
         post_id = post_id_url[4]
+
+        # Check if current author is following foreign author to receive posts.
+        if not follower_serializer.follower_exists(foreign_author_id, author_id) and author_id != foreign_author_id:
+            return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
 
         try:
             existing_post = post_serializer.get_author_post(author_id, post_id)
             method = "POST"
         except ValidationError:
             method = "PUT"
-        print(method)
-        url = f"{BASE_HOST}/authors/{author_id}/posts/{post_id}/"
+
+        url = f"{BASE_HOST}/authors/{foreign_author_id}/posts/{post_id}/"
         headers = {"Content-Type": "application/json"}
         res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
