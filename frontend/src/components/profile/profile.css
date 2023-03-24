@@ -35,3 +35,7 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.nameTitle {
+    text-align: center;
+}
