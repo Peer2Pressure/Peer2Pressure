@@ -116,6 +116,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                     # create new inbox entry referencing the post send to inbox.
                     inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
                     inbox_post.save()
+                # return {"msg": f"Post has been send to {author_id} inbox"}, 200
                 return PostSerializer(post).data, 200
             else:
                 return json.loads(res.text), 404
