@@ -31,3 +31,6 @@
     align-items: flex-start;
 }
 
+.streamContainer {
+    width: 40%;
+}

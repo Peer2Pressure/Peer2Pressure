@@ -25,7 +25,7 @@ const Home = () => {
           <Profile/>
           <div className="streamContainer">
             <Share/>
-            {/* <Stream/> */}
+            <Stream/>
           </div>
           <Widgets/>
         </div>
