@@ -75,6 +75,9 @@ const Share = () => {
                 })
                 .catch((error) => {
                     console.error('Error sending requests:', error);
+                })
+                .finally(() => {
+                    window.location.reload();
                 });
             }
             )
