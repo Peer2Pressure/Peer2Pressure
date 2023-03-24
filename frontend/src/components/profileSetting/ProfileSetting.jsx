@@ -13,11 +13,11 @@ export default function ProfileSetting() {
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         id: '',
-        username: '',
-        title: '',
+        // username: '',
+        // title: '',
         displayName: '',
-        email: '',
-        password: '',
+        // email: '',
+        // password: '',
         profileImage: '',
         github: '',
     });
@@ -67,12 +67,10 @@ export default function ProfileSetting() {
         // }
         e.preventDefault();
         const formData = new FormData();
-        formData.append('username', userData.username || data?.username);
-        formData.append('email', userData.email || data?.email);
-        formData.append('password', userData.password || data?.password);
+        // formData.append('username', userData.username || data?.username);
+        // formData.append('email', userData.email || data?.email);
+        // formData.append('password', userData.password || data?.password);
         formData.append('displayName', userData.name || data?.displayName);
-        console.log("userData.github:", userData.github);
-        console.log("data?.github:", data?.github); 
         formData.append('github', userData.github || data?.github);
         formData.append('profileImage', userData.profileImage || data?.profileImage);
         formData.append('id', authorIDD);
@@ -101,7 +99,9 @@ export default function ProfileSetting() {
             console.log("HAHAHA")
             console.log("Error Response: ", error.response);
             console.log("Error Data: ", error.response.data)
-        });
+        }).finally(() => {
+            window.location.reload();
+        })
     };
 
     return (
@@ -139,11 +139,10 @@ export default function ProfileSetting() {
                         <TextField label="abc@email.com" placeholder={data?.email} defaultValue={userData.email} onChange={(e) => handleChange2("email", e.target.value)}/>
     
                     </div> */}
-                    <div className="passwordBox">
+                    {/* <div className="passwordBox">
                         <h2 className="fieldTitle">Password</h2>
                         <TextField type="password" placeholder="********" defaultValue={userData.password} onChange={(e) => handleChange2("password", e.target.value)}/>
-                        {/* <TextField type="password" placeholder="********"/> */}
-                    </div>
+                    </div> */}
                 </div>  
                 <div className="buttonBox">
                     <Button variant="outlined" onClick={()=>{navigate(-1)}}>Cancel</Button>
