@@ -25,6 +25,8 @@ author_serializer = AuthorSerializer()
 author_api_serializer = AuthorAPISerializer()
 post_api_serializer = PostAPISerializer()
 post_serializer = PostSerializer()
+follower_serializer = FollowerSerializer()
+
 
 pp = pprint.PrettyPrinter()
 
@@ -83,29 +85,43 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
         author = author_serializer.get_author_by_id(author_id)
 
-        # TODO: Validate post_id is a UUID
-        # get post author id
-        post_id_url = urlparse(request_data["id"]).path.split('/')
-        post_id = post_id_url[4]
+        serializer = PostSerializer(data=request_data)
 
-        try:
-            existing_post = post_serializer.get_author_post(author_id, post_id)
-            method = "POST"
-        except ValidationError:
-            method = "PUT"
-        print(method)
-        url = f"{BASE_HOST}/authors/{author_id}/posts/{post_id}/"
-        headers = {"Content-Type": "application/json"}
-        res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+        if serializer.is_valid():
+            # TODO: Validate post_id is a UUID
+            # Get post author id.
+            post_id_url = urlparse(request_data["id"]).path.split('/')
+            foreign_author_id = uuid.UUID(post_id_url[2])
+            post_id = post_id_url[4]
 
-        if res.status_code in [200, 201] and method == "PUT":
-            # create new inbox entry
-            post = post_serializer.get_author_post(author_id, post_id)
-            inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
-            inbox_post.save()
-            return {"msg": f"Post has been send to {author_id} inbox"}, 200
-        else:
-            return json.loads(res.text), 404
+            # Check if current author is following foreign author to receive posts.
+            if author_id != foreign_author_id and not follower_serializer.follower_exists(foreign_author_id, author_id):
+                return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
+
+            method = ""
+            # Check if post exists to send POST or PUT request.
+            if post_serializer.post_exists(foreign_author_id, post_id):
+                method = "POST"
+            else:
+                method = "PUT"
+
+            # Create or update post.
+            url = f"{BASE_HOST}/authors/{foreign_author_id}/posts/{post_id}/"
+            headers = {"Content-Type": "application/json"}
+            res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+
+            if res.status_code in [200, 201]:
+                post = post_serializer.get_author_post(foreign_author_id, post_id)
+                if method == "PUT":
+                    # create new inbox entry referencing the post send to inbox.
+                    inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+                    inbox_post.save()
+                # return {"msg": f"Post has been send to {author_id} inbox"}, 200
+                return PostSerializer(post).data, 200
+            else:
+                return json.loads(res.text), 404
+        else: 
+            return serializer.errors, 400
     
     def handle_follow_request(self, author_id, request_data):
         if not author_serializer.author_exists(author_id):
@@ -114,7 +130,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
         author = author_serializer.get_author_by_id(author_id)
 
         follow_serializer = FollowerSerializer(data=request_data)
-        
         
         if follow_serializer.is_valid():
             # get post author id 

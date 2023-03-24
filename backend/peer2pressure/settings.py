@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-^uq3h4s&#$w-r^^u7x844q@2$or=71mqm!e4m-g^q0g!el-6$z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://peer2pressure.herokuapp.com"]
+ALLOWED_HOSTS = ["https://p2psd.herokuapp.com"]
 
 # Application definition
 
@@ -56,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "https://cmput404-project-app.herokuapp.com",
+    "https://www.distribution.social",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]

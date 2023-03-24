@@ -95,6 +95,7 @@ class Post(AbstractModel):
     origin = models.URLField(blank=True)
     description = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=False, null=False)
+    comments = models.URLField(default="")
     # categories = models.ArrayField(models.CharField)
     unlisted = models.BooleanField(default=False)
 
@@ -110,6 +111,7 @@ class Post(AbstractModel):
             # Generate a URL based on the object's ID
             self.id = f"{self.author.url}/posts/{self.m_id}"
             self.url = f"{self.author.url}/posts/{self.m_id}"
+            self.comments = f"{self.id}/comments"
         super().save(*args, **kwargs)
 
 
