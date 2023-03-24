@@ -90,6 +90,13 @@ class PostSerializer(serializers.ModelSerializer):
         
         return post
     
+    def post_exists(self, author_id, post_id):
+        try:
+            post = self.get_author_post(author_id, post_id)
+        except ValidationError:
+            return False
+        return True
+    
     def update_post(self, author_id, post_id, defaults=None, title=None, content=None, image=None, is_private=False):
         try:
             post = self.get_author_post(author_id, post_id)
