@@ -53,7 +53,7 @@ const Share = () => {
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
             "title": "dasd I123123 Come",
-            "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+            "id": `${data.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
             "content": content,
             "author": data,
