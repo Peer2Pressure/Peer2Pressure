@@ -88,6 +88,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         serializer = PostSerializer(data=request_data)
 
         if serializer.is_valid():
+            print("vd", serializer.validated_data)
             # TODO: Validate post_id is a UUID
             # Get post author id.
             post_id_url = urlparse(request_data["id"]).path.split('/')
@@ -116,11 +117,14 @@ class InboxAPISerializer(serializers.ModelSerializer):
                     # create new inbox entry referencing the post send to inbox.
                     inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
                     inbox_post.save()
+                print("return", method)
+                # return {"msg": f"Post has been send to {author_id} inbox"}, 200
                 return PostSerializer(post).data, 200
             else:
                 return json.loads(res.text), 404
         else: 
             return serializer.errors, 400
+        print("end123")
     
     def handle_follow_request(self, author_id, request_data):
         if not author_serializer.author_exists(author_id):
