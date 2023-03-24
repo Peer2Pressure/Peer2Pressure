@@ -13,10 +13,8 @@ const Share = () => {
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
+    const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
-
-    // const [authorId, loading, error] = useGetAuthorID();
-    // const authorId = "596f24c4-430b-4546-98d2-1f83995259e8"
 
     const {data, loading, error, authorID} = useGetAuthorData();
 
@@ -50,15 +48,9 @@ const Share = () => {
             "type": "post",
             "title": "dasd I123123 Come",
             "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
-            "source": "",
-            "origin": "",
-            "description": "",
-            "contentType": "text/plain",
+            "contentType": contentType,
             "content": content,
             "author": data,
-            "published": "2023-03-24T00:47:20.400082Z",
-            "visibility": "PUBLIC",
-            "unlisted": false
         })
         .then((response) => console.log(response))
         .catch((error) => console.log(error))
