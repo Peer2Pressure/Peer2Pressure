@@ -91,11 +91,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
             # TODO: Validate post_id is a UUID
             # Get post author id.
             post_id_url = urlparse(request_data["id"]).path.split('/')
-            foreign_author_id = post_id_url[2]
+            foreign_author_id = uuid.UUID(post_id_url[2])
             post_id = post_id_url[4]
 
             # Check if current author is following foreign author to receive posts.
-            if not follower_serializer.follower_exists(foreign_author_id, author_id) and author_id != foreign_author_id:
+            if author_id != foreign_author_id and not follower_serializer.follower_exists(foreign_author_id, author_id):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
 
             method = ""
@@ -110,12 +110,14 @@ class InboxAPISerializer(serializers.ModelSerializer):
             headers = {"Content-Type": "application/json"}
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
-            if res.status_code in [200, 201] and method == "PUT":
-                # create new inbox entry referencing the post send to inbox.
+            if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(author_id, post_id)
-                inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
-                inbox_post.save()
-                return {"msg": f"Post has been send to {author_id} inbox"}, 200
+                if method == "PUT":
+                    # create new inbox entry referencing the post send to inbox.
+                    inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+                    inbox_post.save()
+                # return {"msg": f"Post has been send to {author_id} inbox"}, 200
+                return PostSerializer(post).data, 200
             else:
                 return json.loads(res.text), 404
         else: 
