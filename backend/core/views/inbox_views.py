@@ -10,6 +10,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth import logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.middleware.csrf import rotate_token
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,6 +27,10 @@ from ..api_serializers.inbox_api_serializer import InboxAPISerializer
 
 # API serializer
 inbox_api_serializer = InboxAPISerializer()
+
+# def redirect_to_inbox(request):
+#     rotate_token(request)
+#     return redirect('inbox', permanent=True)
 
 class InboxAPI(GenericAPIView):
     serializer_class = PostSerializer
@@ -60,7 +65,6 @@ class InboxAPI(GenericAPIView):
         #     pass
         # else:
         #     pass
-        print("aa111", type(request.data))
         response = None
         code = None
         if "type" in list(request.data.keys()):
