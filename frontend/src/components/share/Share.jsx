@@ -5,6 +5,7 @@ import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSele
 import { Switch } from "@mui/material";
 import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
+import { v4 as uuidv4 } from 'uuid';
 
 const Share = () => {
 
@@ -46,18 +47,18 @@ const Share = () => {
         event.preventDefault();
         axios
         .post(`/authors/${authorID}/inbox/`, {
-            // "type": "post",
-            // "title": "dasd I123123 Come",
-            // "id": `/authors/${authorID}/posts/5276b41d-8894-4aaf-9dc9-c2e210ed4bd2`,
-            // "source": "",
-            // "origin": "",
-            // "description": "",
-            // "contentType": "text/plain",
-            // "content": content,
-            // "author": data,
-            // "published": "2023-03-24T00:47:20.400082Z",
-            // "visibility": "PUBLIC",
-            // "unlisted": false
+            "type": "post",
+            "title": "dasd I123123 Come",
+            "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+            "source": "",
+            "origin": "",
+            "description": "",
+            "contentType": "text/plain",
+            "content": content,
+            "author": data,
+            "published": "2023-03-24T00:47:20.400082Z",
+            "visibility": "PUBLIC",
+            "unlisted": false
         })
         .then((response) => console.log(response))
         .catch((error) => console.log(error))
