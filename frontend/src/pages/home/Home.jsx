@@ -21,6 +21,7 @@ const Home = () => {
         {/* <div className="navBarContainer">
           <NavBar/>
         </div> */}
+        <div className="placeholder"></div>
         <div className="profileContainer">
           <Profile/>
         </div>
