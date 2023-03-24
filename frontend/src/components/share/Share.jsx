@@ -55,7 +55,7 @@ const Share = () => {
 
     async function getFollowers() {
         const response = await axios.get(`/authors/${authorID}/followers`);
-        return response.data.items.map(obj => obj.id);
+        return response.data.items.map(obj => obj.id+"/inbox/");
     }
 
     // const data = {msg: "hello"};
@@ -75,21 +75,24 @@ const Share = () => {
 
     const sendPost = async(event) => {
         event.preventDefault();
-        axios
-            .post(`/authors/${authorID}/inbox/`, {
-                "type": "post",
-                "title": "dasd I123123 Come",
-                "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
-                "contentType": contentType,
-                "content": content,
-                "author": data,
-            })
-            .then((response) => {
-                console.log("Sending to inbox...", response);
-                // getFollowers();
-                // console.log("f", getFollowers())
-                const requestPromises = getFollowers().map(endpoint => {
-                    axios.post(endpoint, response.data)
+        const p = axios
+        .post(`/authors/${authorID}/inbox/`, {
+            "type": "post",
+            "title": "dasd I123123 Come",
+            "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+            "contentType": contentType,
+            "content": content,
+            "author": data,
+        })
+        
+        const p2 = p.then((response) => {
+            const p3 = getFollowers()
+            const p4 = p3.then((response2) => {
+                console.log("p3", p3)
+                console.log("r2", response2)
+                console.log("rd", response.data)
+                const requestPromises = response2.map(endpoint => {
+                axios.post(endpoint, response.data)
                 })
                 Promise.all(requestPromises)
                 .then((responses) => {
@@ -98,8 +101,34 @@ const Share = () => {
                 .catch((error) => {
                     console.error('Error sending requests:', error);
                 });
-            })
-            .catch((error) => console.log(error))
+            }
+            )
+        })
+        // axios
+        //     .post(`/authors/${authorID}/inbox/`, {
+        //         "type": "post",
+        //         "title": "dasd I123123 Come",
+        //         "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+        //         "contentType": contentType,
+        //         "content": content,
+        //         "author": data,
+        //     })
+        //     .then((response) => {
+        //         console.log("Sending to inbox...", response);
+        //         // getFollowers();
+        //         console.log("f", getFollowers())
+        //         const requestPromises = getFollowers().map(endpoint => {
+        //             axios.post(endpoint, response.data)
+        //         })
+        //         Promise.all(requestPromises)
+        //         .then((responses) => {
+        //             console.log('All requests sent successfully:', responses);
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error sending requests:', error);
+        //         });
+        //     })
+        //     .catch((error) => console.log(error))
     }
 
     return (
