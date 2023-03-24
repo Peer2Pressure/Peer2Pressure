@@ -40,8 +40,6 @@ function Stream() {
   }
 
   const inbox_posts = posts.items;
-  console.log("inbox poss", inbox_posts);
-  console.log("inbox author", inbox_posts[0].author);
 
 
   return (
