@@ -137,7 +137,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             actor_id = actor_id_path[2]
 
             headers = {"Content-Type": "application/json"}
-            url = f"{{BASE_HOST}}/authors/{author_id}/followers/{actor_id}/"
+            url = f"{BASE_HOST}/authors/{author_id}/followers/{actor_id}/"
 
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
             
