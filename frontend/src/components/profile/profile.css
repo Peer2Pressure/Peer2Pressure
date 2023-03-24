@@ -9,13 +9,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     background-color: rgba(255, 255, 255, 0.9);
     row-gap: 25px;
     padding: 25px;
     border-radius: 20px;    
     box-shadow:  25px 25px 49px #dde3ede4,
                 -25px -25px 49px #ffffff;
+    /* border: 2px solid black */
 }
 
 .profileImage {
@@ -28,4 +29,10 @@
     white-space: nowrap; 
     min-width: auto;
     /* text-transform: unset !important; */
+}
+
+.editButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
 }

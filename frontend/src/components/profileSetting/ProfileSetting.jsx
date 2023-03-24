@@ -97,23 +97,22 @@ export default function ProfileSetting() {
                     </label> */}
                 </div>
                 <div className="profileDetailsBox">
-                    <div className="usernameBox">
+                    {/* <div className="usernameBox">
                         <h2 class="fieldTitle">Username</h2>
-                        {/* <TextField label="username" placeholder={data?.username} value={userData.username} onChange={handleChange}/> */}
+                        
                         <TextField label="username" placeholder={data?.username} value={userData.username} onChange={(e) => handleChange2("username", e.target.value)}/>
-                    </div>
+                    </div> */}
                     <div className="fullNameBox">
                         <h2 className="fieldTitle">Full Name</h2>
                         <TextField label="Name" placeholder={data?.name} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
                         {/* <TextField label="First Name" placeholder={data??.displayName} />
                         <TextField label="Last Name" placeholder={data??.type} /> */}
                     </div>
-                    <div className="emailBox">
+                    {/* <div className="emailBox">
                         <h2 className="fieldTitle">Email</h2>
                         <TextField label="abc@email.com" placeholder={data?.email} defaultValue={userData.email} onChange={(e) => handleChange2("email", e.target.value)}/>
-                        {/* <TextField label="abc@email.com" placeholder={data??.email}/> */}
     
-                    </div>
+                    </div> */}
                     <div className="passwordBox">
                         <h2 className="fieldTitle">Password</h2>
                         <TextField type="password" placeholder="********" defaultValue={userData.password} onChange={(e) => handleChange2("password", e.target.value)}/>
