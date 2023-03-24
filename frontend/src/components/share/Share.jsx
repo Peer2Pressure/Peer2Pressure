@@ -5,6 +5,7 @@ import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSele
 import { Switch } from "@mui/material";
 import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
+import { v4 as uuidv4 } from 'uuid';
 
 const Share = () => {
 
@@ -12,10 +13,9 @@ const Share = () => {
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
+    const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
 
-    // const [authorId, loading, error] = useGetAuthorID();
-    // const authorId = "596f24c4-430b-4546-98d2-1f83995259e8"
 
     const {data, loading, error, authorID} = useGetAuthorData();
 
@@ -42,49 +42,93 @@ const Share = () => {
        setFiles(files.filter(x => x.name !== i));
     }
 
+    // const getFollowers = async () => {
+    //     return axios
+    //         .get(`/authors/${authorID}/followers`)
+    //         // .then((response) => console.log("FOLLOWERS", response.data.items.map(obj => obj.id)))
+    //         .then((response) => {
+    //             return response.data.items.map(obj => obj.id);
+    //             // return response
+    //         })
+    //         .catch((error) => console.log(error))
+    // }
+
+    async function getFollowers() {
+        const response = await axios.get(`/authors/${authorID}/followers`);
+        return response.data.items.map(obj => obj.id+"/inbox/");
+    }
+
+    // const data = {msg: "hello"};
+    // const endpoints = ['http://localhost:8000/1/inbox', 'http://localhost:8000/2/inbox', 'http://localhost:8000/3/inbox'];
+
+    // const promises = endpoints.map(endpoint => {
+    // return axios.post(endpoint, data);
+    // });
+
+    // Promise.all(promises)
+    // .then(responses => {
+    //     console.log(responses);
+    // })
+    // .catch(error => {
+    //     console.error(error);
+    // });
+
     const sendPost = async(event) => {
         event.preventDefault();
-        axios
+        const p = axios
         .post(`/authors/${authorID}/inbox/`, {
-            // "type": "post",
-            // "title": "dasd I123123 Come",
-            // "id": `/authors/${authorID}/posts/5276b41d-8894-4aaf-9dc9-c2e210ed4bd2`,
-            // "source": "",
-            // "origin": "",
-            // "description": "",
-            // "contentType": "text/plain",
-            // "content": content,
-            // "author": data,
-            // "published": "2023-03-24T00:47:20.400082Z",
-            // "visibility": "PUBLIC",
-            // "unlisted": false
+            "type": "post",
+            "title": "dasd I123123 Come",
+            "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+            "contentType": contentType,
+            "content": content,
+            "author": data,
         })
-        .then((response) => console.log(response))
-        .catch((error) => console.log(error))
-        // .post(`/authors/${authorId}/posts/`, {
-        //     "content": content,
-        //     "contentType": "text/plain"
-        // })
-    //     // .then((response) => console.log(response.data.id))
-    //     .then(async (response) => {
-    //         const response_1 = await axios
-    //             .post(`/authors/${authorId}/inbox/`, {
-    //                 "type": response.data.type,
-    //                 "title": response.data.title,
-    //                 "id": response.data.id,
-    //                 "source": response.data.source,
-    //                 "origin": response.data.origin,
-    //                 "description": response.data.description,
-    //                 "contentType": response.data.contentType,
-    //                 "content": response.data.content,
-    //                 "author": response.data.author,
-    //                 "published": response.data.published,
-    //                 "visibility": response.data.visibility,
-    //                 "unlisted": response.data.unlisted
-    //             });
-    //         return console.log(response_1);
-    //     })
-    //     .catch(error => console.log(error));
+        
+        const p2 = p.then((response) => {
+            const p3 = getFollowers()
+            const p4 = p3.then((response2) => {
+                console.log("p3", p3)
+                console.log("r2", response2)
+                console.log("rd", response.data)
+                const requestPromises = response2.map(endpoint => {
+                axios.post(endpoint, response.data)
+                })
+                Promise.all(requestPromises)
+                .then((responses) => {
+                    console.log('All requests sent successfully:', responses);
+                })
+                .catch((error) => {
+                    console.error('Error sending requests:', error);
+                });
+            }
+            )
+        })
+        // axios
+        //     .post(`/authors/${authorID}/inbox/`, {
+        //         "type": "post",
+        //         "title": "dasd I123123 Come",
+        //         "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+        //         "contentType": contentType,
+        //         "content": content,
+        //         "author": data,
+        //     })
+        //     .then((response) => {
+        //         console.log("Sending to inbox...", response);
+        //         // getFollowers();
+        //         console.log("f", getFollowers())
+        //         const requestPromises = getFollowers().map(endpoint => {
+        //             axios.post(endpoint, response.data)
+        //         })
+        //         Promise.all(requestPromises)
+        //         .then((responses) => {
+        //             console.log('All requests sent successfully:', responses);
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error sending requests:', error);
+        //         });
+        //     })
+        //     .catch((error) => console.log(error))
     }
 
     return (

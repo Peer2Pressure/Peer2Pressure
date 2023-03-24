@@ -111,7 +111,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
             if res.status_code in [200, 201]:
-                post = post_serializer.get_author_post(author_id, post_id)
+                post = post_serializer.get_author_post(foreign_author_id, post_id)
                 if method == "PUT":
                     # create new inbox entry referencing the post send to inbox.
                     inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
@@ -121,7 +121,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 return json.loads(res.text), 404
         else: 
             return serializer.errors, 400
-        
     
     def handle_follow_request(self, author_id, request_data):
         if not author_serializer.author_exists(author_id):
