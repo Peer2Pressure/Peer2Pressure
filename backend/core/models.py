@@ -34,6 +34,11 @@ class AbstractModel(models.Model):
     def __repr__(self):
         return str(self)
 
+class ServerAdmin(AbstractModel):
+    host = models.URLField()
+    username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+    password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)

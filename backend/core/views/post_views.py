@@ -17,12 +17,15 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.http import HttpResponse
 
 # Local Libraries
+from .helpers import server_request_authenticated
 from .. import utils
 from ..models import *
 from ..serializers.postserializer import PostSerializer, AllPostSerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
+from ..config import *
 
 # API serializer
 post_api_serializer = PostAPISerializer()
@@ -32,6 +35,13 @@ class SinglePostAPI(GenericAPIView):
 
     @swagger_auto_schema(tags=['Posts'])
     def get(self, request, author_id, post_id):
+        current_host = f"{request.scheme}://{request.get_host()}"
+        
+        if current_host != BASE_HOST and not server_request_authenticated(request):
+            response = HttpResponse("Authorization required.", status=401)
+            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
+            return response
+
         post = post_api_serializer.get_single_post(author_id, post_id)
         if post:
             return Response(post)
@@ -84,6 +94,13 @@ class PostAPI(GenericAPIView):
         }
     )
     def get(self, request, author_id):
+        current_host = f"{request.scheme}://{request.get_host()}"
+        
+        if current_host != BASE_HOST and not server_request_authenticated(request):
+            response = HttpResponse("Authorization required.", status=401)
+            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
+            return response
+        
         try:
             page, size = utils.get_pagination_variables(request.query_params)
         except ValidationError:

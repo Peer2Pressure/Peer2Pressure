@@ -15,12 +15,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
+from django.http import HttpResponse
 
 # Local Libraries
+from .helpers import server_request_authenticated
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 from ..serializers.followerserializer import FollowerSerializer, AllFollowerSerializer
 from ..api_serializers.follower_api_serializer import FollowerAPISerializer
+from ..config import *
 
 follower_serializer = FollowerSerializer()
 follower_api_serializer = FollowerAPISerializer()
@@ -33,6 +36,13 @@ class FollowerListAPI(GenericAPIView):
         operation_description="Get a list of all followers for an author"
     )
     def get(self, request, author_id):
+        current_host = f"{request.scheme}://{request.get_host()}"
+        
+        if current_host != BASE_HOST and not server_request_authenticated(request):
+            response = HttpResponse("Authorization required.", status=401)
+            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
+            return response
+        
         followers, code = follower_api_serializer.get_all_followers(author_id)
         if code == 200:
             return Response(followers, status=status.HTTP_200_OK)
@@ -47,6 +57,13 @@ class FollowerAPI(GenericAPIView):
 
     @swagger_auto_schema(tags=['Followers'])
     def get(self, request, author_id, foreign_author_id):
+        current_host = f"{request.scheme}://{request.get_host()}"
+        
+        if current_host != BASE_HOST and not server_request_authenticated(request):
+            response = HttpResponse("Authorization required.", status=401)
+            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
+            return response
+        
         follower, code = follower_api_serializer.get_single_follower(author_id, foreign_author_id)
         if code == 200:
             return Response(follower, status=status.HTTP_200_OK)
