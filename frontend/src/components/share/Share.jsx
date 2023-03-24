@@ -16,6 +16,7 @@ const Share = () => {
     const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
 
+
     const {data, loading, error, authorID} = useGetAuthorData();
 
     const handleContentChange = event => {
@@ -41,43 +42,64 @@ const Share = () => {
        setFiles(files.filter(x => x.name !== i));
     }
 
+    // const getFollowers = async () => {
+    //     return axios
+    //         .get(`/authors/${authorID}/followers`)
+    //         // .then((response) => console.log("FOLLOWERS", response.data.items.map(obj => obj.id)))
+    //         .then((response) => {
+    //             return response.data.items.map(obj => obj.id);
+    //             // return response
+    //         })
+    //         .catch((error) => console.log(error))
+    // }
+
+    async function getFollowers() {
+        const response = await axios.get(`/authors/${authorID}/followers`);
+        return response.data.items.map(obj => obj.id);
+    }
+
+    // const data = {msg: "hello"};
+    // const endpoints = ['http://localhost:8000/1/inbox', 'http://localhost:8000/2/inbox', 'http://localhost:8000/3/inbox'];
+
+    // const promises = endpoints.map(endpoint => {
+    // return axios.post(endpoint, data);
+    // });
+
+    // Promise.all(promises)
+    // .then(responses => {
+    //     console.log(responses);
+    // })
+    // .catch(error => {
+    //     console.error(error);
+    // });
+
     const sendPost = async(event) => {
         event.preventDefault();
         axios
-        .post(`/authors/${authorID}/inbox/`, {
-            "type": "post",
-            "title": "dasd I123123 Come",
-            "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
-            "contentType": contentType,
-            "content": content,
-            "author": data,
-        })
-        .then((response) => console.log(response))
-        .catch((error) => console.log(error))
-        // .post(`/authors/${authorId}/posts/`, {
-        //     "content": content,
-        //     "contentType": "text/plain"
-        // })
-    //     // .then((response) => console.log(response.data.id))
-    //     .then(async (response) => {
-    //         const response_1 = await axios
-    //             .post(`/authors/${authorId}/inbox/`, {
-    //                 "type": response.data.type,
-    //                 "title": response.data.title,
-    //                 "id": response.data.id,
-    //                 "source": response.data.source,
-    //                 "origin": response.data.origin,
-    //                 "description": response.data.description,
-    //                 "contentType": response.data.contentType,
-    //                 "content": response.data.content,
-    //                 "author": response.data.author,
-    //                 "published": response.data.published,
-    //                 "visibility": response.data.visibility,
-    //                 "unlisted": response.data.unlisted
-    //             });
-    //         return console.log(response_1);
-    //     })
-    //     .catch(error => console.log(error));
+            .post(`/authors/${authorID}/inbox/`, {
+                "type": "post",
+                "title": "dasd I123123 Come",
+                "id": `http://localhost:8000/authors/${authorID}/posts/${uuidv4()}`,
+                "contentType": contentType,
+                "content": content,
+                "author": data,
+            })
+            .then((response) => {
+                console.log("Sending to inbox...", response);
+                // getFollowers();
+                // console.log("f", getFollowers())
+                const requestPromises = getFollowers().map(endpoint => {
+                    axios.post(endpoint, response.data)
+                })
+                Promise.all(requestPromises)
+                .then((responses) => {
+                    console.log('All requests sent successfully:', responses);
+                })
+                .catch((error) => {
+                    console.error('Error sending requests:', error);
+                });
+            })
+            .catch((error) => console.log(error))
     }
 
     return (
