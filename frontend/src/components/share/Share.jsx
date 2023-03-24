@@ -52,7 +52,6 @@ const Share = () => {
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "title": "dasd I123123 Come",
             "id": `${data.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
             "content": content,
