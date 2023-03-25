@@ -95,8 +95,8 @@ class PostAPI(GenericAPIView):
     )
     def get(self, request, author_id):
         print("originating host", request.get_host())
-        originating_host = request.META.get('REMOTE_ADDR')
-        print(originating_host)
+        originating_host = request.META.get('HTTP_X_FORWARDED_FOR', '')
+        print("IP: ", originating_host)
         current_host = f"{request.scheme}://{request.get_host()}"
         
         if current_host != BASE_HOST and not server_request_authenticated(request):
