@@ -69,7 +69,6 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         if follow_serializer.is_valid():
             validated_follower_data = follow_serializer.validated_data
             follow = None
-            defaults = None
             if follower_serializer.follower_exists(author_id, foreign_author_id):
                 if not validated_follower_data["approved"]:
                     return {"msg": f"Friend request already send. Cannot send again."}, 400
