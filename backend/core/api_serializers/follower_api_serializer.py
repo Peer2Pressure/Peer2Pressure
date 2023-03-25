@@ -78,7 +78,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
                     return {"msg": f"{foreign_author_id} already follows {author_id}"}, 400
             else:
                 # Make sure other authors cannot override local author approval
-                validated_data["approved"] = False
+                validated_follower_data["approved"] = False
 
             # If follow request is from a different server, validate and create
             # an author profile for foreign author.
