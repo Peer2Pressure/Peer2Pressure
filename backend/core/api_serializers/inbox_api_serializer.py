@@ -130,19 +130,18 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if follow_serializer.is_valid():
             # get post author id 
             actor_id_path = urlparse(request_data["actor"]["id"]).path.split('/')
-            actor_id = actor_id_path[2]
             foreign_author_id = actor_id_path[2]
 
             # If local author recives a follow request
             headers = {"Content-Type": "application/json"}
             url = f"{BASE_HOST}/authors/{author_id}/followers/{foreign_author_id}/"
 
+            print("author_id: ", author_id, "f_id: ", foreign_author_id)
             # If local author gets a response of request being approved
-            if author_id == actor_id:
+            if author_id == foreign_author_id:
                 actor_id_path = urlparse(request_data["object"]["id"]).path.split('/')
-                actor_id = actor_id_path[2]
                 foreign_author_id = actor_id_path[2]
-
+                print()
                 # Check if follow request was send
                 if follow_serializer.follower_exists(foreign_author_id, author_id):
                     if not follow_serializer.get_relation_by_ids(foreign_author_id, author_id).approved:
@@ -153,12 +152,13 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 else:
                     return {"msg": f"{author_id} has not send a follow request to you."}, 400
 
+            print("URL : ", url)
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
-            
+            print(res.text, res.status_code)
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 author = author_serializer.get_author_by_id(author_id)
-                follow = follow_serializer.get_relation_by_ids(author_id, actor_id)
+                follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
                 inbox_post = Inbox.objects.create(content_object=follow, author=author, type="follow")
                 inbox_post.save()
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
