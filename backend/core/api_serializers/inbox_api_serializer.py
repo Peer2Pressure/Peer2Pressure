@@ -137,6 +137,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             url = f"{BASE_HOST}/authors/{author_id}/followers/{foreign_author_id}/"
 
             print("author_id: ", author_id, "f_id: ", foreign_author_id)
+            approved = False
             # If local author gets a response of request being approved
             if author_id == foreign_author_id:
                 actor_id_path = urlparse(request_data["object"]["id"]).path.split('/')
@@ -147,6 +148,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                     if not follow_serializer.get_relation_by_ids(foreign_author_id, author_id).approved:
                         url = f"{BASE_HOST}/authors/{foreign_author_id}/followers/{author_id}/"
                         request_data["approved"] = True
+                        approved = True
                     else:
                         return {"msg": f"{author_id} already follows {foreign_author_id}"}, 200
                 else:
@@ -158,9 +160,15 @@ class InboxAPISerializer(serializers.ModelSerializer):
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 author = author_serializer.get_author_by_id(author_id)
-                follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
+                follow = None
+                if approved:
+                    follow = follow_serializer.get_relation_by_ids(foreign_author_id, author_id)
+                else: 
+                    follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
                 inbox_post = Inbox.objects.create(content_object=follow, author=author, type="follow")
                 inbox_post.save()
+                if approved:
+                    return {"msg": f"Approved. {author_id} is following {foreign_author_id}."}, 200
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
             else:
                 return json.loads(res.text), res.status_code

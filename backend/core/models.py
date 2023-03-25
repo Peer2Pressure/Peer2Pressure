@@ -68,7 +68,7 @@ class Follower(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
     summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
-    approved = models.BooleanField(default=True)
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
