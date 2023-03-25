@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import BaseBackend
-from models import ServerAdmin
 from django.contrib.auth.hashers import check_password
+from .models import ServerAdmin
 
 class BasicAuthBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
