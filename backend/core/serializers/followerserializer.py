@@ -14,7 +14,7 @@ class FollowerSerializer(serializers.ModelSerializer):
     summary = serializers.CharField(required=False)
     actor = AuthorSerializer(source="from_author", required=True)
     object = AuthorSerializer(source="to_author", required=False)
-    approved = serializers.BooleanField(required=False)
+    approved = serializers.BooleanField(required=False, default=False)
 
     class Meta:
         model = Follower
