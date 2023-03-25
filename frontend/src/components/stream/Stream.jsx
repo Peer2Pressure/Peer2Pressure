@@ -42,6 +42,7 @@ function Stream() {
   const inbox_posts = posts.items;
 
 
+
   return (
     <div className="stream">
       <div className="xyz">

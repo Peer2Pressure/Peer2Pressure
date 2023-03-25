@@ -123,6 +123,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 return json.loads(res.text), 404
         else: 
             return serializer.errors, 400
+
     
     def handle_follow_request(self, author_id, request_data):
         follow_serializer = FollowerSerializer(data=request_data)
@@ -152,6 +153,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 url = f"{BASE_HOST}/authors/{foreign_author_id}/followers/{author_id}/"
                 request_data["approved"] = True
                 approved = True
+
 
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
             if res.status_code in [200, 201]:
