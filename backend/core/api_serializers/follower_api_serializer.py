@@ -76,9 +76,9 @@ class FollowerAPISerializer(serializers.ModelSerializer):
                 follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
                 if follow.approved:
                     return {"msg": f"{foreign_author_id} already follows {author_id}"}, 400
-            
-            # # Make sure other authors cannot override local author approval
-            # validated_data["approved"] = False
+            else:
+                # Make sure other authors cannot override local author approval
+                validated_data["approved"] = False
 
             # If follow request is from a different server, validate and create
             # an author profile for foreign author.
@@ -108,7 +108,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             # Update data
             validated_follower_data["from_author"] = foreign_author
             validated_follower_data["to_author"] = author
-            serializer.create()
+            serializer.create(validated_follower_data)
         else:
             return serializer.errors, 400
                 
@@ -120,8 +120,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             return {"msg": "Follow relation does not exist"}, 404
         
         follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
-        
-        
+
         follow.delete()
 
-        return follow, 200
+        return {"msg": f"{foreign_author_id} has unfollwed {author_id}"}, 200
