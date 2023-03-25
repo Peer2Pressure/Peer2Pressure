@@ -134,21 +134,17 @@ class InboxAPISerializer(serializers.ModelSerializer):
             actor_id_path = urlparse(request_data["actor"]["id"]).path.split('/')
             foreign_author_id = uuid.UUID(actor_id_path[2])
 
-            # if folo
-
             # If local author recives a follow request
             headers = {"Content-Type": "application/json"}
             url = f"{BASE_HOST}/authors/{author_id}/followers/{foreign_author_id}/"
 
-            print("author_id: ", author_id, "f_id: ", foreign_author_id)
             approved = False
 
             # If local author gets a response of request being approved
             if author_id == foreign_author_id:
                 actor_id_path = urlparse(request_data["object"]["id"]).path.split('/')
                 foreign_author_id = uuid.UUID(actor_id_path[2])
-                print()
-                
+
                 # Check if local author has not send a follow request
                 if not follow_serializer.follower_exists(foreign_author_id, author_id):
                     return {"msg": f"{author_id} has not send a follow request to you."}, 400
@@ -157,9 +153,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 request_data["approved"] = True
                 approved = True
 
-            print("URL : ", url)
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
-            print(res.text, res.status_code)
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 author = author_serializer.get_author_by_id(author_id)

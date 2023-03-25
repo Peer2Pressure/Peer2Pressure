@@ -65,10 +65,11 @@ class FollowerAPISerializer(serializers.ModelSerializer):
     def create_follow_request(self, author_id, foreign_author_id, request_data):
         # if not author_serializer.author_exists(author_id):
         #     return {"msg": "Author does not exist"}, 404
-        serializer = FollowerSerializer(data=request_data)
-        if serializer.is_valid():
-            validated_follower_data = serializer.validated_data
-
+        follow_serializer= FollowerSerializer(data=request_data)
+        if follow_serializer.is_valid():
+            validated_follower_data = follow_serializer.validated_data
+            follow = None
+            defaults = None
             if follower_serializer.follower_exists(author_id, foreign_author_id):
                 if not validated_follower_data["approved"]:
                     return {"msg": f"Friend request already send. Cannot send again."}, 400
@@ -76,6 +77,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
                 follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
                 if follow.approved:
                     return {"msg": f"{foreign_author_id} already follows {author_id}"}, 400
+                validated_follower_data["m_id"] = follow.m_id
             else:
                 # Make sure other authors cannot override local author approval
                 validated_follower_data["approved"] = False
@@ -104,11 +106,13 @@ class FollowerAPISerializer(serializers.ModelSerializer):
 
             author = author_serializer.get_author_by_id(author_id)
             foreign_author = author_serializer.get_author_by_id(foreign_author_id)
-
+            
             # Update data
             validated_follower_data["from_author"] = foreign_author
             validated_follower_data["to_author"] = author
-            serializer.create(validated_follower_data)
+            follow, created = follow_serializer.create(validated_follower_data)
+            if not created:
+                return {"msg": f"Follow request from {foreign_author_id} has been approved."}, 200
         else:
             return serializer.errors, 400
                 
