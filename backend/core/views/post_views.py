@@ -99,7 +99,9 @@ class PostAPI(GenericAPIView):
         originating_host = request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[0].strip()
         print("IP: ", originating_host)
         current_host = f"{request.scheme}://{request.get_host()}"
-        
+        print(originating_host not in ALLOWED_IPS)
+        print(not server_request_authenticated(request))
+        print(originating_host not in ALLOWED_IPS and not server_request_authenticated(request))
         if originating_host not in ALLOWED_IPS and not server_request_authenticated(request):
             response = HttpResponse("Authorization required.", status=401)
             response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
