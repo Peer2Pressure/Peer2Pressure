@@ -66,8 +66,8 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         # if not author_serializer.author_exists(author_id):
         #     return {"msg": "Author does not exist"}, 404
         
-        # if follower_serializer.follower_exists(author_id, foreign_author_id):
-        #     return {"msg": f"Friend request already send. Cannot send again."}, 400
+        if follower_serializer.follower_exists(author_id, foreign_author_id):
+            return {"msg": f"Friend request already send. Cannot send again."}, 400
         
         # If follow request is from a different server, validate and create
         # an author profile for foreign author.
