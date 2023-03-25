@@ -128,9 +128,13 @@ class InboxAPISerializer(serializers.ModelSerializer):
         follow_serializer = FollowerSerializer(data=request_data)
         
         if follow_serializer.is_valid():
+            validated_data = follow_serializer.validated_data
+            
             # get post author id 
             actor_id_path = urlparse(request_data["actor"]["id"]).path.split('/')
             foreign_author_id = uuid.UUID(actor_id_path[2])
+
+            # if folo
 
             # If local author recives a follow request
             headers = {"Content-Type": "application/json"}

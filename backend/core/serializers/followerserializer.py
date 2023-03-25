@@ -13,7 +13,7 @@ class FollowerSerializer(serializers.ModelSerializer):
     type = serializers.CharField(required=False, max_length=10, default="follow", read_only=True)
     summary = serializers.CharField(required=False)
     actor = AuthorSerializer(source="from_author", required=True)
-    object = AuthorSerializer(source="to_author", required=False)
+    object = AuthorSerializer(source="to_author", required=True)
     approved = serializers.BooleanField(required=False, default=False)
 
     class Meta:
@@ -21,7 +21,8 @@ class FollowerSerializer(serializers.ModelSerializer):
         fields = ["type", "summary", "actor", "object", "approved"]
 
     def create(self, validated_data):
-        return Follower.objects.create(**validated_data)
+        follow, created = Follower.objects.update_or_create(**validated_data)
+        return follow
     
     def create_relations(self, author_id, foreign_author_id):
     
