@@ -41,6 +41,7 @@ class ClientServer(AbstractModel):
     host = models.URLField()
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+    token = models.CharField(max_length=512, default="")
 
     
 class Author(AbstractModel):

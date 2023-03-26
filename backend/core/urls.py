@@ -4,7 +4,7 @@ from drf_yasg import openapi
 from django.urls import path, re_path, include
 from django.shortcuts import redirect, render
 
-from .views import account_views, author_views, follower_views, post_views, comment_views, like_views, inbox_views
+from .views import account_views, author_views, follower_views, post_views, comment_views, like_views, inbox_views, clientserver
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -55,4 +55,7 @@ urlpatterns = [
 
    # # Liked Views
    #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
+
+   # Client Server
+   path('clientservers/tokens/', clientserver.get_tokens, name="get_tokens")
 ]
