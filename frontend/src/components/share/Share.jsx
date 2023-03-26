@@ -43,19 +43,28 @@ const Share = () => {
     }
 
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`);
+        const response = await axios.get(`/authors/${authorID}/followers`, {
+            headers:{
+                "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+            }
+        });
         return response.data.items.map(obj => obj.id+"/inbox/");
     }
 
     const sendPost = async(event) => {
         event.preventDefault();
         const p = axios
-        .post(`/authors/${authorID}/inbox/`, {
+        .post(`/authors/${authorID}/inbox/`, data={
             "type": "post",
             "id": `${data.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
             "content": content,
             "author": data,
+        },
+        {
+            headers:{
+                "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+            }
         })
         
         const p2 = p.then((response) => {

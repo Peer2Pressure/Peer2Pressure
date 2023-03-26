@@ -15,19 +15,17 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
 from drf_yasg.utils import swagger_auto_schema
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
+
 # Local Libraries
-from .helpers import server_request_authenticated
 from .. import utils
 from ..models import *
 from ..serializers.postserializer import PostSerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 from ..api_serializers.inbox_api_serializer import InboxAPISerializer
-from ..config import *
 
 # API serializer
 inbox_api_serializer = InboxAPISerializer()
@@ -64,14 +62,8 @@ class InboxAPI(GenericAPIView):
         tags=["Inbox"],
         operation_description="Send an object to an author's obj",
     )
+    @permission_classes([IsAuthenticated])
     def post(self, request, author_id):
-        current_host = f"{request.scheme}://{request.get_host()}"
-
-        if current_host != BASE_HOST and not server_request_authenticated(request):
-            response = HttpResponse("Authorization required.", status=401)
-            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
-            return response
-        
         response = None
         code = None
         if "type" in list(request.data.keys()):

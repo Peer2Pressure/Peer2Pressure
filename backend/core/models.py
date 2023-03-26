@@ -1,21 +1,22 @@
-import os
+import os 
 from uuid import uuid4
 from abc import abstractclassmethod
 from varname import nameof
 from typing import List
 
+# Third-party libraries
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+# Local Libraries
 from .config import *
 
 MAX_CHARFIELD_LENGTH = 300
-
-# default_user = User.objects.get(username="deafult_user")
 
 class AbstractModel(models.Model):
     class Meta:
@@ -34,11 +35,14 @@ class AbstractModel(models.Model):
     def __repr__(self):
         return str(self)
 
-class ServerAdmin(AbstractModel):
+
+class ClientServer(AbstractModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_server", default=None, null=True)
     host = models.URLField()
     username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
 
+    
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)

@@ -26,7 +26,11 @@ export default function useGetAuthorData() {
                 const authorID = response.data.author_id;
                 setAuthorID(authorID);
 
-                const response2 = await axios.get("/authors/" + authorID + '/');
+                const response2 = await axios.get("/authors/" + authorID + '/', {
+                    headers:{
+                        "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+                    }
+                });
                 setData(response2.data);
                 setLoading(false);
             }   catch(error) {

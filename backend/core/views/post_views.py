@@ -4,6 +4,8 @@ import json
 # Third-party libraries
 # from django.http import HttpResponse, JsonResponse
 # from rest_framework import authentication, permission
+
+# Third-party libraries
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
@@ -17,31 +19,22 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.http import HttpResponse
 
 # Local Libraries
-from .helpers import server_request_authenticated
 from .. import utils
 from ..models import *
 from ..serializers.postserializer import PostSerializer, AllPostSerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
-from ..config import *
 
 # API serializer
 post_api_serializer = PostAPISerializer()
 
 class SinglePostAPI(GenericAPIView):
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(tags=['Posts'])
     def get(self, request, author_id, post_id):
-        current_host = f"{request.scheme}://{request.get_host()}"
-        
-        if current_host != BASE_HOST and not server_request_authenticated(request):
-            response = HttpResponse("Authorization required.", status=401)
-            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
-            return response
-
         post = post_api_serializer.get_single_post(author_id, post_id)
         if post:
             return Response(post)
@@ -49,10 +42,6 @@ class SinglePostAPI(GenericAPIView):
     
     @swagger_auto_schema(tags=['Posts'])
     def put(self, request, author_id, post_id):
-        # if request.user.is_authenticated:
-        #     pass
-        # else:
-        #     pass
         post, code = post_api_serializer.add_new_post(author_id, request.data, post_id=post_id)
         if code == 201:
             return Response(post, status=status.HTTP_201_CREATED)
@@ -82,6 +71,7 @@ class SinglePostAPI(GenericAPIView):
 
 class PostAPI(GenericAPIView):
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         tags=['Posts'],
@@ -94,19 +84,6 @@ class PostAPI(GenericAPIView):
         }
     )
     def get(self, request, author_id):
-        ALLOWED_IPS = ["68.151.70.49"]
-        print("originating host", request.get_host())
-        originating_host = request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[0].strip()
-        print("IP: ", originating_host)
-        current_host = f"{request.scheme}://{request.get_host()}"
-        print(originating_host not in ALLOWED_IPS)
-        print(not server_request_authenticated(request))
-        print(originating_host not in ALLOWED_IPS and not server_request_authenticated(request))
-        if originating_host not in ALLOWED_IPS and not server_request_authenticated(request):
-            response = HttpResponse("Authorization required.", status=401)
-            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
-            return response
-        
         try:
             page, size = utils.get_pagination_variables(request.query_params)
         except ValidationError:
@@ -125,7 +102,6 @@ class PostAPI(GenericAPIView):
             tags=['Posts'],
             operation_description='Create a new post.',)
     def post(self, request, author_id):
-
         post, code = post_api_serializer.add_new_post(author_id, request.data)
         if code == 201:
             return Response(post, status=status.HTTP_201_CREATED)

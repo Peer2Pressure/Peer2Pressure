@@ -19,7 +19,11 @@ function Stream() {
         console.log("author ID: " + authorId);
         // authorId = "1ead7fea-2483-463d-94d7-6e0ea244a1ff"
         // let's get all the posts under this author ID
-        const response2 = await axios.get("/authors/" + authorId + "/inbox/");
+        const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+          headers:{
+              "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+          }
+        });
         console.log("/authors/" + authorId + "/inbox/");
         setPosts(response2.data);
 

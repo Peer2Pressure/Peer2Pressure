@@ -20,7 +20,11 @@ function Widgets() {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('/authors/');
+      const response = await fetch('/authors/', {
+        headers:{
+            "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+        }
+      });
 
       const data = await response.json();
       console.log('fetchAllUsers:', data);

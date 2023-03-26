@@ -18,12 +18,6 @@ function getCsrfToken() {
 
 export default function Profile() {
 
-  // // calling the api to get data to be rendered in this component
-  // const {response1, loading1, error1} = useFetch("http://localhost:8000/get_author_id/");
-  // const authorId = response1.author_id;
-  // const {response2, loading2, error2} = useFetch("http://localhost:8000/authors/"+ authorId + "/");
-  // console.log(authorId, data, data1)
-
   const navigate = useNavigate();
   
   const [authorData, setAuthorData] = useState(null);
@@ -41,7 +35,11 @@ export default function Profile() {
         const response1 = await axios.get("/get_author_id/");
         const authorId = response1.data.author_id;
         // const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
-        const response2 = await axios.get("/authors/"+authorId+"/");
+        const response2 = await axios.get("/authors/"+authorId+"/", {
+          headers:{
+              "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+          }
+      });
         setAuthorData(response2.data);
         setLoading(false);
       } catch (err) {

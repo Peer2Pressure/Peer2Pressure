@@ -17,16 +17,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.http import HttpResponse
 
 # Local Libraries
-from .helpers import server_request_authenticated
 from .. import utils
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..serializers.authorserializer import AuthorSerializer, AllAuthorSerializer
 from ..models import *
-from ..config import *
-
 
 # author_list_serializer = AuthorListSerializer()
 author_api_serializer = AuthorAPISerializer()
@@ -52,6 +48,7 @@ class CurrentAuthorID(GenericAPIView):
 
 class AuthorListAPI(GenericAPIView):
     serializer_class = AllAuthorSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         tags=['Authors'],
@@ -63,14 +60,7 @@ class AuthorListAPI(GenericAPIView):
             )   
         }
     )
-    def get(self, request):
-        current_host = f"{request.scheme}://{request.get_host()}"
-
-        if current_host != BASE_HOST and not server_request_authenticated(request):
-            response = HttpResponse("Authorization required.", status=401)
-            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
-            return response
-        
+    def get(self, request):        
         try:
             page, size = utils.get_pagination_variables(request.query_params)
         except ValidationError:
@@ -83,18 +73,12 @@ class AuthorListAPI(GenericAPIView):
 
 class AuthorAPI(GenericAPIView):
     serializer_class = AuthorSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
             tags=['Authors'],
             operation_description='Get a single author.',)
-    def get(self, request, author_id):
-        current_host = f"{request.scheme}://{request.get_host()}"
-        
-        if current_host != BASE_HOST and not server_request_authenticated(request):
-            response = HttpResponse("Authorization required.", status=401)
-            response['WWW-Authenticate'] = 'Basic realm="Authentication required"'
-            return response
-        
+    def get(self, request, author_id):        
         author = author_api_serializer.get_single_author(author_id)
         if author:
             return Response(author)

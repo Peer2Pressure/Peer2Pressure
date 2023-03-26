@@ -44,7 +44,7 @@ def signin(request):
             return redirect('/')
         else:
             messages.info(request, 'Credentials Invalid')
-            return redirect('/signin')
+            return redirect('signin')
 
     else:
         return render(request, 'core/signin.html')
@@ -73,10 +73,10 @@ def signup(request):
 
                 new_author_profile = Author.objects.create(user=user_model, name=name, username=username, email=email, password=password)
                 new_author_profile.save()
-                return redirect("/signin")
+                return redirect("signin")
         else:
             messages.info(request, "Password Not Matching")
-            return redirect("/signup")
+            return redirect("signup")
         
     else:
         return render(request, "core/signup.html")
