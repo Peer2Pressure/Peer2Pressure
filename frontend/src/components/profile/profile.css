@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     background-color: rgba(255, 255, 255, 0.9);
     row-gap: 25px;
     padding: 25px;
@@ -28,4 +28,10 @@
     white-space: nowrap; 
     min-width: auto;
     /* text-transform: unset !important; */
+}
+
+.editButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
 }

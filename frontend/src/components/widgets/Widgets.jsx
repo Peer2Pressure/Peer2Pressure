@@ -20,7 +20,8 @@ function Widgets() {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('http://localhost:8000/authors/');
+      const response = await fetch('/authors/');
+
       const data = await response.json();
       console.log('fetchAllUsers:', data);
       if (Array.isArray(data.items)) {

@@ -27,7 +27,13 @@ SECRET_KEY = "django-insecure-^uq3h4s&#$w-r^^u7x844q@2$or=71mqm!e4m-g^q0g!el-6$z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://peer2pressure.herokuapp.com"]
+ALLOWED_HOSTS = ["https://p2psd.herokuapp.com", 
+                 "https://nevil-p2p.herokuapp.com", 
+                 "https://peer2test.herokuapp.com",
+                 "https://www.distribution.social",
+                 "https://sociallydistributed.herokuapp.com",
+                 "https://cmput404-project-app.herokuapp.com"
+                 ]
 
 # Application definition
 
@@ -56,8 +62,15 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "https://nevil-p2p.herokuapp.com",  # test app
+    "https://peer2test.herokuapp.com",  # test app
+    "https://p2psd.herokuapp.com",
+    "https://cmput404-project-app.herokuapp.com",
+    "https://www.distribution.social",
+    "https://sociallydistributed.herokuapp.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:8000"
 ]
 
 ROOT_URLCONF = "peer2pressure.urls"

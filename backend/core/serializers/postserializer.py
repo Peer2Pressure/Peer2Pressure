@@ -17,7 +17,7 @@ author_serializer = AuthorSerializer()
 
 class PostSerializer(serializers.ModelSerializer):
     type = serializers.CharField(required=False, max_length=10, default="post", read_only=True)
-    title = serializers.CharField(required=False, max_length=300)
+    title = serializers.CharField(required=False, max_length=300, allow_blank=True)
     id = serializers.URLField(required=False)
     source = serializers.URLField(required=False, allow_blank=True)
     origin = serializers.URLField(required=False, allow_blank=True)
@@ -89,6 +89,13 @@ class PostSerializer(serializers.ModelSerializer):
             raise ValidationError("Post does not exist.")
         
         return post
+    
+    def post_exists(self, author_id, post_id):
+        try:
+            post = self.get_author_post(author_id, post_id)
+        except ValidationError:
+            return False
+        return True
     
     def update_post(self, author_id, post_id, defaults=None, title=None, content=None, image=None, is_private=False):
         try:

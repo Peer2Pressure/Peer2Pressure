@@ -68,7 +68,7 @@ class Follower(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
     summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
-    approved = models.BooleanField(default=True)
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -95,6 +95,7 @@ class Post(AbstractModel):
     origin = models.URLField(blank=True)
     description = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=False, null=False)
+    comments = models.URLField(default="")
     # categories = models.ArrayField(models.CharField)
     unlisted = models.BooleanField(default=False)
 
@@ -110,6 +111,7 @@ class Post(AbstractModel):
             # Generate a URL based on the object's ID
             self.id = f"{self.author.url}/posts/{self.m_id}"
             self.url = f"{self.author.url}/posts/{self.m_id}"
+            self.comments = f"{self.id}/comments"
         super().save(*args, **kwargs)
 
 

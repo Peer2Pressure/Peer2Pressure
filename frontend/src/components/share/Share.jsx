@@ -4,7 +4,8 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch } from "@mui/material";
 import axios from "axios";
-
+import useGetAuthorData from "../../useGetAuthorData";
+import { v4 as uuidv4 } from 'uuid';
 
 const Share = () => {
 
@@ -12,9 +13,11 @@ const Share = () => {
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
+    const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
 
-    const authorId = "cfa35fee-0696-4253-91c0-df7646cde2fe";
+
+    const {data, loading, error, authorID} = useGetAuthorData();
 
     const handleContentChange = event => {
         setContent(event.target.value);
@@ -39,18 +42,45 @@ const Share = () => {
        setFiles(files.filter(x => x.name !== i));
     }
 
+    async function getFollowers() {
+        const response = await axios.get(`/authors/${authorID}/followers`);
+        return response.data.items.map(obj => obj.id+"/inbox/");
+    }
+
     const sendPost = async(event) => {
         event.preventDefault();
-        axios
-        .post("http://localhost:8000/authors/" + authorId + "/posts/", {
+        const p = axios
+        .post(`/authors/${authorID}/inbox/`, {
+            "type": "post",
+            "id": `${data.host}/authors/${authorID}/posts/${uuidv4()}`,
+            "contentType": contentType,
             "content": content,
-            "author" : authorId,
-            "is_private": false,
-            "image": files  // or test with null
+            "author": data,
         })
-        .then(response => console.log('Posting data', response))
-        .catch(error => console.log(error));
-        // .catch(console.log(files));
+        
+        const p2 = p.then((response) => {
+            const p3 = getFollowers()
+            const p4 = p3.then((response2) => {
+                // console.log("p3", p3)
+                // console.log("r2", response2)
+                // console.log("rd", response.data)
+                const requestPromises = response2.map(endpoint => {
+                    axios.post(endpoint, response.data)
+                })
+                Promise
+                .all(requestPromises)
+                .then((responses) => {
+                    console.log('All requests sent successfully:', responses);
+                })
+                .catch((error) => {
+                    console.error('Error sending requests:', error);
+                })
+                .finally(() => {
+                    window.location.reload();
+                });
+            }
+            )
+        })
     }
 
     return (

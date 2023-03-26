@@ -129,7 +129,7 @@ const Post = forwardRef(
             </div>
             <div className="post__comments" onClick={handleCommentClick}>
               <ChatBubbleOutlineIcon fontSize="small" />
-              <p>{comments}</p>
+              {/* <p>{comments}</p> */}
             </div>
             {showCommentArea && (
               <form onSubmit={handleCommentSubmit}>

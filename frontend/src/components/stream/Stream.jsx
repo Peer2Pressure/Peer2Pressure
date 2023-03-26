@@ -40,17 +40,13 @@ function Stream() {
   }
 
   const inbox_posts = posts.items;
-  console.log("inbox poss", inbox_posts);
+
 
 
   return (
     <div className="stream">
-      <div className="stream__header">
-        {/* <h2>Home</h2> */}
-        {/* <Share/> */}
-      </div>
-      <div>
-        <Flipmove>
+      <div className="xyz">
+        <Flipmove className="flippy">
           {inbox_posts.map((post) => (
             <div className="stream__posts" key={post.id}>
               <Post
