@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import "./home.css";
 import Share from "../../components/share/Share";
 import Profile from "../../components/profile/Profile";
@@ -9,28 +11,23 @@ import NavBar from "../../components/navBar/NavBar";
 
 
 const Home = () => {
-    return (
-      // <div>
-      //   <Profile/>
-      //   <Share/>
-      //   <Stream/>
-      // </div>
+  const [postsUpdated, setPostsUpdated] = useState(false);
+  return (
+    <div className="homeContainer">
 
-      <div className="homeContainer">
-
-        {/* <div className="navBarContainer">
-          <NavBar/>
-        </div> */}
-        <div className="bodyContainer">
-          <Profile/>
-          <div className="streamContainer">
-            <Share/>
-            <Stream/>
-          </div>
-          <Widgets/>
+      {/* <div className="navBarContainer">
+        <NavBar/>
+      </div> */}
+      <div className="bodyContainer">
+        <Profile/>
+        <div className="streamContainer">
+          <Share postsUpdated={postsUpdated} setPostsUpdated={setPostsUpdated}/>
+          <Stream postsUpdated={postsUpdated}/>
         </div>
+        <Widgets/>
       </div>
-    )
-  }
-  
-  export default Home
+    </div>
+  )
+}
+
+export default Home

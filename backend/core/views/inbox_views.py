@@ -64,13 +64,16 @@ class InboxAPI(GenericAPIView):
     )
     @permission_classes([IsAuthenticated])
     def post(self, request, author_id):
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+    
         response = None
         code = None
+        print("asd")
         if "type" in list(request.data.keys()):
             if request.data["type"].lower() == "post":
-                response, code = inbox_api_serializer.handle_post(author_id, request.data)
+                response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "follow":
-                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data)
+                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data, auth_header)
         if code == 200:
             return Response(response, status=status.HTTP_200_OK)
         elif code == 400:

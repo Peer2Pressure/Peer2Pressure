@@ -7,8 +7,8 @@ import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
 
-const Share = () => {
-
+function Share(props) {
+    const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
@@ -17,7 +17,7 @@ const Share = () => {
     // const [fileURL, setFileURL] = useState(null)
 
 
-    const {data, loading, error, authorID} = useGetAuthorData();
+    const {authorData, loading, error, authorID} = useGetAuthorData();
 
     const handleContentChange = event => {
         setContent(event.target.value);
@@ -52,14 +52,15 @@ const Share = () => {
     }
 
     const sendPost = async(event) => {
+        console.log("author_data123: ", authorData, authorID);
         event.preventDefault();
         const p = axios
-        .post(`/authors/${authorID}/inbox/`, data={
+        .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${data.host}/authors/${authorID}/posts/${uuidv4()}`,
+            "id": `${authorData.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
             "content": content,
-            "author": data,
+            "author": authorData,
         },
         {
             headers:{
@@ -68,11 +69,11 @@ const Share = () => {
         })
         
         const p2 = p.then((response) => {
+            setPostsUpdated(response.data);
+            setContent("");
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
-                // console.log("p3", p3)
-                // console.log("r2", response2)
-                // console.log("rd", response.data)
+
                 const requestPromises = response2.map(endpoint => {
                     axios.post(endpoint, response.data)
                 })
@@ -85,8 +86,8 @@ const Share = () => {
                     console.error('Error sending requests:', error);
                 })
                 .finally(() => {
-                    window.location.reload();
-                });
+                    console.log("empty text area")
+                })
             }
             )
         })

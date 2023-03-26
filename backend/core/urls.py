@@ -30,7 +30,7 @@ urlpatterns = [
     path('accounts/logout/', account_views.logout_view, name='logout'),
 
     # Author views
-    path('get_author_id/', author_views.CurrentAuthorID.as_view(), name="get_author_id"),
+    path('get_author_id/', author_views.get_author_id, name="get_author_id"),
     path('authors/', author_views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', author_views.AuthorAPI.as_view(), name='author_api'),
 

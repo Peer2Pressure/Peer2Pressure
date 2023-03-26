@@ -8,13 +8,14 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import logout
+from django.http import JsonResponse
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -27,23 +28,10 @@ from ..models import *
 # author_list_serializer = AuthorListSerializer()
 author_api_serializer = AuthorAPISerializer()
 
-class CurrentAuthorID(GenericAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
-    
-    @swagger_auto_schema(
-            tags=["Authors"],
-            operation_description='Get currently logged in author\'s id.',
-            responses={
-            200: openapi.Response(
-                description='OK',
-                schema=AuthorSerializer()
-                )   
-            }
-        )
-    def get(self, request):
-        author_id = request.user.author_profile.m_id
-        return Response({'author_id': author_id})
+@permission_classes([IsAuthenticated])
+def get_author_id(request):
+    author_id = request.user.author_profile.m_id
+    return JsonResponse({'author_id': author_id})
         
 
 class AuthorListAPI(GenericAPIView):

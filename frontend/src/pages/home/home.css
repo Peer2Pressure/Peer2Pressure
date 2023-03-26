@@ -1,7 +1,8 @@
 .homeContainer {
     background-attachment: fixed;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-around;
     margin:0;
     padding: 0;
     width: 100%;
@@ -34,5 +35,6 @@
 }
 
 .streamContainer {
-    width: 40%;
+    visibility: hidden;
+    width: 50%;
 }

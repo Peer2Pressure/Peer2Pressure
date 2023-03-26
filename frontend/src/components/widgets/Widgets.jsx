@@ -27,7 +27,6 @@ function Widgets() {
       });
 
       const data = await response.json();
-      console.log('fetchAllUsers:', data);
       if (Array.isArray(data.items)) {
         setAllUsers(data.items);
         setIsLoading(false);
@@ -43,12 +42,10 @@ function Widgets() {
 
   const filterUsers = useCallback((query) => {
     // Filter users based on the search term
-    console.log('allUsers:', allUsers);
     if (allUsers) {
       const filteredUsers = allUsers.filter((user) => {      
         return user.displayName.toLowerCase().includes(query.toLowerCase());
       });
-      console.log('Search term:', query);
       setSearchResults(filteredUsers);
     }
   }, [allUsers]);
