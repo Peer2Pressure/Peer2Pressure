@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import getCsrfToken from "./utils";
+import useGetTokens from './useGetTokens';
 
 // hook <- component but in this case, we don't return jsx (ie. any visual stuff, ui). We only return data and states
 // that we may need upon calling the hook.
@@ -14,6 +15,8 @@ export default function useGetAuthorData() {
     const [loading, setLoading] = useState(false);      // boolean; set to false initially becuase nothing is loading yet till we call something to load 
     const [error, setError] = useState(null);           // 
 
+    const {tokens, tokenError} = useGetTokens();
+
     useEffect(() => {
         const getAuthorData = async () => {
             try {
@@ -25,10 +28,12 @@ export default function useGetAuthorData() {
                 const response = await axios.get("/get_author_id/");
                 const authorID = response.data.author_id;
                 setAuthorID(authorID);
+                console.log(tokens)
 
                 const response2 = await axios.get("/authors/" + authorID + '/', {
                     headers:{
-                        "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+                        // "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+                        "Authorization": tokens[window.location.origin + "/"]
                     }
                 });
                 setData(response2.data);
@@ -40,7 +45,9 @@ export default function useGetAuthorData() {
                 setLoading(false);
             }
         };
-        getAuthorData();
-    }, []);
+        if (tokens) {
+            getAuthorData();
+        }
+    }, [tokens]);
     return {authorData, loading, error, authorID};
 }

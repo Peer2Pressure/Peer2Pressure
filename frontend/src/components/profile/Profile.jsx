@@ -32,7 +32,7 @@ export default function Profile() {
         const csrftoken = getCsrfToken();
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
         axios.defaults.xsrfCookieName = 'csrftoken';
-        console.log("aaaaaaa", tokens);
+        // console.log("aaaaaaa", tokens);
         
         
         const response1 = await axios.get("/get_author_id/");
@@ -42,6 +42,7 @@ export default function Profile() {
           headers:{
               // "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
               "Authorization": tokens[window.location.origin + "/"]
+              // "Authorization": tokens["http://localhost:8000/"]
           }
       });
         setAuthorData(response2.data);

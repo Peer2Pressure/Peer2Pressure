@@ -18,7 +18,7 @@ function Stream(props) {
         // let's get the author ID 
         const response1 = await axios.get("/get_author_id/");
         const authorId = response1.data.author_id;
-        console.log("askdlfj", tokens);
+        // console.log("askdlfj", tokens);
         // console.log("author ID: " + authorId);
         // let's get all the posts under for current author ID
         const response2 = await axios.get("/authors/" + authorId + "/inbox/", {

@@ -3,6 +3,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import './widgets.css';
+import useGetTokens from "../../useGetTokens";
+import useGetAuthorData from '../../useGetAuthorData';
+
 
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,17 +15,25 @@ function Widgets() {
   //for testing purposes, we will set the current user to 1
   const [currentUserId, setCurrentUserId] = useState(1);
 
+  const {tokens, tokenError} = useGetTokens();
+  const {authorData, authorLoad, authorError, authorID } = useGetAuthorData();
+
 
   useEffect(() => {
     // Fetch all users when the component mounts
-    fetchAllUsers();
-  }, []);
+    if (tokens && authorData) {
+      fetchAllUsers();
+      // console.log("tokens", tokens);
+      // console.log("a", authorData);
+    }    
+  }, [tokens, authorData]);
 
   const fetchAllUsers = async () => {
     try {
       const response = await fetch('/authors/', {
         headers:{
-            "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+        //     "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+            "Authorization": tokens[authorData.host + "/"]
         }
       });
 
