@@ -42,7 +42,7 @@
     /* border: 1px solid black; */
 }
 
-.usernameBox, .fullNameBox, .emailBox, .passwordBox {
+.usernameBox, .fullNameBox, .emailBox, .passwordBox, .gitHubBox, .avatarBox {
     padding-top: 20px;
     padding-bottom: 20px;
     display: flex;

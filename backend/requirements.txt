@@ -29,6 +29,8 @@ django==4.1.7
     #   drf-yasg
 django-cors-headers==3.14.0
     # via -r base.in
+django-cors-middleware==1.5.0
+    # via -r base.in
 django-on-heroku==1.1.2
     # via -r base.in
 djangorestframework==3.14.0

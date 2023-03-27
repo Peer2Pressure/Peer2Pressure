@@ -6,8 +6,9 @@ import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
 import useGetTokens from "../../useGetTokens";
+import Button from "@mui/material/Button";
 
-function Share(props) {
+function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
@@ -77,7 +78,6 @@ function Share(props) {
             setContent("");
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
-
                 const requestPromises = response2.map(obj => {
                     axios.post(obj[0], response.data, {
                         headers: {
@@ -145,7 +145,8 @@ function Share(props) {
                                     <PhotoSizeSelectActualOutlinedIcon 
                                         fontSize="small"     
                                         color="primary"
-                                    /> <b> Upload a Photo</b>
+                                    />
+                                    <b> Upload a Photo</b>
                                     <img src = {Image} alt="" /> 
                                 </div>
                             </label>
@@ -161,12 +162,10 @@ function Share(props) {
                     </div>
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
-                            <button className="postButton" role="button" onClick={sendPost}>Post</button>
+                            <Button sx={{borderRadius: 20}} variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
                         </div>
                     </div>
-                    
                 </div>
-                
             </div>
         </div>
     );

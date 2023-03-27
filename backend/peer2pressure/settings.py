@@ -30,7 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = ["https://p2psd.herokuapp.com", 
                  "https://nevil-p2p.herokuapp.com", 
                  "https://peer2test.herokuapp.com",
-                 "https://www.distribution.social"
+                 "https://www.distribution.social",
+                 "https://sociallydistributed.herokuapp.com",
+                 "https://cmput404-project-app.herokuapp.com"
                  ]
 
 # Application definition
@@ -59,11 +61,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOWED_ORIGINS = [
-    "https://nevil-p2p.herokuapp.com", "https://peer2test.herokuapp.com",
+    "https://nevil-p2p.herokuapp.com",  # test app
+    "https://peer2test.herokuapp.com",  # test app
     "https://p2psd.herokuapp.com",
     "https://cmput404-project-app.herokuapp.com",
     "https://www.distribution.social",
+    "https://sociallydistributed.herokuapp.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8000"

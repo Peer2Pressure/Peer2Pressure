@@ -91,8 +91,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
             print("in")
             # TODO: Validate post_id is a UUID
             # Get post author id.
-            post_id_url = urlparse(request_data["id"]).path.split('/')
-            foreign_author_id = uuid.UUID(post_id_url[2])
+            post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
+            foreign_author_id = uuid.UUID(post_id_url[-1])
             post_id = post_id_url[4]
 
             print("inbox author: ", author_id, "post author: ", foreign_author_id)
@@ -138,8 +138,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
             validated_data = follow_serializer.validated_data
             
             # get post author id 
-            actor_id_path = urlparse(request_data["actor"]["id"]).path.split('/')
-            foreign_author_id = uuid.UUID(actor_id_path[2])
+            actor_id_path = urlparse(request_data["actor"]["id"]).path.rstrip("/").split('/')
+            foreign_author_id = uuid.UUID(actor_id_path[-1])
 
             # If local author recives a follow request
             headers = {
@@ -152,8 +152,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             # If local author gets a response of request being approved
             if author_id == foreign_author_id:
-                actor_id_path = urlparse(request_data["object"]["id"]).path.split('/')
-                foreign_author_id = uuid.UUID(actor_id_path[2])
+                actor_id_path = urlparse(request_data["object"]["id"]).path.rstrip("/").split('/')
+                foreign_author_id = uuid.UUID(actor_id_path[-1])
 
                 # Check if local author has not send a follow request
                 if not follow_serializer.follower_exists(foreign_author_id, author_id):
@@ -165,6 +165,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
 
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
+
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 author = author_serializer.get_author_by_id(author_id)

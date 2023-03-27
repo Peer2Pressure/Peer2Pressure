@@ -11,7 +11,7 @@ export default function useGetAuthorData() {
     // do an api call whenever we call this hook.
 
     const [authorID, setAuthorID] = useState(null)
-    const [authorData, setData] = useState(null);             // set as null because we don't really know the state the data is in initially.
+    const [authorData, setAuthorData] = useState(null);             // set as null because we don't really know the state the data is in initially.
     const [loading, setLoading] = useState(false);      // boolean; set to false initially becuase nothing is loading yet till we call something to load 
     const [error, setError] = useState(null);           // 
 
@@ -35,7 +35,7 @@ export default function useGetAuthorData() {
                         "Authorization": tokens[window.location.origin]
                     }
                 });
-                setData(response2.data);
+                setAuthorData(response2.data);
                 setLoading(false);
             }   catch(error) {
                 setError(error.message);
@@ -48,5 +48,6 @@ export default function useGetAuthorData() {
             getAuthorData();
         }
     }, [tokens]);
+  
     return {authorData, loading, error, authorID};
 }
