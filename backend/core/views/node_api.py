@@ -23,7 +23,7 @@ from ..api_serializers.post_api_serializer import PostAPISerializer
 # @permission_classes([IsAuthenticated])
 def get_tokens(request):
     print("hello 23")
-    client_servers = ClientServer.objects.all()
+    client_servers = Node.objects.all()
     print(client_servers)
     if len(client_servers) == 0:
         return JsonResponse({}, status=status.HTTP_204_NO_CONTENT)
