@@ -29,7 +29,6 @@ const Home = () => {
         <div className="widgetContainer">
            <Widgets/>
         </div>
-        <Widgets/>
       </div>
     </div>
   )
