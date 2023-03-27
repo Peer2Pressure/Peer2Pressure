@@ -40,8 +40,7 @@ export default function Profile() {
         // const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
         const response2 = await axios.get("/authors/"+authorId+"/", {
           headers:{
-              // "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
-              "Authorization": tokens[window.location.origin + "/"]
+              "Authorization": tokens[window.location.origin]
               // "Authorization": tokens["http://localhost:8000/"]
           }
       });

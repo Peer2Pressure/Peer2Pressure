@@ -46,7 +46,7 @@ function Share(props) {
         const response = await axios.get(`/authors/${authorID}/followers`, {
             headers:{
                 // "Authorization": tokens[window.location.origin]
-                "Authorization": tokens[authorData.host + "/"]
+                "Authorization": tokens[authorData.host]
             }
         });
         return response.data.items.map(obj => [obj.id+"/inbox/", obj.host+"/"]);
@@ -55,7 +55,7 @@ function Share(props) {
     const sendPost = async(event) => {
         // console.log("author_data123: ", authorData, authorID);
         console.log("tt", tokens);
-        console.log("ttttt", tokens[authorData.host + "/"]);
+        console.log("ttttt", tokens[authorData.host]);
         event.preventDefault();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
@@ -68,7 +68,7 @@ function Share(props) {
         {
             headers: {
                 // "Authorization": tokens[window.location.origin]
-                "Authorization": tokens[authorData.host + "/"]
+                "Authorization": tokens[authorData.host]
             }
         })
         

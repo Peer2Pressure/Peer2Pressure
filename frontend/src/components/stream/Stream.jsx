@@ -23,8 +23,7 @@ function Stream(props) {
         // let's get all the posts under for current author ID
         const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
           headers:{
-              // "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
-              "Authorization": tokens[window.location.origin + "/"]
+              "Authorization": tokens[window.location.origin]
           }
         });
         // console.log("/authors/" + authorId + "/inbox/", postsUpdated);

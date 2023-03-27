@@ -32,8 +32,7 @@ export default function useGetAuthorData() {
 
                 const response2 = await axios.get("/authors/" + authorID + '/', {
                     headers:{
-                        // "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
-                        "Authorization": tokens[window.location.origin + "/"]
+                        "Authorization": tokens[window.location.origin]
                     }
                 });
                 setData(response2.data);
