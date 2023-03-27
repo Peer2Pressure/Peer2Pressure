@@ -25,8 +25,8 @@ urlpatterns = [
     
     # Account views
     re_path(r"^$", account_views.index, name="index"),
-    path('signin/', account_views.signin, name='signin'),
-    path('signup/', account_views.signup, name='signup'),
+    path('accounts/login/', account_views.signin, name='signin'),
+    path('accounts/signup/', account_views.signup, name='signup'),
     path('accounts/logout/', account_views.logout_view, name='logout'),
 
     # Author views
@@ -50,8 +50,9 @@ urlpatterns = [
     path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', like_views.CommentLikeAPI.as_view(), name="comment_likes"),
 
    # Inbox views
-    path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox_like"),
+    path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
+    path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox1"),
 
    # Liked Views
-   #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
+    path('authors/<uuid:author_id>/liked/', like_views.PostLikedAPI.as_view(), name="author_liked")
 ]

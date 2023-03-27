@@ -48,3 +48,23 @@ class PostLikeAPISerializer(serializers.ModelSerializer):
 
         return result_dict
 
+    def get_all_post_likes_by_author(self, author_id):
+        try:
+            author = author_api_serializer.get_single_author(author_id)
+        except ValueError:
+            return None
+        
+        post_likes = PostLike.objects.filter(author=author_id)
+
+        result_dict = {}
+        result_dict["type"] = "liked"
+
+        post_likes_list = []
+
+        for like in post_likes:
+            curr_post_like_data = self.get_post_like_data(like)
+            post_likes_list.append(curr_post_like_data)
+
+        result_dict["items"] = post_likes_list
+
+        return result_dict

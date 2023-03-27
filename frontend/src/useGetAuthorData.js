@@ -10,7 +10,7 @@ export default function useGetAuthorData() {
     // do an api call whenever we call this hook.
 
     const [authorID, setAuthorID] = useState(null)
-    const [data, setData] = useState(null);             // set as null because we don't really know the state the data is in initially.
+    const [authorData, setAuthorData] = useState(null);             // set as null because we don't really know the state the data is in initially.
     const [loading, setLoading] = useState(false);      // boolean; set to false initially becuase nothing is loading yet till we call something to load 
     const [error, setError] = useState(null);           // 
 
@@ -27,7 +27,7 @@ export default function useGetAuthorData() {
                 setAuthorID(authorID);
 
                 const response2 = await axios.get("/authors/" + authorID + '/');
-                setData(response2.data);
+                setAuthorData(response2.data);
                 setLoading(false);
             }   catch(error) {
                 setError(error.message);
@@ -38,5 +38,5 @@ export default function useGetAuthorData() {
         };
         getAuthorData();
     }, []);
-    return {data, loading, error, authorID};
+    return {authorData, loading, error, authorID};
 }

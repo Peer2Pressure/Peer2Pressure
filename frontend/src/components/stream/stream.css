@@ -22,18 +22,17 @@
 }/* Firefox */
 
 .stream__posts {
-  margin-bottom: 2em;
-  margin-top: 2em;
+  margin: 1em;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
-/* .stream__header {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 100;
-  border: 1px solid var(--main-background);
-  padding: 15px 20px;
-} */
+.stream__posts > .post {
+  visibility: visible;
+  width: 85%;
+}
 
 .stream__header > h2 {
   font-size: 20px;

@@ -5,8 +5,9 @@ import axios from "axios";
 import "./stream.css";
 import Post from "../post/Post";
 
-function Stream() {
-  const [posts, setPosts] = useState(null);
+function Stream(props) {
+  const { postsUpdated } = props;
+  const [inboxPosts, setInboxPosts] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ function Stream() {
         // let's get all the posts under this author ID
         const response2 = await axios.get("/authors/" + authorId + "/inbox/");
         console.log("/authors/" + authorId + "/inbox/");
-        setPosts(response2.data);
+        setInboxPosts(response2.data.items);
 
       } catch(error) {
         setError(error);
@@ -29,26 +30,24 @@ function Stream() {
     };
  
     getPosts();
-  }, []);
+  }, [postsUpdated]);
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-  if (!posts) {
+  if (!inboxPosts) {
     return <div>Loading...</div>;
   }
-
-  const inbox_posts = posts.items;
 
 
   return (
     <div className="stream">
-      <div className="xyz">
         <Flipmove className="flippy">
-          {inbox_posts.map((post) => (
+          {inboxPosts.slice().reverse().map((post) => (
             <div className="stream__posts" key={post.id}>
               <Post
+                className="post"
                 key={post.id}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
@@ -61,7 +60,6 @@ function Stream() {
             </div>
           ))}
         </Flipmove>
-      </div>
     </div>
 
   );

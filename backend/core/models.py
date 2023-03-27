@@ -47,7 +47,7 @@ class Author(AbstractModel):
     github = models.URLField(default="", blank=True)
     
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["username", "email", "password"], name="Unique user properties")]
+        constraints = [models.UniqueConstraint(fields=["id"], name="Unique user properties")]
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
@@ -68,7 +68,7 @@ class Follower(AbstractModel):
     to_author = models.ForeignKey(Author, related_name='follower', on_delete=models.CASCADE)
     from_author = models.ForeignKey(Author, related_name='following', on_delete=models.CASCADE)
     summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
-    approved = models.BooleanField(default=True)
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
