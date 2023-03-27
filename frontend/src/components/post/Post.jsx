@@ -7,6 +7,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
+import Button from "@mui/material/Button";
 
 // menu source: https://mui.com/material-ui/react-menu/
 
@@ -60,10 +61,11 @@ const Post = forwardRef(
 
     return (
       <div className="post" ref={ref}>
-        <div className="post__avatar">
-          <Avatar src={avatar} />
-        </div>
-        <div className="post__body">
+        <div className="placeHolder">
+          <div className="post__avatar">
+            <Avatar src={avatar} />
+          </div>
+          <div className="post__body">
           <div className="post__header">
             <div className="post_headerTop">
               <div className="post__headerText">
@@ -113,35 +115,42 @@ const Post = forwardRef(
             </div>
           </div>
           <img src={image} alt="" />
-          <div className="post__footer">
-            <div className="post__likes" onClick={handleLikeClick}>
-              {like ? (
-                <>
-                  <FavoriteIcon fontSize="small" />
-                  <p>{likes + 1}</p>
-                </>
-              ) : (
-                <>
-                  <FavoriteBorderIcon fontSize="small" />
-                  <p>{likes}</p>
-                </>
-              )}
-            </div>
-            <div className="post__comments" onClick={handleCommentClick}>
-              <ChatBubbleOutlineIcon fontSize="small" />
-              {/* <p>{comments}</p> */}
-            </div>
-            {showCommentArea && (
-              <form onSubmit={handleCommentSubmit}>
-                <textarea className="post__commentInput"
-                  placeholder="Add a comment..."
-                  value={commentText}
-                  onChange={(event) => setCommentText(event.target.value)}
-                />
-                <button className="replybutton" type="submit">Reply</button>
-              </form>
-            )}
           </div>
+        </div>
+        <div className="post__footer">
+              <div className="iconArea">
+                <div className="post__likes" onClick={handleLikeClick}>
+                  {like ? (
+                    <>
+                      <FavoriteIcon fontSize="small" />
+                      {/* <p>{likes + 1}</p> */}
+                    </>
+                  ) : (
+                    <>
+                      <FavoriteBorderIcon fontSize="small" />
+                      <p>{likes}</p>
+                    </>
+                  )}
+                </div>
+                <div className="post__comments" onClick={handleCommentClick}>
+                <ChatBubbleOutlineIcon fontSize="small" />
+                {/* <p>{comments}</p> */}
+                </div>
+              </div>
+              <div className="showCommentArea">
+                  {showCommentArea && (
+                  <form onSubmit={handleCommentSubmit}>
+                    <div className="addCommentContainer">
+                      <textarea className="post__commentInput"
+                      placeholder="Add a comment..."
+                      value={commentText}
+                      onChange={(event) => setCommentText(event.target.value)}
+                      />
+                      <Button variant="contained" className="replybutton" type="submit">Reply</Button>
+                    </div>
+                  </form>
+                )}
+              </div>
         </div>
       </div>
     );
