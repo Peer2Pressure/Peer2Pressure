@@ -3,40 +3,68 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import './widgets.css';
-import useGetTokens from "../../useGetTokens";
-import useGetAuthorData from '../../useGetAuthorData';
-
+import axios from 'axios';
 
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [isAuthorIdFetched, setIsAuthorIdFetched] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  //for testing purposes, we will set the current user to 1
-  const [currentUserId, setCurrentUserId] = useState(1);
-
-  const {tokens, tokenError} = useGetTokens();
-  const {authorData, authorLoad, authorError, authorID } = useGetAuthorData();
-
+  const [followedUsers, setFollowedUsers] = useState({});
+  const [currentUserId, setCurrentUserId] = useState();
+  const [singleAuthor, setsingleAuthor] = useState()
+  const [displayedUsers, setDisplayedUsers] = useState([]);
 
   useEffect(() => {
     // Fetch all users when the component mounts
-    if (tokens && authorData) {
-      fetchAllUsers();
-      // console.log("tokens", tokens);
-      // console.log("a", authorData);
-    }    
-  }, [tokens, authorData]);
+    fetchAllUsers();
+  }, []);
 
-  const fetchAllUsers = async () => {
+  const getTokens = async () => {
     try {
-      const response = await fetch('/authors/', {
-        headers:{
-            "Authorization": tokens[authorData.host]
-        }
-      });
+      const response = await axios.get('/nodes/tokens/');
+      console.log("TOKEN", response.data);
+      const values = Object.values(response.data);
+      return values.length > 0 ? values[0] : null;
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+      return null;
+    }
+  };
+  
 
-      const data = await response.json();
+  useEffect(() => {
+    async function getauthorid() {
+      try {
+        const tokens = await getTokens();
+        if (!tokens) {
+          throw new Error('Failed to fetch tokens');
+        }
+
+        const response1 = await axios.get("/get_author_id/");
+        setCurrentUserId(response1.data.author_id);
+
+        const currentUserData = await fetchSingleAuthor(response1.data.author_id);
+        setsingleAuthor(currentUserData);
+        setIsAuthorIdFetched(true);
+      } catch (error) {
+        console.error("Error occurred: " + JSON.stringify(error));
+      };
+    };
+
+    getauthorid();
+  }, []);
+  
+  const fetchAllUsers = async (tokens) => {
+    try {
+      const response = await axios.get('/authors/'
+      , {
+        headers: {
+          'Authorization': `Bearer ${tokens.access_token}`,
+        },
+      });
+      const data = response.data;
+      console.log('fetchAllUsers:', data);
       if (Array.isArray(data.items)) {
         setAllUsers(data.items);
         setIsLoading(false);
@@ -44,88 +72,136 @@ function Widgets() {
         console.error('Error fetching users: response data is not an array');
         setIsLoading(false);
       }
-    } catch (error) {    
+    } catch (error) {
       console.error('Error fetching users:', error);
       setIsLoading(false);
     }
   };
 
+
   const filterUsers = useCallback((query) => {
-    // Filter users based on the search term
-    if (allUsers) {
-      const filteredUsers = allUsers.filter((user) => {      
-        return user.displayName.toLowerCase().includes(query.toLowerCase());
+    if (allUsers && singleAuthor) {
+      const filteredUsers = allUsers.filter((user) => {
+        return user.displayName !== singleAuthor.displayName && user.displayName.toLowerCase().includes(query.toLowerCase());
       });
-      setSearchResults(filteredUsers);
+      console.log('Search term:', query);
+      setDisplayedUsers(filteredUsers);
     }
-  }, [allUsers]);
+  }, [allUsers, singleAuthor]);
 
   useEffect(() => {
-    // Filter users whenever the search term changes
     filterUsers(searchTerm);
-  }, [searchTerm, filterUsers]);
+  }, [searchTerm, filterUsers, currentUserId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     filterUsers(searchTerm);
   };
 
-  const fetchFollows = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:8000/follows/${userId}/`, {
-        // headers: {
-        //   Authorization: `Token ${accessToken}`,
-        // },
-      });
-      const data = await response.json();
-      console.log('fetchFollows:', data);
-      return data.following;
-    } catch (error) {
-      console.error('Error fetching follows:', error);
-      return false;
+  const sendFollowRequest = async (user) => {
+    console.log('sendFollowRequest called');
+
+    if (followedUsers[user.id]) {
+      console.log('User already followed');
+      return;
     }
-  };
+
+    const tokens = await getTokens();
+    if (!tokens) {
+      console.error('Error fetching tokens');
+      return;
+    }
+
+    
+    const singleAuthor = await fetchSingleAuthor(currentUserId);
+      try {
+        const data = {
+          type: "Follow",
+          summary: `${singleAuthor.displayName} wants to follow ${user.displayName}`,
+          actor: singleAuthor,
+          object: user,
+        };
+        console.log('Sending follow request:', data);
+        console.log('User ID:', user.id);
+        await axios.post(`${user.id}/inbox/`, data
+        , {
+          headers: {
+            'Authorization': `Bearer ${tokens.access_token}`,
+          },
+        });
+        console.log('Follow request sent successfully.');
+
+        setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+      } catch (error) {
+        console.error('Error sending follow request:', error);
+      }
+    };
   
-  return (
-    <div className="widgets">
-      <form className="widgets__input" onSubmit={handleSubmit}>
-        <SearchIcon className="widgets__searchIcon" />
-        <input
-          placeholder="Search for friends"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </form>
-
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="searchResults">
-          {searchTerm === '' ? (
-            <div></div>
-          ) : searchResults.length === 0 ? (
-            <div>No results found.</div>
-          ) : (
-            searchResults.map((user) => (
-              <div key={user.id} className="userResult">
-                <span>{user.displayName}</span>
-                {user.id !== currentUserId && (
-                  <button className="followButton">
-                    {user.followed ? (
-                      <HowToRegIcon/>
-                    ) : (
-                      <PersonAddIcon />
-                    )}
-                </button>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default Widgets;
+    const fetchFollows = async (userId) => {
+      try {
+        const response = await axios.get(`/authors/${userId}/followers/`);
+        const data = response.data;
+        console.log('fetchFollows:', data);
+        return data.following;
+      } catch (error) {
+        console.error('Error fetching follows:', error);
+        return false;
+      }
+    };
+  
+    const fetchSingleAuthor = async (userId) => {
+      try {
+        const response = await axios.get(`/authors/${userId}/`);
+        const data = response.data;
+        setsingleAuthor(data);
+        console.log('fetchSingleAuthor:', data);
+        return data;
+      } catch (error) {
+        console.error('Error fetching singleAuthorId:', error);
+        return false;
+      }
+    };
+  
+    return (
+      <div className="widgets">
+        <form className="widgets__input" onSubmit={handleSubmit}>
+          <SearchIcon className="widgets__searchIcon" />
+          <input
+            placeholder="Search for friends"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </form>
+  
+        {!isLoading && (
+          <div className="searchResults">
+            {searchTerm === '' ? (
+              <div></div>
+            ) : displayedUsers.length === 0 ? (
+              <div>No results found.</div>
+            ) : (
+              displayedUsers.map((user) => (
+                <div key={user.id} className="userResult">
+                  <span>{user.displayName}</span>
+                  {user.id !== currentUserId && (
+                    <button className="followButton" onClick={() => sendFollowRequest(user)}>
+                      {followedUsers[user.id] ? (
+                        <HowToRegIcon />
+                      ) : (
+                        <PersonAddIcon />
+                      )}
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  export default Widgets;
+  
+  
