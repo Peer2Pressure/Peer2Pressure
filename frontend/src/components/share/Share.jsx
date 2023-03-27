@@ -151,7 +151,7 @@ function Share (props) {
                     </div>
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
-                            <Button variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
+                            <Button sx={{borderRadius: 20}} variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
                         </div>
                     </div>
                 </div>

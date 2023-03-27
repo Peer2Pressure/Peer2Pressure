@@ -146,7 +146,7 @@ const Post = forwardRef(
                       value={commentText}
                       onChange={(event) => setCommentText(event.target.value)}
                       />
-                      <Button variant="contained" className="replybutton" type="submit">Reply</Button>
+                      <Button sx={{borderRadius: 20}} variant="contained" className="replybutton" type="submit">Reply</Button>
                     </div>
                   </form>
                 )}
