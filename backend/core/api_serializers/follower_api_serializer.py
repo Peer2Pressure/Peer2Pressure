@@ -57,8 +57,9 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         
         follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
         
-        follower = follow.from_author
-        serializer = AuthorSerializer(follower)
+        # follower = follow.from_author
+        # serializer = AuthorSerializer(follower)
+        serializer = FollowerSerializer(follow)
         
         return serializer.data, 200
 

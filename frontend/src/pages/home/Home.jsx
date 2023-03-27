@@ -9,8 +9,6 @@ import Widgets from "../../components/widgets/Widgets";
 import Post from "../../components/post/Post";
 import NavBar from "../../components/navBar/NavBar";
 
-import { useState } from "react";
-
 const Home = () => {
   const [postsUpdated, setPostsUpdated] = useState(false);
   return (
