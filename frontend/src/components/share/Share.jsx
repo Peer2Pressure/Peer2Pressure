@@ -1,11 +1,11 @@
 import "./share.css";
 import { useState } from "react";
-import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch } from "@mui/material";
 import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
+import useGetTokens from "../../useGetTokens";
 
 function Share(props) {
     const {setPostsUpdated} = props;
@@ -16,8 +16,8 @@ function Share(props) {
     const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
 
-
-    const {authorData, loading, error, authorID} = useGetAuthorData();
+    const {authorData, loading, authorError, authorID} = useGetAuthorData();
+    const {tokens, tokenError} = useGetTokens();
 
     const handleContentChange = event => {
         setContent(event.target.value);
@@ -39,20 +39,22 @@ function Share(props) {
     };
 
     const removeImage = (i) => {
-       setFiles(files.filter(x => x.name !== i));
-    }
+        setFiles(files.filter(x => x.name !== i));
+    } 
 
     async function getFollowers() {
+        // const tokens = await getTokens();
         const response = await axios.get(`/authors/${authorID}/followers`, {
             headers:{
-                "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+                "Authorization": tokens[window.location.origin]  // check
             }
         });
-        return response.data.items.map(obj => obj.id+"/inbox/");
+        return response.data.items.map(obj => [obj.id+"/inbox/", obj.host]);
     }
 
     const sendPost = async(event) => {
-        console.log("author_data123: ", authorData, authorID);
+        // console.log("author_data123: ", authorData, authorID);
+        console.log("tt", tokens);
         event.preventDefault();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
@@ -63,8 +65,8 @@ function Share(props) {
             "author": authorData,
         },
         {
-            headers:{
-                "Authorization": "Basic cDJwYWRtaW46cDJwYWRtaW4="
+            headers: {
+                "Authorization": tokens[window.location.origin]  // check
             }
         })
         
@@ -74,12 +76,17 @@ function Share(props) {
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
 
-                const requestPromises = response2.map(endpoint => {
-                    axios.post(endpoint, response.data)
+                const requestPromises = response2.map(obj => {
+                    axios.post(obj[0], response.data, {
+                        headers: {
+                            "Authorization": tokens[obj[1]]
+                        }
+                    });
                 })
                 Promise
                 .all(requestPromises)
                 .then((responses) => {
+                    // console.log("TOKENS", tokens);
                     console.log('All requests sent successfully:', responses);
                 })
                 .catch((error) => {
