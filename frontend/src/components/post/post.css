@@ -166,6 +166,7 @@
   flex-direction: column;
   width: 100%;
   align-items: flex-end;
+  row-gap: 1.5em;
 }
 
 .showCommentArea {
