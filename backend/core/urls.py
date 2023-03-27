@@ -53,6 +53,6 @@ urlpatterns = [
     path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
     path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox1"),
 
-   # # Liked Views
-   #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
+   # Liked Views
+    path('authors/<uuid:author_id>/liked/', like_views.PostLikedAPI.as_view(), name="author_liked")
 ]
