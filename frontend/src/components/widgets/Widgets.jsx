@@ -3,6 +3,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import './widgets.css';
+import useGetTokens from "../../useGetTokens";
+import useGetAuthorData from '../../useGetAuthorData';
+
 
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,18 +15,28 @@ function Widgets() {
   //for testing purposes, we will set the current user to 1
   const [currentUserId, setCurrentUserId] = useState(1);
 
+  const {tokens, tokenError} = useGetTokens();
+  const {authorData, authorLoad, authorError, authorID } = useGetAuthorData();
+
 
   useEffect(() => {
     // Fetch all users when the component mounts
-    fetchAllUsers();
-  }, []);
+    if (tokens && authorData) {
+      fetchAllUsers();
+      // console.log("tokens", tokens);
+      // console.log("a", authorData);
+    }    
+  }, [tokens, authorData]);
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('/authors/');
+      const response = await fetch('/authors/', {
+        headers:{
+            "Authorization": tokens[authorData.host]
+        }
+      });
 
       const data = await response.json();
-      console.log('fetchAllUsers:', data);
       if (Array.isArray(data.items)) {
         setAllUsers(data.items);
         setIsLoading(false);
@@ -39,12 +52,10 @@ function Widgets() {
 
   const filterUsers = useCallback((query) => {
     // Filter users based on the search term
-    console.log('allUsers:', allUsers);
     if (allUsers) {
       const filteredUsers = allUsers.filter((user) => {      
         return user.displayName.toLowerCase().includes(query.toLowerCase());
       });
-      console.log('Search term:', query);
       setSearchResults(filteredUsers);
     }
   }, [allUsers]);

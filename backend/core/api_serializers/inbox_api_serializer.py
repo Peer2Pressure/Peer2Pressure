@@ -79,15 +79,16 @@ class InboxAPISerializer(serializers.ModelSerializer):
         else:
             return serializer.errors, 400
     
-    def handle_post(self, author_id, request_data):
+    def handle_post(self, author_id, request_data, auth_header):
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist."}, 404
         
         author = author_serializer.get_author_by_id(author_id)
 
         serializer = PostSerializer(data=request_data)
-
+        print("out")
         if serializer.is_valid():
+            print("in")
             # TODO: Validate post_id is a UUID
             # Get post author id.
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
@@ -108,9 +109,14 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             # Create or update post.
             url = f"{BASE_HOST}/authors/{foreign_author_id}/posts/{post_id}/"
-            headers = {"Content-Type": "application/json"}
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"{auth_header}"
+            }
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
-
+            print("heloo123")
+            print(res.status_code)
+            print(res)
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 if method == "PUT":
@@ -125,7 +131,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     
-    def handle_follow_request(self, author_id, request_data):
+    def handle_follow_request(self, author_id, request_data, auth_header):
         follow_serializer = FollowerSerializer(data=request_data)
         
         if follow_serializer.is_valid():
@@ -136,7 +142,10 @@ class InboxAPISerializer(serializers.ModelSerializer):
             foreign_author_id = uuid.UUID(actor_id_path[-1])
 
             # If local author recives a follow request
-            headers = {"Content-Type": "application/json"}
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"{auth_header}"
+                }
             url = f"{BASE_HOST}/authors/{author_id}/followers/{foreign_author_id}/"
 
             approved = False

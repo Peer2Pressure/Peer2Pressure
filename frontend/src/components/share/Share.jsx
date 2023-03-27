@@ -1,16 +1,15 @@
 import "./share.css";
 import { useState } from "react";
-import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch } from "@mui/material";
 import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
+import useGetTokens from "../../useGetTokens";
 import Button from "@mui/material/Button";
 
 function Share (props) {
     const {setPostsUpdated} = props;
-
     const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
@@ -18,8 +17,8 @@ function Share (props) {
     const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
 
-
-    const {authorData, loading, error, authorID} = useGetAuthorData();
+    const {authorData, loading, authorError, authorID} = useGetAuthorData();
+    const {tokens, tokenError} = useGetTokens();
 
     const handleContentChange = event => {
         setContent(event.target.value);
@@ -41,15 +40,23 @@ function Share (props) {
     };
 
     const removeImage = (i) => {
-       setFiles(files.filter(x => x.name !== i));
-    }
+        setFiles(files.filter(x => x.name !== i));
+    } 
 
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`);
-        return response.data.items.map(obj => obj.id+"/inbox/");
+        const response = await axios.get(`/authors/${authorID}/followers`, {
+            headers:{
+                // "Authorization": tokens[window.location.origin]
+                "Authorization": tokens[authorData.host]
+            }
+        });
+        return response.data.items.map(obj => [obj.id+"/inbox/", obj.host+"/"]);
     }
 
     const sendPost = async(event) => {
+        // console.log("author_data123: ", authorData, authorID);
+        console.log("tt", tokens);
+        console.log("ttttt", tokens[authorData.host]);
         event.preventDefault();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
@@ -58,6 +65,12 @@ function Share (props) {
             "contentType": contentType,
             "content": content,
             "author": authorData,
+        },
+        {
+            headers: {
+                // "Authorization": tokens[window.location.origin]
+                "Authorization": tokens[authorData.host]
+            }
         })
         
         const p2 = p.then((response) => {
@@ -65,8 +78,12 @@ function Share (props) {
             setContent("");
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
-                const requestPromises = response2.map(endpoint => {
-                    axios.post(endpoint, response.data)
+                const requestPromises = response2.map(obj => {
+                    axios.post(obj[0], response.data, {
+                        headers: {
+                            "Authorization": tokens[obj[1]]
+                        }
+                    });
                 })
                 Promise
                 .all(requestPromises)
@@ -76,9 +93,9 @@ function Share (props) {
                 .catch((error) => {
                     console.error('Error sending requests:', error);
                 })
-                // .finally(() => {
-                //     window.location.reload();
-                // });
+                .finally(() => {
+                    console.log("empty text area")
+                })
             }
             )
         })
@@ -115,12 +132,6 @@ function Share (props) {
 
                 </div>
                 <div className="bottom">
-                    {/* <div className="shareText">
-                        <CreateOutlinedIcon 
-                            fontSize="small" 
-                            color="primary"
-                        /> <b>Create a Post</b>
-                    </div> */}
                     <div className="postOptionsContainer">
                         <div className="shareImage">
                             <input 

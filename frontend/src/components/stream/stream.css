@@ -23,6 +23,10 @@
   scrollbar-width: none; 
 }/* Firefox */
 
+/* .xyz {
+  visibility: hidden;
+} */
+
 .stream__posts {
   margin: 1em;
   border-radius: 20px;

@@ -4,7 +4,7 @@ from drf_yasg import openapi
 from django.urls import path, re_path, include
 from django.shortcuts import redirect, render
 
-from .views import account_views, author_views, follower_views, post_views, comment_views, like_views, inbox_views
+from .views import account_views, author_views, follower_views, node_api, post_views, comment_views, like_views, inbox_views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -30,7 +30,7 @@ urlpatterns = [
     path('accounts/logout/', account_views.logout_view, name='logout'),
 
     # Author views
-    path('get_author_id/', author_views.CurrentAuthorID.as_view(), name="get_author_id"),
+    path('get_author_id/', author_views.get_author_id, name="get_author_id"),
     path('authors/', author_views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', author_views.AuthorAPI.as_view(), name='author_api'),
 
@@ -53,6 +53,9 @@ urlpatterns = [
     path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
     path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox1"),
 
-   # Liked Views
-    path('authors/<uuid:author_id>/liked/', like_views.PostLikedAPI.as_view(), name="author_liked")
+   # # Liked Views
+   #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
+
+   # Client Server
+   path('nodes/tokens/', node_api.get_tokens, name="get_tokens")
 ]

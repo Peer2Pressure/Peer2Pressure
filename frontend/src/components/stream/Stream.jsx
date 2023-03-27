@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import axios from "axios";
 import "./stream.css";
 import Post from "../post/Post";
+import useGetTokens from "../../useGetTokens";
 
 function Stream(props) {
   const { postsUpdated } = props;
+  const {tokens, tokenError} = useGetTokens();
   const [inboxPosts, setInboxPosts] = useState(null);
   const [error, setError] = useState(null);
 
@@ -16,12 +18,13 @@ function Stream(props) {
         // let's get the author ID 
         const response1 = await axios.get("/get_author_id/");
         const authorId = response1.data.author_id;
-
-        console.log("author ID: " + authorId);
-        // authorId = "1ead7fea-2483-463d-94d7-6e0ea244a1ff"
-        // let's get all the posts under this author ID
-        const response2 = await axios.get("/authors/" + authorId + "/inbox/");
-        console.log("/authors/" + authorId + "/inbox/");
+        
+        // let's get all the posts under for current author ID
+        const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+          headers:{
+              "Authorization": tokens[window.location.origin]
+          }
+        });
         setInboxPosts(response2.data.items);
 
       } catch(error) {
@@ -39,7 +42,6 @@ function Stream(props) {
   if (!inboxPosts) {
     return <div>Loading...</div>;
   }
-
 
   return (
     <div className="stream">

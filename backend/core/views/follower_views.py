@@ -27,6 +27,7 @@ follower_api_serializer = FollowerAPISerializer()
 
 class FollowerListAPI(GenericAPIView):
     serializer_class = AllFollowerSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         tags=["Followers"],
@@ -44,9 +45,10 @@ class FollowerListAPI(GenericAPIView):
 
 class FollowerAPI(GenericAPIView):
     serializer_class = FollowerSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(tags=['Followers'])
-    def get(self, request, author_id, foreign_author_id):
+    def get(self, request, author_id, foreign_author_id):        
         follower, code = follower_api_serializer.get_single_follower(author_id, foreign_author_id)
         if code == 200:
             return Response(follower, status=status.HTTP_200_OK)
@@ -66,7 +68,6 @@ class FollowerAPI(GenericAPIView):
     @swagger_auto_schema(tags=['Followers'])
     def delete(self, request, author_id, foreign_author_id):
         follower, code = follower_api_serializer.remove_follower(author_id, foreign_author_id)
-        print(follower, code)
         if code == 200:
             return Response(follower, status=status.HTTP_200_OK)
         elif code == 404:
