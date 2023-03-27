@@ -43,10 +43,9 @@ function Share(props) {
     } 
 
     async function getFollowers() {
-        // const tokens = await getTokens();
         const response = await axios.get(`/authors/${authorID}/followers`, {
             headers:{
-                "Authorization": tokens[window.location.origin]  // check
+                "Authorization": tokens[window.location.origin]
             }
         });
         return response.data.items.map(obj => [obj.id+"/inbox/", obj.host]);
@@ -66,7 +65,7 @@ function Share(props) {
         },
         {
             headers: {
-                "Authorization": tokens[window.location.origin]  // check
+                "Authorization": tokens[window.location.origin]
             }
         })
         
@@ -86,7 +85,6 @@ function Share(props) {
                 Promise
                 .all(requestPromises)
                 .then((responses) => {
-                    // console.log("TOKENS", tokens);
                     console.log('All requests sent successfully:', responses);
                 })
                 .catch((error) => {
@@ -131,12 +129,6 @@ function Share(props) {
 
                 </div>
                 <div className="bottom">
-                    {/* <div className="shareText">
-                        <CreateOutlinedIcon 
-                            fontSize="small" 
-                            color="primary"
-                        /> <b>Create a Post</b>
-                    </div> */}
                     <div className="postOptionsContainer">
                         <div className="shareImage">
                             <input 
