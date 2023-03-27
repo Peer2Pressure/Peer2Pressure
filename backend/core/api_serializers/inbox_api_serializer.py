@@ -131,7 +131,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     
-    def handle_follow_request(self, author_id, request_data):
+    def handle_follow_request(self, author_id, request_data, auth_header):
         follow_serializer = FollowerSerializer(data=request_data)
         
         if follow_serializer.is_valid():
@@ -142,7 +142,10 @@ class InboxAPISerializer(serializers.ModelSerializer):
             foreign_author_id = uuid.UUID(actor_id_path[2])
 
             # If local author recives a follow request
-            headers = {"Content-Type": "application/json"}
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"{auth_header}"
+                }
             url = f"{BASE_HOST}/authors/{author_id}/followers/{foreign_author_id}/"
 
             approved = False
