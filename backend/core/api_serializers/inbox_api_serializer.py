@@ -90,7 +90,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             # TODO: Validate post_id is a UUID
             # Get post author id.
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
-            foreign_author_id = uuid.UUID(post_id_url[-1])
+            foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = post_id_url[4]
 
             # Check if current author is followed by foreign author to receive posts.
