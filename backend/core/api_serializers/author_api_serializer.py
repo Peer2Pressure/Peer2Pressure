@@ -69,7 +69,6 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             # author = author_serializer.create_author()
             return None, None
         serializer = AuthorSerializer(author, request_data)
-        
         if serializer.is_valid():
             serializer.save()
             # serializer.update(author, serializer.validated_data)
