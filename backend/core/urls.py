@@ -25,8 +25,8 @@ urlpatterns = [
     
     # Account views
     re_path(r"^$", account_views.index, name="index"),
-    path('signin/', account_views.signin, name='signin'),
-    path('signup/', account_views.signup, name='signup'),
+    path('accounts/login/', account_views.signin, name='signin'),
+    path('aacounts/signup/', account_views.signup, name='signup'),
     path('accounts/logout/', account_views.logout_view, name='logout'),
 
     # Author views
