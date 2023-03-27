@@ -18,12 +18,16 @@ const Home = () => {
         <NavBar/>
       </div> */}
       <div className="bodyContainer">
-        <Profile/>
+        <div className="profileContainer">
+          <Profile/>
+        </div>
         <div className="streamContainer">
           <Share postsUpdated={postsUpdated} setPostsUpdated={setPostsUpdated}/>
           <Stream postsUpdated={postsUpdated}/>
         </div>
-        <Widgets/>
+        <div className="widgetContainer">
+           <Widgets/>
+        </div>
       </div>
     </div>
   )

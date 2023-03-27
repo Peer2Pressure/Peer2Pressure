@@ -1,6 +1,8 @@
 .post {
   display: flex;
+  flex: 1;
   align-items: flex-start;
+  flex-direction: column;
   border-bottom: 1px solid var(--main-background);
   padding-bottom: 10px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -8,6 +10,8 @@
   box-shadow:  25px 25px 49px #dde3ede4,
                   -25px -25px 49px #ffffff;
   /* border: 2px solid black; */
+  justify-content: space-evenly;
+  width: 1px;
 }
 
 
@@ -29,11 +33,7 @@
   max-width: 100%;
 }
 
-.post__footer {
-  display: flex;
-  margin-top: 20px;
-  align-items: center;
-}
+
 .post__likes {
   align-items: center;
   margin-right: 10px;
@@ -70,69 +70,106 @@
   padding: 20px;
 }
 
+.post_headerTop {
+  /* border: 1px solid green; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.post__footer {
+  display: flex;
+  margin-top: 20px;
+  align-items: center;
+  /* background-color: red; */
+  display: flex;
+  flex-direction: column;
+  /* border: 1px solid black; */
+  width: 100%;
+  row-gap: 1em;
+  padding-left: 20px;
+}
+.post__likes {
+  align-items: center;
+  margin-right: 10px;
+}
+
+
+.post__likes > p {
+  font-size: 15px;
   
+}
+.post__commentInput{
+  background-color: rgb(248, 248, 248);
+}
+.replybutton{
+  height: max-content;
+  border-radius: 25px;
+  border: none;
+  background-color: #2977c9;
+  color: white;
+  font-size: 1rem;;
+  padding: 0.5rem;
+  cursor: pointer;
+  width: fit-content;
+}
 
-  .post_headerTop {
-    /* border: 1px solid green; */
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+.post__headerDescription {
+  margin-bottom: 10px;
+  font-size: 15px;
+}
 
+.post__headerText > h3 {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
 
-  .post__footer {
-    display: flex;
-    margin-top: 20px;
-    align-items: center;
-  }
-  .post__likes {
-    align-items: center;
-    margin-right: 10px;
-  }
+.post__badge {
+  font-size: 14px !important;
+  color: var(--main-color);
+}
 
+.post__headerSpecial {
+  font-weight: 600;
+  font-size: 12px;
+  color: gray;
+}
 
-  .post__likes > p {
-    font-size: 15px;
-    
-  }
-  .post__commentInput{
-    background-color: rgb(248, 248, 248);
-  }
-  .replybutton{
-    height: max-content;
-    border-radius: 25px;
-    border: none;
-    background-color: #2977c9;
-    color: white;
-    font-size: 1rem;;
-    padding: 0.5rem;
-    cursor: pointer;
-    width: fit-content;
-  }
+.post__avatar {
+  padding: 20px;
+}
 
-  .post__headerDescription {
-    margin-bottom: 10px;
-    font-size: 15px;
-  }
+.commentArea {
+  
+  width: 20%;
+}
 
-  .post__headerText > h3 {
-    font-size: 15px;
-    margin-bottom: 5px;
-  }
+.iconArea {
+  display: flex;
+  width: 100%;
+  /* border: 1px solid red; */
+}
 
-  .post__badge {
-    font-size: 14px !important;
-    color: var(--main-color);
-  }
+.placeHolder {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: flex-start;
+  /* border: 1px solid red; */
+  min-width: 600px;
+  width: 100%;
+}
 
-  .post__headerSpecial {
-    font-weight: 600;
-    font-size: 12px;
-    color: gray;
-  }
+.addCommentContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-end;
+}
 
-  .post__avatar {
-    padding: 20px;
-  }
-
+.showCommentArea {
+  /* border: 1px solid green; */
+  width: 100%;
+  display: flex;
+}
