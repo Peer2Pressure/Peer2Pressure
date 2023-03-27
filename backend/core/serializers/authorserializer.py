@@ -16,7 +16,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     url = serializers.URLField(required=False)
     displayName = serializers.CharField(source="name", max_length=100, required=False)
     # username = serializers.CharField(max_length=300, required=False)
-    github = serializers.URLField(allow_blank=True, required=False)
+    github = serializers.URLField(allow_blank=True, required=False, allow_null=True, allow_blank=True)
     profileImage = serializers.URLField(source="avatar", required=False, allow_null=True, allow_blank=True)
 
     # TODO: Set required attribute true for certain methods

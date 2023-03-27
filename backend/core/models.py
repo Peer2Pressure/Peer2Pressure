@@ -53,8 +53,8 @@ class Author(AbstractModel):
     url = models.URLField()
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    avatar = models.URLField(default="", blank=True)
-    github = models.URLField(default="", blank=True)
+    avatar = models.URLField(default="", blank=True, null=True)
+    github = models.URLField(default="", blank=True, null=True)
     
     class Meta:
         constraints = [models.UniqueConstraint(fields=["id"], name="Unique user properties")]
