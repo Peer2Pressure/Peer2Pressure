@@ -6,6 +6,7 @@ import { Switch } from "@mui/material";
 import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
+import Button from "@mui/material/Button";
 
 function Share (props) {
     const {setPostsUpdated} = props;
@@ -133,7 +134,8 @@ function Share (props) {
                                     <PhotoSizeSelectActualOutlinedIcon 
                                         fontSize="small"     
                                         color="primary"
-                                    /> <b> Upload a Photo</b>
+                                    />
+                                    <b> Upload a Photo</b>
                                     <img src = {Image} alt="" /> 
                                 </div>
                             </label>
@@ -149,12 +151,10 @@ function Share (props) {
                     </div>
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
-                            <button className="postButton" role="button" onClick={sendPost}>Post</button>
+                            <Button variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
                         </div>
                     </div>
-                    
                 </div>
-                
             </div>
         </div>
     );
