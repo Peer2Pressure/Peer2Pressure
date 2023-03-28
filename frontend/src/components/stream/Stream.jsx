@@ -13,7 +13,7 @@ function Stream(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // const interval = setInterval(() => {
+    const interval = setInterval(() => {
       async function getPosts() {
         try {
           // let's get the author ID 
@@ -34,8 +34,8 @@ function Stream(props) {
       };
   
       getPosts();
-    // }, 10000);
-    // return () => clearInterval(interval);
+    }, 5000);
+    return () => clearInterval(interval);
   }, [postsUpdated, tokens]);
 
   if (error) {
