@@ -8,6 +8,7 @@ import { Avatar, Button, IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { Navigate, useNavigate } from "react-router-dom";
 import useGetTokens from "../../useGetTokens";
+import useGetAuthorData from "../../useGetAuthorData";
 
 function getCsrfToken() {
   // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
@@ -26,22 +27,20 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+  // const { authorData, loading, error, authorID } = useGetAuthorData();
   useEffect(() => {
     const getAuthorData = async () => {
       try {
         const csrftoken = getCsrfToken();
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        axios.defaults.xsrfCookieName = 'csrftoken';
-        // console.log("aaaaaaa", tokens);
-        
+        axios.defaults.xsrfCookieName = 'csrftoken';        
         
         const response1 = await axios.get("/get_author_id/");
         const authorId = response1.data.author_id;
-        // const authorId = "7156bb35-4e95-4911-a6f6-ef9bdc77da75"
         const response2 = await axios.get("/authors/"+authorId+"/", {
           headers:{
               "Authorization": tokens[window.location.origin]
-              // "Authorization": tokens["http://localhost:8000/"]
           }
       });
         setAuthorData(response2.data);
@@ -51,13 +50,14 @@ export default function Profile() {
         setLoading(false);
       }
     };
-
-    getAuthorData();
+    if (tokens) {
+      getAuthorData();
+    };
   }, [tokens]);
 
     
   // check if loading 
-  if (loading) return <h1> Loading... </h1>; // placeholder for now 
+  if (loading) return; // placeholder for now 
 
   // check if any error generated shown in console
   if (error) console.log(error);

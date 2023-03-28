@@ -20,9 +20,13 @@ class FollowerSerializer(serializers.ModelSerializer):
         model = Follower
         fields = ["type", "summary", "actor", "object", "approved"]
 
-    def create(self, validated_data):
-        follow, created = Follower.objects.update_or_create(defaults=validated_data)
-        return follow, created
+    # def create(self, validated_data):
+    #     follow, created = Follower.objects.create(**validated_data)
+    #     return follow, created
+    
+    def update(self, instance, validated_data):
+        Follower.objects.filter(m_id=instance.m_id).update(**validated_data)
+        return instance
     
     def create_relations(self, author_id, foreign_author_id):
     

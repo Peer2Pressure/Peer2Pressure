@@ -1,5 +1,6 @@
 import json
 import pprint
+import uuid
 # Third-party libraries
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -56,9 +57,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             return {"msg": "Follow relation does not exist"}, 404
         
         follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
-        
-        # follower = follow.from_author
-        # serializer = AuthorSerializer(follower)
+
         serializer = FollowerSerializer(follow)
         
         return serializer.data, 200
@@ -110,9 +109,15 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             # Update data
             validated_follower_data["from_author"] = foreign_author
             validated_follower_data["to_author"] = author
-            follow, created = follow_serializer.create(validated_follower_data)
-            if not created:
-                return {"msg": f"Follow request from {foreign_author_id} has been approved."}, 200
+
+            if not follow_serializer.follower_exists(author_id, foreign_author_id):
+                validated_follower_data["m_id"] = uuid.uuid4()
+                follow_serializer.save()
+            else:
+                follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
+                follow = follow_serializer.update(follow, validated_follower_data)
+                if validated_follower_data["approved"]:
+                    return {"msg": f"Follow request from {foreign_author_id} has been approved."}, 200
         else:
             return serializer.errors, 400
                 

@@ -64,7 +64,7 @@ class Author(AbstractModel):
         return [nameof(cls.username), nameof(cls.name), nameof(cls.host)]
 
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
 
     def save(self, *args, **kwargs):
         if not self.url:

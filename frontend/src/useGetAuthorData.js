@@ -29,7 +29,7 @@ export default function useGetAuthorData() {
                 const authorID = response.data.author_id;
                 setAuthorID(authorID);
                 console.log(tokens)
-
+                console.log("tokens123: ", tokens, "origin123: ", window.location.origin,)
                 const response2 = await axios.get("/authors/" + authorID + '/', {
                     headers:{
                         "Authorization": tokens[window.location.origin]
@@ -46,7 +46,7 @@ export default function useGetAuthorData() {
         };
         if (tokens) {
             getAuthorData();
-        }
+        };
     }, [tokens]);
   
     return {authorData, loading, error, authorID};

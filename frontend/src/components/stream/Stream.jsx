@@ -13,26 +13,29 @@ function Stream(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function getPosts() {
-      try {
-        // let's get the author ID 
-        const response1 = await axios.get("/get_author_id/");
-        const authorId = response1.data.author_id;
-        
-        // let's get all the posts under for current author ID
-        const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
-          headers:{
-              "Authorization": tokens[window.location.origin]
-          }
-        });
-        setInboxPosts(response2.data.items);
+    // const interval = setInterval(() => {
+      async function getPosts() {
+        try {
+          // let's get the author ID 
+          const response1 = await axios.get("/get_author_id/");
+          const authorId = response1.data.author_id;
+          
+          // let's get all the posts under for current author ID
+          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+            headers:{
+                "Authorization": tokens[window.location.origin]
+            }
+          });
+          setInboxPosts(response2.data.items);
 
-      } catch(error) {
-        setError(error);
+        } catch(error) {
+          setError(error);
+        };
       };
-    };
- 
-    getPosts();
+  
+      getPosts();
+    // }, 10000);
+    // return () => clearInterval(interval);
   }, [postsUpdated, tokens]);
 
   if (error) {
