@@ -33,8 +33,15 @@ function Widgets() {
     try {
       setIsLoading(true);
       const requestPromises = hostnames.map(async (hostname) => {
-        console.log('Fetched users from', hostname);
-        const response = await axios.get(`http://${hostname}/authors`, {
+        let url = `http://${hostname}/authors`;
+        
+        // Update host if host is localhost
+        if (hostname === "localhost") {
+          url = `http://${window.location.host}/authors`;
+          console.log("this is a localhost", url)
+        };
+
+        const response = await axios.get(url, {
           headers: {
             'Authorization': tokens[hostname],
           },
