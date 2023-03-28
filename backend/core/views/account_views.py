@@ -45,7 +45,6 @@ def signin(request):
         else:
             messages.info(request, 'Credentials Invalid')
             return redirect('signin')
-
     else:
         return render(request, 'core/signin.html')
     
