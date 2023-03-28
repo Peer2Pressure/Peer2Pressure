@@ -46,10 +46,14 @@ function Stream(props) {
     return <div>Loading...</div>;
   }
 
+  const sortedInboxPosts = inboxPosts.sort((a, b) => {
+    return new Date(b.published) - new Date(a.published);
+  });
+
   return (
     <div className="stream">
         <Flipmove className="flippy">
-          {inboxPosts.slice().reverse().map((post) => (
+          {sortedInboxPosts.map((post) => (
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"

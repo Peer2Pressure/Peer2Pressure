@@ -65,14 +65,11 @@ class FollowerAPISerializer(serializers.ModelSerializer):
     def create_follow_request(self, author_id, foreign_author_id, request_data):
         # if not author_serializer.author_exists(author_id):
         #     return {"msg": "Author does not exist"}, 404
-        print("otisew")
         follow_serializer= FollowerSerializer(data=request_data)
-        print("inside123")
         if follow_serializer.is_valid():
             validated_follower_data = follow_serializer.validated_data
             follow = None
             if follower_serializer.follower_exists(author_id, foreign_author_id):
-                print("extsing 123\n")
                 if not validated_follower_data["approved"]:
                     return {"msg": f"Friend request already send. Cannot send again."}, 400
 
@@ -81,14 +78,12 @@ class FollowerAPISerializer(serializers.ModelSerializer):
                     return {"msg": f"{foreign_author_id} already follows {author_id}"}, 400
                 validated_follower_data["m_id"] = follow.m_id
             else:
-                print("NOT extsing 123\n")
                 # Make sure other authors cannot override local author approval
                 validated_follower_data["approved"] = False
 
             # If follow request is from a different server, validate and create
             # an author profile for foreign author.
             if not author_serializer.author_exists(foreign_author_id):
-                print("actot no123 \n")
                 serializer = AuthorSerializer(data=request_data["actor"])            
                 if serializer.is_valid():
                     validated_data = serializer.validated_data
@@ -100,7 +95,6 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             # If request is from current server to a different server, validate and 
             # create an author profile if it doesn't exist. 
             if not author_serializer.author_exists(author_id):
-                print("foreign actor\n")
                 serializer = AuthorSerializer(data=request_data["object"])            
                 if serializer.is_valid():
                     validated_data = serializer.validated_data
@@ -117,15 +111,11 @@ class FollowerAPISerializer(serializers.ModelSerializer):
             validated_follower_data["to_author"] = author
 
             if not follow_serializer.follower_exists(author_id, foreign_author_id):
-                print("hi 123\n")
                 validated_follower_data["m_id"] = uuid.uuid4()
                 follow_serializer.save()
-                print("creat2131\n")
             else:
-                print("no1 333 \n")
                 follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
                 follow = follow_serializer.update(follow, validated_follower_data)
-                print("updateD 13123")
                 if validated_follower_data["approved"]:
                     return {"msg": f"Follow request from {foreign_author_id} has been approved."}, 200
         else:
