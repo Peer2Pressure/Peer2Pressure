@@ -31,7 +31,7 @@ def get_tokens(request):
     response = {}
 
     for client in client_servers:
-        hostname = urlparse(client.host).hostname
+        hostname = urlparse(client.host).netloc
         response[hostname] = client.token
     return JsonResponse(response, status=status.HTTP_200_OK)
 
@@ -47,7 +47,7 @@ def get_hostnames(request):
     }
 
     for client in client_servers:
-        hostname = urlparse(client.host).hostname
+        hostname = urlparse(client.host).netloc
         response["items"].append(hostname)
 
     return JsonResponse(response, status=status.HTTP_200_OK)

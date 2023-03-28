@@ -13,23 +13,30 @@ import Dropdown from 'react-dropdown';
 function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
+    const [contentText, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
+    const contentOptions = [
+        { value: 'text/plain', label: 'Plaintext' },
+        { value: 'text/markdown', label: 'Markdown' },
+    ];
+    const [contentType, setContentType] = useState(contentOptions[0].value);
     // const [fileURL, setFileURL] = useState(null)
     const [hasImage, setHasImage] = useState(false);
     const [imageBase64, setImageBase64] = useState(null);
     const [postImage, setPostImage] = useState({
         myFile: "",
     });
-    const contentOptions = ['text/plain', 'text/markdown'];
-    const defaultOption = contentOptions[0];
+    
 
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
-    const handleContentChange = event => {
+    function handleContentTypeChange(option) {
+        setContentType(option.value);
+    }
+
+    const handleTextChange = event => {
         setContent(event.target.value);
     };
 
@@ -105,7 +112,7 @@ function Share (props) {
             "type": "post",
             "id": `${authorData.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
-            "content": content,
+            "content": contentText,
             "author": authorData,
         },
         {
@@ -152,8 +159,8 @@ function Share (props) {
                         <textarea 
                             name="text" 
                             placeholder={"Write something..."}
-                            value={content}
-                            onChange={handleContentChange}
+                            value={contentText}
+                            onChange={handleTextChange}
                         />
                           
                     </div>
@@ -202,7 +209,10 @@ function Share (props) {
                         </div>
                         <div className="chooseContentType">
                             <Dropdown 
-                                options={contentOptions}/>; 
+                                options={contentOptions}
+                                value={contentType}
+                                onChange={handleContentTypeChange}
+                                />; 
                         </div>
                     </div>
                     <div className="postButtonContainer">
