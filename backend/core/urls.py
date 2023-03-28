@@ -56,6 +56,8 @@ urlpatterns = [
    # # Liked Views
    #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
 
-   # Client Server
-   path('nodes/tokens/', node_api.get_tokens, name="get_tokens")
+   # Nodes
+   path('nodes/tokens/', node_api.get_tokens, name="get_tokens"),
+   path('nodes/hostnames/', node_api.get_hostnames, name="get_hostnames")
+
 ]

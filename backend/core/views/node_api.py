@@ -34,3 +34,20 @@ def get_tokens(request):
         hostname = urlparse(client.host).hostname
         response[hostname] = client.token
     return JsonResponse(response, status=status.HTTP_200_OK)
+
+
+def get_hostnames(request):
+    client_servers = Node.objects.all()
+    if len(client_servers) == 0:
+        return JsonResponse({}, status=status.HTTP_204_NO_CONTENT)
+    
+    response = {
+        "type": "hostnames",
+        "items": []
+    }
+
+    for client in client_servers:
+        hostname = urlparse(client.host).hostname
+        response["items"].append(hostname)
+
+    return JsonResponse(response, status=status.HTTP_200_OK)
