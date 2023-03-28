@@ -96,7 +96,7 @@ function Widgets() {
       // Check if already following
       const response = await axios.get(`/authors/${user.id.split('/')[4]}/followers/`, {
       headers: {
-        'Authorization': tokens[authorData.host],
+        'Authorization': tokens[window.location.hostname],
         },
       });
       console.log('Already following user', response.data.items);
@@ -117,9 +117,10 @@ function Widgets() {
       console.log('User host:', user.host);
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
+      console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
       await axios.post(`${user.id}/inbox/`, data, {
         headers: {
-          'Authorization': tokens[user.host],
+          'Authorization': tokens[new URL(user.host).hostname],
         },
       });
       console.log('Follow request sent successfully.');
