@@ -161,7 +161,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             print("\n\n", url)
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
-
+            print("CODEEE: ", res.status_code)
+            
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 author = author_serializer.get_author_by_id(author_id)
