@@ -92,7 +92,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = post_id_url[-1]
-
+            
             # Check if current author is followed by foreign author to receive posts.
             if author_id != foreign_author_id and not follower_serializer.follower_exists(foreign_author_id, author_id):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
@@ -110,6 +110,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 "Content-Type": "application/json",
                 "Authorization": f"{auth_header}"
             }
+
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
             if res.status_code in [200, 201]:
@@ -159,7 +160,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 approved = True
 
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
-            
             if res.status_code in [200, 201]:
                 # create new inbox entry
                 author = author_serializer.get_author_by_id(author_id)
