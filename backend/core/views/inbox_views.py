@@ -64,8 +64,8 @@ class InboxAPI(GenericAPIView):
     )
     @permission_classes([IsAuthenticated])
     def post(self, request, author_id):
-        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-    
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')    
+
         response = None
         code = None
         if "type" in list(request.data.keys()):

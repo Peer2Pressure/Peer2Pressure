@@ -43,6 +43,8 @@ class Node(AbstractModel):
     # password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
     token = models.CharField(max_length=512, default="")
 
+    def __str__(self):
+        return str(self.host)
     
 class Author(AbstractModel):
     id = models.URLField()
@@ -64,7 +66,7 @@ class Author(AbstractModel):
         return [nameof(cls.username), nameof(cls.name), nameof(cls.host)]
 
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
 
     def save(self, *args, **kwargs):
         if not self.url:

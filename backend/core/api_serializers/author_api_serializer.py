@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 # Third-party libraries
 from django.core.paginator import Paginator
 from rest_framework import serializers
@@ -8,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 from .. import utils
 from ..models import *
 from ..serializers.authorserializer import AuthorSerializer, AllAuthorSerializer
+from ..config import *
 
 author_serializer = AuthorSerializer()
 
@@ -41,12 +44,17 @@ class AuthorAPISerializer(serializers.ModelSerializer):
         return serializer.data
     
     def get_all_authors(self, page=None, size=None):
-        authors = Author.objects.all()
+        all_authors = Author.objects.all()
         
+        authors = []
+        for author in all_authors:
+            if urlparse(author.host).hostname == urlparse(BASE_HOST).hostname:
+                authors.append(author)
+
         if page and size:
             paginator = Paginator(authors, size)
             authors = paginator.get_page(page)
-
+        
         authors_serializer = AuthorSerializer(authors, many=True)
         
         serializer = AllAuthorSerializer(data={

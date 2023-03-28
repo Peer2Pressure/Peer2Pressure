@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 # Third-party libraries
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -22,18 +24,17 @@ from ..api_serializers.post_api_serializer import PostAPISerializer
 
 # @permission_classes([IsAuthenticated])
 def get_tokens(request):
-    print("hello 23")
     client_servers = Node.objects.all()
-    print(client_servers)
     if len(client_servers) == 0:
         return JsonResponse({}, status=status.HTTP_204_NO_CONTENT)
     
     response = {}
 
     for client in client_servers:
-        response[client.host] = client.token
-    print(response)
+        hostname = urlparse(client.host).hostname
+        response[hostname] = client.token
     return JsonResponse(response, status=status.HTTP_200_OK)
+
 
 def get_hostnames(request):
     client_servers = Node.objects.all()
@@ -46,6 +47,7 @@ def get_hostnames(request):
     }
 
     for client in client_servers:
-        response["items"].append(client.host)
+        hostname = urlparse(client.host).hostname
+        response["items"].append(hostname)
 
     return JsonResponse(response, status=status.HTTP_200_OK)
