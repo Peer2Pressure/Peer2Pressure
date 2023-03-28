@@ -58,6 +58,7 @@ function Stream(props) {
                 avatar={post.author.profileImage}
                 likes={post.likes}
                 comments={post.comments}
+                contentType={post.contentType}
               />
             </div>
           ))}

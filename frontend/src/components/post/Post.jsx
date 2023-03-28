@@ -25,7 +25,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, likes, comments }, ref) => {
+  ({ id, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -112,7 +112,14 @@ const Post = forwardRef(
               </span>
             </div>
             <div className="post__headerDescription">
-              <p><ReactMarkdown>{text}</ReactMarkdown></p>
+              
+              {contentType === "text/plain" ?
+                  <p><ReactMarkdown>{text}</ReactMarkdown></p>
+                  :
+                  <p>{text}</p>
+              }
+              
+              {/* <p><ReactMarkdown>{text}</ReactMarkdown></p> */}
             </div>
           </div>
           <img src={image} alt="" />
