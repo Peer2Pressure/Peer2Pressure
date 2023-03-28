@@ -31,11 +31,11 @@ export default function ProfileSetting() {
         // };
     };
     // grabbing data from /get_author_id/ and /authors/author_id APIs
-    const {data, loading, error, authorID} = useGetAuthorData();
+    const {authorData, loading, error, authorID} = useGetAuthorData();
     // console.log(data.profileImage);
     // get current author ID (note: not UUID)
     // const [authorIDD, setAuthorIDD] = useState(null);
-    const {authorIDD} = useGetFullAuthorID();
+    // const {authorIDD} = useGetFullAuthorID();
 
     // const [submitForm, setSubmitForm] = useState(false);
 
@@ -54,8 +54,8 @@ export default function ProfileSetting() {
     //     getAuthorIDD();
     // }, [authorID]);
 
-    console.log("author UUID: ", authorID);
-    console.log("author ID: ", authorIDD);
+    // console.log("author UUID: ", authorID);
+    // console.log("author ID: ", authorData.id);
 
 
 
@@ -70,10 +70,10 @@ export default function ProfileSetting() {
         // formData.append('username', userData.username || data?.username);
         // formData.append('email', userData.email || data?.email);
         // formData.append('password', userData.password || data?.password);
-        formData.append('displayName', userData.name || data?.displayName);
-        formData.append('github', userData.github || data?.github);
-        formData.append('profileImage', userData.profileImage || data?.profileImage);
-        formData.append('id', authorIDD);
+        formData.append('displayName', userData.name || authorData?.displayName);
+        formData.append('github', userData.github || authorData?.github);
+        formData.append('profileImage', userData.profileImage || authorData?.profileImage);
+        formData.append('id', authorData.id);
 
         // console.log(userData.displayName);
         // if (userData.avatar) {
@@ -108,7 +108,7 @@ export default function ProfileSetting() {
         <form onSubmit={handleSubmit}>
             <div className="profileSettingsBox">
                 <div className="profileImageBox">
-                    <Avatar src={data?.profileImage} sx={{width:100, height:100}}/>
+                    <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
                     {/* <input type="file" accept="image/*" onChange={handleFileChange}/> */}
                     {/* <label htmlFor="avatar-input">
                         <Button component="span">Change image</Button>
@@ -122,17 +122,17 @@ export default function ProfileSetting() {
                     </div> */}
                     <div className="avatarBox">
                         <h2 className="fieldTitle">Profile Avatar</h2>
-                        <TextField label="Avatar Link" placeholder={data?.profileImage} value={userData.profileImage} onChange={(e) => handleChange2("profileImage", e.target.value)} />
+                        <TextField label="Avatar Link" placeholder={authorData?.profileImage} value={userData.profileImage} onChange={(e) => handleChange2("profileImage", e.target.value)} />
                     </div>
                     <div className="fullNameBox">
                         <h2 className="fieldTitle">Full Name</h2>
-                        <TextField label="Name" placeholder={data?.displayName} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
+                        <TextField label="Name" placeholder={authorData?.displayName} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
                         {/* <TextField label="First Name" placeholder={data??.displayName} />
                         <TextField label="Last Name" placeholder={data??.type} /> */}
                     </div>
                     <div className="gitHubBox">
                         <h2 className="fieldTitle">GitHub</h2>
-                        <TextField label="GitHub Profile ID" placeholder={data?.github} value={userData.github} onChange={(e) => handleChange2("github", e.target.value)} />
+                        <TextField label="GitHub Profile ID" placeholder={authorData?.github} value={userData.github} onChange={(e) => handleChange2("github", e.target.value)} />
                     </div>
                     {/* <div className="emailBox">
                         <h2 className="fieldTitle">Email</h2>
