@@ -43,6 +43,8 @@ class Node(AbstractModel):
     # password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
     token = models.CharField(max_length=512, default="")
 
+    def __str__(self):
+        return str(self.host)
     
 class Author(AbstractModel):
     id = models.URLField()

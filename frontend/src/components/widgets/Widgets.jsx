@@ -32,7 +32,8 @@ function Widgets() {
     try {
       const response = await fetch('/authors/', {
         headers:{
-            "Authorization": tokens[authorData.host]
+            // "Authorization": tokens[authorData.host]
+            "Authorization": tokens[window.location.hostname]
         }
       });
 

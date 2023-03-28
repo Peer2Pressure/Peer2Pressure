@@ -40,7 +40,7 @@ export default function Profile() {
         const authorId = response1.data.author_id;
         const response2 = await axios.get("/authors/"+authorId+"/", {
           headers:{
-              "Authorization": tokens[window.location.origin]
+              "Authorization": tokens[window.location.hostname]
           }
       });
         setAuthorData(response2.data);

@@ -23,7 +23,7 @@ function Stream(props) {
           // let's get all the posts under for current author ID
           const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
             headers:{
-                "Authorization": tokens[window.location.origin]
+                "Authorization": tokens[window.location.hostname]
             }
           });
           setInboxPosts(response2.data.items);

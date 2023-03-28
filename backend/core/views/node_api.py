@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 # Third-party libraries
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -31,6 +33,7 @@ def get_tokens(request):
     response = {}
 
     for client in client_servers:
-        response[client.host] = client.token
+        hostname = urlparse(client.host).hostname
+        response[hostname] = client.token
     print(response)
     return JsonResponse(response, status=status.HTTP_200_OK)

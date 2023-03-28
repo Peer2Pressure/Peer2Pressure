@@ -32,7 +32,7 @@ export default function useGetAuthorData() {
                 console.log("tokens123: ", tokens, "origin123: ", window.location.origin,)
                 const response2 = await axios.get("/authors/" + authorID + '/', {
                     headers:{
-                        "Authorization": tokens[window.location.origin]
+                        "Authorization": tokens[window.location.hostname]
                     }
                 });
                 setAuthorData(response2.data);
