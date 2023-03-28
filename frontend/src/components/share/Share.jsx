@@ -211,7 +211,7 @@ function Share (props) {
                                 options={contentOptions}
                                 value={contentType}
                                 onChange={handleContentTypeChange}
-                                />; 
+                            />
                         </div>
                     </div>
                     <div className="postButtonContainer">
