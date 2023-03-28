@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import useGetTokens from "../../useGetTokens";
 import Button from "@mui/material/Button";
 import Dropdown from 'react-dropdown';
-// import { Dropdown } from 'semantic-ui-react';
 
 function Share (props) {
     const {setPostsUpdated} = props;
