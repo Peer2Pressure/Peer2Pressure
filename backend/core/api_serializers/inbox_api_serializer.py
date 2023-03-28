@@ -110,7 +110,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 "Content-Type": "application/json",
                 "Authorization": f"{auth_header}"
             }
-            print("resss\n")
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
             if res.status_code in [200, 201]:
@@ -128,7 +127,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
     
     def handle_follow_request(self, author_id, request_data, auth_header):
-        print("inbox auth: ", auth_header)
         follow_serializer = FollowerSerializer(data=request_data)
         
         if follow_serializer.is_valid():
@@ -160,9 +158,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 request_data["approved"] = True
                 approved = True
 
-            print("\n\n", url)
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
-            print("CODEEE: ", res.status_code)
             
             if res.status_code in [200, 201]:
                 # create new inbox entry
