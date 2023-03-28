@@ -68,7 +68,6 @@ class InboxAPI(GenericAPIView):
     
         response = None
         code = None
-        print("asd")
         if "type" in list(request.data.keys()):
             if request.data["type"].lower() == "post":
                 response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
