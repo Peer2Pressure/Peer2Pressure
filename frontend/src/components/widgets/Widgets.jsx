@@ -12,7 +12,7 @@ function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [followedUsers, setFollowedUsers] = useState({});
+  const [followedUsers, setFollowedUsers] = useState(false);
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
   const { tokens } = useGetTokens();
@@ -24,6 +24,7 @@ function Widgets() {
     console.log('tokens:', tokens);
     console.log('authorData:', authorData);
     console.log('hostnames:', hostnames);
+    console.log('authorID:', authorID);
     if (tokens && authorData && hostnames) {
       fetchAllUsers(tokens);
     }
@@ -83,13 +84,21 @@ function Widgets() {
 
   const sendFollowRequest = async (user) => {
     console.log('sendFollowRequest called');
-
-    if (followedUsers[user.id]) {
-      console.log('User already followed');
-      return;
-    }
-
+    
     try {
+      // Check if already following
+      const response = await axios.get(`/authors/${user.id.split('/')[4]}/followers/`, {
+      headers: {
+        'Authorization': tokens[authorData.host],
+        },
+      });
+      console.log('Already following user', response.data.items);
+      const following = response.data.items.some((item) => item.actor.id === authorData.id);
+      if (following) {
+        
+        setFollowedUsers(true)
+        return;
+      }
       const data = {
         type: "Follow",
         summary: `${authorData.displayName} wants to follow ${user.displayName}`,
@@ -138,7 +147,7 @@ function Widgets() {
                       <span>{user.displayName}</span>
                       {user.id !== authorID && (
                         <button className="followButton" onClick={() => sendFollowRequest(user)}>
-                          {followedUsers[user.id] ? (
+                          {followedUsers? (
                             <HowToRegIcon />
                           ) : (
                             <PersonAddIcon />
