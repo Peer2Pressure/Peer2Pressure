@@ -113,7 +113,7 @@ const Post = forwardRef(
             </div>
             <div className="post__headerDescription">
               
-              {contentType === "text/plain" ?
+              {contentType === "text/markdown" ?
                   <p><ReactMarkdown>{text}</ReactMarkdown></p>
                   :
                   <p>{text}</p>
