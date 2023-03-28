@@ -57,6 +57,7 @@ class FollowerAPI(GenericAPIView):
 
     @swagger_auto_schema(tags=['Followers'])
     def put(self, request, author_id, foreign_author_id):
+        print("follower auth: ", request.META.get('HTTP_AUTHORIZATION', ''))
         response, code = follower_api_serializer.create_follow_request(author_id, foreign_author_id, request.data)
         if code == 200:
             return Response(response, status=status.HTTP_200_OK)

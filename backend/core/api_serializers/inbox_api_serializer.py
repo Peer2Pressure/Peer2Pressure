@@ -128,6 +128,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
     
     def handle_follow_request(self, author_id, request_data, auth_header):
+        print("inbox auth: ", auth_header)
         follow_serializer = FollowerSerializer(data=request_data)
         
         if follow_serializer.is_valid():
