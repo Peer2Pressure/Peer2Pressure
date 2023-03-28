@@ -4,12 +4,12 @@ import useFetch from "../../useFetch";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-// import useGetAuthorID from "../../useGetAuthorID.js";
 import useGetAuthorData from "../../useGetAuthorData";
-import useGetFullAuthorID from "../../useGetFullAuthorID";
+import useGetTokens from "../../useGetTokens";
 
 export default function ProfileSetting() {
 
+    const {tokens, tokenError} = useGetTokens();
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         id: '',
@@ -31,11 +31,11 @@ export default function ProfileSetting() {
         // };
     };
     // grabbing data from /get_author_id/ and /authors/author_id APIs
-    const {data, loading, error, authorID} = useGetAuthorData();
+    const {authorData, loading, error, authorID} = useGetAuthorData();
+    
     // console.log(data.profileImage);
     // get current author ID (note: not UUID)
     // const [authorIDD, setAuthorIDD] = useState(null);
-    const {authorIDD} = useGetFullAuthorID();
 
     // const [submitForm, setSubmitForm] = useState(false);
 
@@ -54,14 +54,15 @@ export default function ProfileSetting() {
     //     getAuthorIDD();
     // }, [authorID]);
 
-    console.log("author UUID: ", authorID);
-    console.log("author ID: ", authorIDD);
+    
 
 
 
     const handleSubmit = (e) => {
 
-
+        const authorIDD = authorData.id;
+        console.log("author UUID: ", authorID);
+        console.log("author ID: ", authorIDD);
         // if (authorID === null && authorIDD === null) {
         //     return;
         // }
@@ -69,10 +70,10 @@ export default function ProfileSetting() {
         const formData = new FormData();
         // formData.append('username', userData.username || data?.username);
         // formData.append('email', userData.email || data?.email);
-        // formData.append('password', userData.password || data?.password);
-        formData.append('displayName', userData.name || data?.displayName);
-        formData.append('github', userData.github || data?.github);
-        formData.append('profileImage', userData.profileImage || data?.profileImage);
+        // formData.append('password', userData.password || authorData?.password);
+        formData.append('displayName', userData.name || authorData?.displayName);
+        formData.append('github', userData.github || authorData?.github);
+        formData.append('profileImage', userData.profileImage || authorData?.profileImage);
         formData.append('id', authorIDD);
 
         // console.log(userData.displayName);
@@ -90,6 +91,7 @@ export default function ProfileSetting() {
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    "Authorization": tokens[window.location.hostname]
                 },
             })
         .then((response) => {
@@ -108,7 +110,7 @@ export default function ProfileSetting() {
         <form onSubmit={handleSubmit}>
             <div className="profileSettingsBox">
                 <div className="profileImageBox">
-                    <Avatar src={data?.profileImage} sx={{width:100, height:100}}/>
+                    <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
                     {/* <input type="file" accept="image/*" onChange={handleFileChange}/> */}
                     {/* <label htmlFor="avatar-input">
                         <Button component="span">Change image</Button>
@@ -118,25 +120,25 @@ export default function ProfileSetting() {
                     {/* <div className="usernameBox">
                         <h2 class="fieldTitle">Username</h2>
                         
-                        <TextField label="username" placeholder={data?.username} value={userData.username} onChange={(e) => handleChange2("username", e.target.value)}/>
+                        <TextField label="username" placeholder={authorData?.username} value={userData.username} onChange={(e) => handleChange2("username", e.target.value)}/>
                     </div> */}
                     <div className="avatarBox">
                         <h2 className="fieldTitle">Profile Avatar</h2>
-                        <TextField label="Avatar Link" placeholder={data?.profileImage} value={userData.profileImage} onChange={(e) => handleChange2("profileImage", e.target.value)} />
+                        <TextField label="Avatar Link" placeholder={authorData?.profileImage} value={userData.profileImage} onChange={(e) => handleChange2("profileImage", e.target.value)} />
                     </div>
                     <div className="fullNameBox">
                         <h2 className="fieldTitle">Full Name</h2>
-                        <TextField label="Name" placeholder={data?.displayName} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
-                        {/* <TextField label="First Name" placeholder={data??.displayName} />
-                        <TextField label="Last Name" placeholder={data??.type} /> */}
+                        <TextField label="Name" placeholder={authorData?.displayName} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
+                        {/* <TextField label="First Name" placeholder={authorData??.displayName} />
+                        <TextField label="Last Name" placeholder={authorData??.type} /> */}
                     </div>
                     <div className="gitHubBox">
                         <h2 className="fieldTitle">GitHub</h2>
-                        <TextField label="GitHub Profile ID" placeholder={data?.github} value={userData.github} onChange={(e) => handleChange2("github", e.target.value)} />
+                        <TextField label="GitHub Profile ID" placeholder={authorData?.github} value={userData.github} onChange={(e) => handleChange2("github", e.target.value)} />
                     </div>
                     {/* <div className="emailBox">
                         <h2 className="fieldTitle">Email</h2>
-                        <TextField label="abc@email.com" placeholder={data?.email} defaultValue={userData.email} onChange={(e) => handleChange2("email", e.target.value)}/>
+                        <TextField label="abc@email.com" placeholder={authorData?.email} defaultValue={userData.email} onChange={(e) => handleChange2("email", e.target.value)}/>
     
                     </div> */}
                     {/* <div className="passwordBox">

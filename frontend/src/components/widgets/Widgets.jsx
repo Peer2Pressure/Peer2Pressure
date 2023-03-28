@@ -34,7 +34,7 @@ function Widgets() {
       setIsLoading(true);
       const requestPromises = hostnames.map(async (hostname) => {
         console.log('Fetched users from', hostname);
-        const response = await axios.get(`${hostname}/authors/`, {
+        const response = await axios.get(`http://${hostname}/authors`, {
           headers: {
             'Authorization': tokens[hostname],
           },

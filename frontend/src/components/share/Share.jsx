@@ -46,11 +46,10 @@ function Share (props) {
     async function getFollowers() {
         const response = await axios.get(`/authors/${authorID}/followers`, {
             headers:{
-                // "Authorization": tokens[window.location.origin]
-                "Authorization": tokens[authorData.host]
+                "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox/", obj.host+"/"]);
+        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).host]);
     }
 
     const sendPost = async(event) => {
@@ -68,8 +67,7 @@ function Share (props) {
         },
         {
             headers: {
-                // "Authorization": tokens[window.location.origin]
-                "Authorization": tokens[authorData.host]
+                "Authorization": tokens[window.location.hostname]
             }
         })
         
