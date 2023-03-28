@@ -16,11 +16,14 @@ function Widgets() {
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
   const { tokens } = useGetTokens();
-  const { hostnames } = useGetNodeHosts();
+  const hostnames  = useGetNodeHosts();
   const { authorData, authorID } = useGetAuthorData();
   
   
   useEffect(() => {
+    console.log('tokens:', tokens);
+    console.log('authorData:', authorData);
+    console.log('hostnames:', hostnames);
     if (tokens && authorData && hostnames) {
       fetchAllUsers(tokens);
     }
@@ -105,7 +108,7 @@ function Widgets() {
       });
       console.log('Follow request sent successfully.');
 
-      setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+      // setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
     } catch (error) {
       console.error('Error sending follow request:', error);
     }

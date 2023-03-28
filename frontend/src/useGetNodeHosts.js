@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 function useGetNodeHosts() {
-    const [hosts, setHosts] = useState("");
+    const [hosts, setHosts] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ function useGetNodeHosts() {
         }; 
         getHosts();
     }, []);
-    return {hosts, error};
+    return hosts;
 }
 
 export default useGetNodeHosts;
