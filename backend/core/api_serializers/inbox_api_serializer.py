@@ -159,7 +159,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 request_data["approved"] = True
                 approved = True
 
-
+            print("\n\n", url)
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
 
             if res.status_code in [200, 201]:
