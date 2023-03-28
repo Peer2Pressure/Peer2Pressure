@@ -62,7 +62,6 @@ export default function Profile() {
   // check if any error generated shown in console
   if (error) console.log(error);
 
-  // if (authorData) console.log(authorData);
   return (
     <div>
         <div className="profileBox">

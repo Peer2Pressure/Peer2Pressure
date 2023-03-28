@@ -23,8 +23,6 @@ function Widgets() {
     // Fetch all users when the component mounts
     if (tokens && authorData) {
       fetchAllUsers();
-      // console.log("tokens", tokens);
-      // console.log("a", authorData);
     }    
   }, [tokens, authorData]);
 
@@ -32,7 +30,6 @@ function Widgets() {
     try {
       const response = await fetch('/authors/', {
         headers:{
-            // "Authorization": tokens[authorData.host]
             "Authorization": tokens[window.location.hostname]
         }
       });

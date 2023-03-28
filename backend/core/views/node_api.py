@@ -24,9 +24,7 @@ from ..api_serializers.post_api_serializer import PostAPISerializer
 
 # @permission_classes([IsAuthenticated])
 def get_tokens(request):
-    print("hello 23")
     client_servers = Node.objects.all()
-    print(client_servers)
     if len(client_servers) == 0:
         return JsonResponse({}, status=status.HTTP_204_NO_CONTENT)
     
@@ -35,5 +33,4 @@ def get_tokens(request):
     for client in client_servers:
         hostname = urlparse(client.host).hostname
         response[hostname] = client.token
-    print(response)
     return JsonResponse(response, status=status.HTTP_200_OK)

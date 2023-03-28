@@ -4,10 +4,12 @@ import useFetch from "../../useFetch";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-// import useGetAuthorID from "../../useGetAuthorID.js";
 import useGetAuthorData from "../../useGetAuthorData";
+import useGetTokens from "../../useGetTokens";
+
 export default function ProfileSetting() {
 
+    const {tokens, tokenError} = useGetTokens();
     const navigate = useNavigate();
     const [userData, setUserData] = useState({
         id: '',
@@ -89,6 +91,7 @@ export default function ProfileSetting() {
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    "Authorization": tokens[window.location.hostname]
                 },
             })
         .then((response) => {

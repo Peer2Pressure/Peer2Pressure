@@ -47,7 +47,6 @@ function Share (props) {
         const response = await axios.get(`/authors/${authorID}/followers`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
-                // "Authorization": tokens[authorData.host]
             }
         });
         return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).host]);
@@ -69,7 +68,6 @@ function Share (props) {
         {
             headers: {
                 "Authorization": tokens[window.location.hostname]
-                // "Authorization": tokens[authorData.host]
             }
         })
         
@@ -79,7 +77,6 @@ function Share (props) {
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
                 const requestPromises = response2.map(obj => {
-                console.log("AUTH HEADER to FOLLOWERs: ", tokens, tokens[obj[1]], )
                     axios.post(obj[0], response.data, {
                         headers: {
                             "Authorization": tokens[obj[1]]
