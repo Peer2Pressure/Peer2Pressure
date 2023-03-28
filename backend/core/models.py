@@ -37,10 +37,10 @@ class AbstractModel(models.Model):
 
 
 class Node(AbstractModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_server", default=None, null=True)
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_server", default=None, null=True)
     host = models.URLField()
-    username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
-    password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+    # username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+    # password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
     token = models.CharField(max_length=512, default="")
 
     

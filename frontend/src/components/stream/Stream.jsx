@@ -33,7 +33,7 @@ function Stream(props) {
     };
  
     getPosts();
-  }, [postsUpdated]);
+  }, [postsUpdated, tokens]);
 
   if (error) {
     return <div>Error: {error}</div>;

@@ -53,7 +53,7 @@ export default function Profile() {
     };
 
     getAuthorData();
-  }, []);
+  }, [tokens]);
 
     
   // check if loading 
