@@ -57,14 +57,15 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
-                key={post.id}
+                id={post.author.id}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
                 image={post.image}
                 avatar={post.author.profileImage}
-                likes={post.likes}
                 comments={post.comments}
+                object={post.id}
+                // likes={post.like}
               />
             </div>
           ))}
