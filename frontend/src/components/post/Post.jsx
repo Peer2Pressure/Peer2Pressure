@@ -8,6 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
+import ReactMarkdown from 'react-markdown'
 
 // menu source: https://mui.com/material-ui/react-menu/
 
@@ -24,7 +25,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, likes, comments }, ref) => {
+  ({ id, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -111,7 +112,13 @@ const Post = forwardRef(
               </span>
             </div>
             <div className="post__headerDescription">
-              <p>{text}</p>
+              
+              {contentType === "text/markdown" ?
+                  <p><ReactMarkdown>{text}</ReactMarkdown></p>
+                  :
+                  <p>{text}</p>
+              }
+              
             </div>
           </div>
           <img src={image} alt="" />

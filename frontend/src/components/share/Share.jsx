@@ -7,40 +7,89 @@ import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
 import useGetTokens from "../../useGetTokens";
 import Button from "@mui/material/Button";
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
+    const [contentText, setContent] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
-    // const [fileURL, setFileURL] = useState(null)
+    const contentOptions = [
+        { value: 'text/plain', label: 'Plaintext' },
+        { value: 'text/markdown', label: 'Markdown' },
+    ];
+    const [contentType, setContentType] = useState(contentOptions[0].value);
+    const [hasImage, setHasImage] = useState(false);
+    const [imageBase64, setImageBase64] = useState(null);
+    const [postImage, setPostImage] = useState({
+        myFile: "",
+    });
+    
 
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
-    const handleContentChange = event => {
+    function handleContentTypeChange(option) {
+        setContentType(option.value);
+    }
+
+    const handleTextChange = event => {
         setContent(event.target.value);
+    };
+
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            };
+            fileReader.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
+
+    const handleFile = async (e) => {
+        setMessage("");
+        setHasImage(true);
+        // const file = e.target.files[0];
+        let file = e.target.files;
+        for (let i=0; i<file.length; i++) {
+
+        
+        // const fileType = file['type'];
+        // const validImageTypes = ['image/jpeg', 'image/png'];
+        // if (validImageTypes.includes(fileType)) {
+            const base64 = await convertToBase64(file[i]);
+            setPostImage({ ...postImage, myFile: base64 });
+        // } else {
+            // setMessage("only jpeg and png accepted");
+        // }
+    }
       };
 
-    const handleFile = (e) => {
-        setMessage("");
-        let file = e.target.files;
+    // const handleFile = (e) => {
+    //     setMessage("");
+    //     setHasImage(true);
+    //     let file = e.target.files;
         
-        for (let i = 0; i < file.length; i++) {
-            const fileType = file[i]['type'];
-            const validImageTypes = ['image/jpeg', 'image/png'];
-            if (validImageTypes.includes(fileType)) {
-                setFiles([...files,file[i]]);
-            } else {
-                setMessage("only jpeg and png accepted");
-            }
-        }
-    };
+    //     for (let i = 0; i < file.length; i++) {
+    //         const fileType = file[i]['type'];
+    //         const validImageTypes = ['image/jpeg', 'image/png'];
+    //         if (validImageTypes.includes(fileType)) {
+    //             setFiles([...files,file[i]]);
+    //         } else {
+    //             setMessage("only jpeg and png accepted");
+    //         }
+    //     }
+    // };
 
     const removeImage = (i) => {
         setFiles(files.filter(x => x.name !== i));
+        setHasImage(false);
     } 
 
     async function getFollowers() {
@@ -62,7 +111,7 @@ function Share (props) {
             "type": "post",
             "id": `${authorData.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
-            "content": content,
+            "content": contentText,
             "author": authorData,
         },
         {
@@ -109,8 +158,8 @@ function Share (props) {
                         <textarea 
                             name="text" 
                             placeholder={"Write something..."}
-                            value={content}
-                            onChange={handleContentChange}
+                            value={contentText}
+                            onChange={handleTextChange}
                         />
                           
                     </div>
@@ -156,6 +205,13 @@ function Share (props) {
                                 color="primary"
                             />
                             <b>Private</b>  
+                        </div>
+                        <div className="chooseContentType">
+                            <Dropdown 
+                                options={contentOptions}
+                                value={contentType}
+                                onChange={handleContentTypeChange}
+                            />
                         </div>
                     </div>
                     <div className="postButtonContainer">

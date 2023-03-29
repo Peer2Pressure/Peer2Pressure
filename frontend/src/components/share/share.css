@@ -139,3 +139,21 @@ img {
     cursor: pointer;
     border-radius: 100%;
   }
+
+.chooseContentType {
+    margin-left: 1.5rem;
+}
+
+.Dropdown-root {
+    font-weight: bold;
+}
+
+.Dropdown-control {
+    border-radius: 10px !important;
+    /* padding: 8px 40px 8px 10px !important; */
+}
+
+.Dropdown-menu {
+    font-weight: bold;
+    border-radius: 10px !important;
+}
