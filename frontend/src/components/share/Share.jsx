@@ -67,8 +67,9 @@ function Share (props) {
     }
 
     const sendImagePost = async() => {
-        console.log(imageBase64);
-        console.log(imageFile.type)
+        console.log(imageBase64);  // content
+        console.log(imageFile.type)  // contentType
+        // visibility: "unlisted"
     }
 
     const sendPost = async() => {
