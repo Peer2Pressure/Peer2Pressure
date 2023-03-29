@@ -1,16 +1,23 @@
 import "./share.css";
+
+import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
+
 import { useState } from "react";
+import Dropdown from 'react-dropdown';
+import FileBase64 from 'react-file-base64';
+
+import useGetAuthorData from "../../useGetAuthorData";
+import useGetTokens from "../../useGetTokens";
+
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch } from "@mui/material";
-import axios from "axios";
-import useGetAuthorData from "../../useGetAuthorData";
-import { v4 as uuidv4 } from 'uuid';
-import useGetTokens from "../../useGetTokens";
 import Button from "@mui/material/Button";
-import Dropdown from 'react-dropdown';
+
 
 function Share (props) {
     const {setPostsUpdated} = props;
+
     const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
     const [message, setMessage] = useState();
@@ -20,7 +27,6 @@ function Share (props) {
         { value: 'text/markdown', label: 'Markdown' },
     ];
     const [contentType, setContentType] = useState(contentOptions[0].value);
-    // const [fileURL, setFileURL] = useState(null)
     const [hasImage, setHasImage] = useState(false);
     const [imageBase64, setImageBase64] = useState(null);
     const [postImage, setPostImage] = useState({
@@ -31,67 +37,39 @@ function Share (props) {
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
+    // change contentType
     function handleContentTypeChange(option) {
         setContentType(option.value);
     }
 
+    // updating content text
     const handleTextChange = event => {
         setContent(event.target.value);
     };
 
-    const convertToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-                resolve(fileReader.result);
-            };
-            fileReader.onerror = (error) => {
-                reject(error);
-            };
-        });
-    };
-
-    const handleFile = async (e) => {
+    // selecting an image from browser
+    const handleFile = (e) => {
         setMessage("");
         setHasImage(true);
-        // const file = e.target.files[0];
         let file = e.target.files;
-        for (let i=0; i<file.length; i++) {
-
         
-        // const fileType = file['type'];
-        // const validImageTypes = ['image/jpeg', 'image/png'];
-        // if (validImageTypes.includes(fileType)) {
-            const base64 = await convertToBase64(file[i]);
-            setPostImage({ ...postImage, myFile: base64 });
-        // } else {
-            // setMessage("only jpeg and png accepted");
-        // }
-    }
-      };
-
-    // const handleFile = (e) => {
-    //     setMessage("");
-    //     setHasImage(true);
-    //     let file = e.target.files;
-        
-    //     for (let i = 0; i < file.length; i++) {
-    //         const fileType = file[i]['type'];
-    //         const validImageTypes = ['image/jpeg', 'image/png'];
-    //         if (validImageTypes.includes(fileType)) {
-    //             setFiles([...files,file[i]]);
-    //         } else {
-    //             setMessage("only jpeg and png accepted");
-    //         }
-    //     }
-    // };
+        for (let i = 0; i < file.length; i++) {
+            const fileType = file[i]['type'];
+            const validImageTypes = ['image/jpeg', 'image/png'];
+            if (validImageTypes.includes(fileType)) {
+                setFiles([...files,file[i]]);
+            } else {
+                setMessage("only jpeg and png accepted");
+            }
+        }
+    };
 
     const removeImage = (i) => {
         setFiles(files.filter(x => x.name !== i));
         setHasImage(false);
-    } 
+    }
 
+    // get followers to send a public post
     async function getFollowers() {
         const response = await axios.get(`/authors/${authorID}/followers`, {
             headers:{
@@ -151,8 +129,7 @@ function Share (props) {
     return (
         <div className="share">
             <div className="shareCard">
-                
-
+            
                 <div className="top">
                     <div className="textBox">
                         <textarea 
@@ -161,7 +138,6 @@ function Share (props) {
                             value={contentText}
                             onChange={handleTextChange}
                         />
-                          
                     </div>
                        
                     <div className="imgPreview" role="test">
@@ -176,8 +152,8 @@ function Share (props) {
                             )
                         })}
                     </div>
-
                 </div>
+
                 <div className="bottom">
                     <div className="postOptionsContainer">
                         <div className="shareImage">
@@ -198,6 +174,7 @@ function Share (props) {
                                 </div>
                             </label>
                         </div>
+
                         <div className="isPrivateSwitch">
                             <Switch
                                 private={isPrivate}
@@ -206,6 +183,7 @@ function Share (props) {
                             />
                             <b>Private</b>  
                         </div>
+
                         <div className="chooseContentType">
                             <Dropdown 
                                 options={contentOptions}
@@ -214,6 +192,7 @@ function Share (props) {
                             />
                         </div>
                     </div>
+                    
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
                             <Button sx={{borderRadius: 20}} variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
