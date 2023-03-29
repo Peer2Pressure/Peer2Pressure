@@ -77,10 +77,13 @@ function Share (props) {
     const sendPost = async() => {
         // console.log("tt", tokens);
         // console.log("ttttt", tokens[authorData.host]);
+        const uuid = uuidv4()
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${authorData.host}/authors/${authorID}/posts/${uuidv4()}`,
+            "id": `${authorData.id}/posts/${uuid}`,
+            "source": `${authorData.id}/posts/${uuid}`,
+            "origin": `${authorData.id}/posts/${uuid}`,
             "contentType": contentType,
             "content": contentText,
             "author": authorData,
