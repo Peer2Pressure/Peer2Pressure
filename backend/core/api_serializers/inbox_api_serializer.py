@@ -92,16 +92,19 @@ class InboxAPISerializer(serializers.ModelSerializer):
             paginator = Paginator(inbox_items, size)
             inbox_items = paginator.get_page(page)
 
-        serializer = None
-
         # Serialize inbox items based on type.
-        if data_type is None:
+        if data_type == "post":
             post_serializer = PostSerializer(inbox_items, many=True)
             serializer = InboxItemsSerializer(data={
                         'page': page,
                         'size': size,
                         'items': post_serializer.data
                     })
+            # Return serialized data.
+            if serializer.is_valid():
+                return serializer.data, 200
+            else:
+                return serializer.errors, 400
         elif data_type == "request":
             follower_serializer = FollowerSerializer(inbox_items, many=True)
             serializer = InboxFollowRequestSerializer(data={
@@ -109,12 +112,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
                         'size': size,
                         'items': follower_serializer.data
                     })
-
-        # Return serialized data.
-        if serializer.is_valid():
-            return serializer.data, 200
-        else:
-            return serializer.errors, 400
+            # Return serialized data.
+            if serializer.is_valid():
+                return serializer.data, 200
+            else:
+                return serializer.errors, 400
     
     def handle_post(self, author_id, request_data, auth_header):
         """
