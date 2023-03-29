@@ -125,13 +125,16 @@ class Post(AbstractModel):
 
 
 class Comment(AbstractModel):
-    id = models.URLField()
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="comment")
+    id = models.URLField(default="")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
     comment = models.TextField(default="")
-    url = models.URLField()
+    url = models.URLField(default="")
+    content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=False, null=False, default="text/plain")
     created_at = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
+    object = models.URLField(default="")
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
@@ -149,12 +152,16 @@ class Comment(AbstractModel):
 
 
 class PostLike(AbstractModel):
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="like")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post_like")
     created_at = models.DateTimeField(default=timezone.now)
+    summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    object = models.URLField(default="")
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["author", "post"], name="A user can only like post onces")]
+
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
