@@ -28,10 +28,10 @@ function Share (props) {
     ];
     const [contentType, setContentType] = useState(contentOptions[0].value);
     const [hasImage, setHasImage] = useState(false);
-    const [imageBase64, setImageBase64] = useState(null);
-    const [postImage, setPostImage] = useState({
-        myFile: "",
-    });
+    const [postImage, setPostImage] = useState({ 
+        type: "",
+        image: "",
+     });
     
 
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
@@ -48,21 +48,21 @@ function Share (props) {
     };
 
     // selecting an image from browser
-    const handleFile = (e) => {
-        setMessage("");
-        setHasImage(true);
-        let file = e.target.files;
+    // const handleFile = (e) => {
+    //     setMessage("");
+    //     setHasImage(true);
+    //     let file = e.target.files;
         
-        for (let i = 0; i < file.length; i++) {
-            const fileType = file[i]['type'];
-            const validImageTypes = ['image/jpeg', 'image/png'];
-            if (validImageTypes.includes(fileType)) {
-                setFiles([...files,file[i]]);
-            } else {
-                setMessage("only jpeg and png accepted");
-            }
-        }
-    };
+    //     for (let i = 0; i < file.length; i++) {
+    //         const fileType = file[i]['type'];
+    //         const validImageTypes = ['image/jpeg', 'image/png'];
+    //         if (validImageTypes.includes(fileType)) {
+    //             setFiles([...files,file[i]]);
+    //         } else {
+    //             setMessage("only jpeg and png accepted");
+    //         }
+    //     }
+    // };
 
     const removeImage = (i) => {
         setFiles(files.filter(x => x.name !== i));
@@ -83,6 +83,7 @@ function Share (props) {
         // console.log("author_data123: ", authorData, authorID);
         console.log("tt", tokens);
         console.log("ttttt", tokens[authorData.host]);
+        // console.log("base64", postImage.image);
         event.preventDefault();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
@@ -140,6 +141,7 @@ function Share (props) {
                         />
                     </div>
                        
+                    {/* show the image in a preview box */}
                     <div className="imgPreview" role="test">
                         <span className="errorMsg">{message}</span>
                         {files.map((file, key) => {
@@ -147,7 +149,6 @@ function Share (props) {
                                 <div key={key} className="imgContainer">
                                     <button onClick={() => { removeImage(file.name)}}>x</button>
                                     <img src={URL.createObjectURL(file)} alt={file}/>   
-                                    {/* alt for tests, idk what file actually is though */}
                                 </div>
                             )
                         })}
@@ -156,8 +157,17 @@ function Share (props) {
 
                 <div className="bottom">
                     <div className="postOptionsContainer">
+                        
+                        {/* actual image choice */}
                         <div className="shareImage">
-                            <input 
+                            <FileBase64                           
+                                multiple={false}
+                                onDone={({base64, type}) => setPostImage({ 
+                                    ...postImage, image: base64, type: type 
+                                })}
+                                
+                            />
+                            {/* <input 
                                 type="file"
                                 id="file" 
                                 style={{display:"none"}} 
@@ -172,7 +182,7 @@ function Share (props) {
                                     <b> Upload a Photo</b>
                                     <img src = {Image} alt="" /> 
                                 </div>
-                            </label>
+                            </label> */}
                         </div>
 
                         <div className="isPrivateSwitch">
