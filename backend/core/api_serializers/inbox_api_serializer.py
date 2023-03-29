@@ -78,14 +78,14 @@ class InboxAPISerializer(serializers.ModelSerializer):
         inbox_items = []
 
         # Get all inbox posts.
-        if data_type is None:
+        if data_type == "post":
             inbox = author.inbox.all().filter(type="post")    
             inbox_items = [inbox_obj.content_object for inbox_obj in inbox]
         
         # Get all inbox follow requests.
         if data_type == "request":
             inbox = author.inbox.all().filter(type="follow")
-            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object == False]
+            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.approved == False]
 
         # Paginate inbox items.
         if page and size:
