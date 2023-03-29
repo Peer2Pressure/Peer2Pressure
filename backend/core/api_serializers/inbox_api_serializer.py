@@ -17,7 +17,7 @@ from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 from ..serializers.postserializer import PostSerializer
 from ..serializers.followerserializer import FollowerSerializer
-from ..serializers.inboxserializer import InboxItemsSerializer
+from ..serializers.inboxserializer import InboxItemsSerializer, InboxFollowRequestSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 from ..serializers.postlikeserializer import PostLikeSerializer
