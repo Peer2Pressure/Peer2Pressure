@@ -59,10 +59,30 @@
     cursor: pointer;
     margin-left: 8px;
   }
+
+  .acceptButton.accepted {
+    background-color: green;
+    color: white;
+  }
   
   .acceptButton:hover,
   .declineButton:hover {
     opacity: 0.8;
+  }
+  
+  .acceptedIconWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: green;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 8px;
   }
   
   
