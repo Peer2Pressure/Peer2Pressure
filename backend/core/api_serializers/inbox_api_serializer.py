@@ -16,7 +16,7 @@ from ..models import *
 from ..serializers.authorserializer import AuthorSerializer
 from ..serializers.postserializer import PostSerializer
 from ..serializers.followerserializer import FollowerSerializer
-from ..serializers.inboxserializer import InboxItemsSerializer
+from ..serializers.inboxserializer import InboxItemsSerializer, InboxFollowRequestSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 from ..config import *
@@ -36,6 +36,14 @@ class InboxAPISerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_inbox_posts_data(self, author, inbox_posts):
+        """
+        Get inbox posts data.
+        Parameters:
+            author (Author): Author.
+            inbox_posts (list): Inbox posts.
+        Returns:
+            (dict): Inbox posts data.
+        """
         inbox_posts_data = {
             "type": "inbox",
             "author": author.url
@@ -52,34 +60,72 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
         return inbox_posts_data
     
-    def get_all_inbox_posts(self, author_id, page=None, size=None):
+    def get_all_inbox_posts(self, author_id, page=None, size=None, data_type=None):
+        """
+        Get all inbox posts for an author.
+        Parameters:
+            author_id (uuid): Author id.
+            page (int): Page number.
+            size (int): Number of items per page.
+            data_type (str): Type of data to return.
+        Returns:
+            (dict, int): Serialized data and status code.        
+        """
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist."}, 404
         
         author = author_serializer.get_author_by_id(author_id)
-        
-        inbox = author.inbox.all().filter(type="post")
-        
-        inbox_posts = [inbox_obj.content_object for inbox_obj in inbox]
+        inbox_items = []
 
+        # Get all inbox posts.
+        if data_type is None:
+            inbox = author.inbox.all().filter(type="post")    
+            inbox_items = [inbox_obj.content_object for inbox_obj in inbox]
+        
+        # Get all inbox follow requests.
+        if data_type == "request":
+            inbox = author.inbox.all().filter(type="follow")
+            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object == False]
+
+        # Paginate inbox items.
         if page and size:
-            paginator = Paginator(inbox_posts, size)
-            inbox_posts = paginator.get_page(page)
+            paginator = Paginator(inbox_items, size)
+            inbox_items = paginator.get_page(page)
 
-        post_serializer = PostSerializer(inbox_posts, many=True)
+        serializer = None
 
-        serializer = InboxItemsSerializer(data={
+        # Serialize inbox items based on type.
+        if data_type is None:
+            post_serializer = PostSerializer(inbox_items, many=True)
+            serializer = InboxItemsSerializer(data={
                         'page': page,
                         'size': size,
                         'items': post_serializer.data
                     })
+        elif data_type == "request":
+            follower_serializer = FollowerSerializer(inbox_items, many=True)
+            serializer = InboxFollowRequestSerializer(data={
+                        'page': page,
+                        'size': size,
+                        'items': follower_serializer.data
+                    })
 
+        # Return serialized data.
         if serializer.is_valid():
             return serializer.data, 200
         else:
             return serializer.errors, 400
     
     def handle_post(self, author_id, request_data, auth_header):
+        """
+        Handle post request send to inbox.
+        Parameters:
+            author_id (uuid): Author id.
+            request_data (dict): Request data.
+            auth_header (str): Authorization header.
+        Returns:
+            (dict, int): Serialized data and status code.
+        """
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist."}, 404
         

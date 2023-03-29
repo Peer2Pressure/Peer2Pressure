@@ -37,10 +37,7 @@ class AbstractModel(models.Model):
 
 
 class Node(AbstractModel):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_server", default=None, null=True)
     host = models.URLField()
-    # username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
-    # password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
     token = models.CharField(max_length=512, default="")
 
     def __str__(self):
@@ -181,3 +178,5 @@ class Inbox(AbstractModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(default=timezone.now)
+    
