@@ -85,7 +85,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # Get all inbox follow requests.
         if data_type == "request":
             inbox = author.inbox.all().filter(type="follow")
-            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.approved == False]
+            if inbox != []:
+                inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.content_object.approved == False]
 
         # Paginate inbox items.
         if page and size:
@@ -106,11 +107,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
             else:
                 return serializer.errors, 400
         elif data_type == "request":
-            follower_serializer = FollowerSerializer(inbox_items, many=True)
+            a_serializer = AuthorSerializer(inbox_items, many=True)
             serializer = InboxFollowRequestSerializer(data={
                         'page': page,
                         'size': size,
-                        'items': follower_serializer.data
+                        'items': a_serializer.data
                     })
             # Return serialized data.
             if serializer.is_valid():
@@ -163,10 +164,9 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
-                if method == "PUT":
-                    # create new inbox entry referencing the post send to inbox.
-                    inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
-                    inbox_post.save()
+                # create new inbox entry referencing the post send to inbox.
+                inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+                inbox_post.save()
                 # return {"msg": f"Post has been send to {author_id} inbox"}, 200
                 return PostSerializer(post).data, 200
             else:
