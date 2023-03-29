@@ -4,6 +4,8 @@ import json
 # Third-party libraries
 # from django.http import HttpResponse, JsonResponse
 # from rest_framework import authentication, permission
+
+# Third-party libraries
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
@@ -29,6 +31,7 @@ post_api_serializer = PostAPISerializer()
 
 class SinglePostAPI(GenericAPIView):
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(tags=['Posts'])
     def get(self, request, author_id, post_id):
@@ -39,10 +42,6 @@ class SinglePostAPI(GenericAPIView):
     
     @swagger_auto_schema(tags=['Posts'])
     def put(self, request, author_id, post_id):
-        # if request.user.is_authenticated:
-        #     pass
-        # else:
-        #     pass
         post, code = post_api_serializer.add_new_post(author_id, request.data, post_id=post_id)
         if code == 201:
             return Response(post, status=status.HTTP_201_CREATED)
@@ -72,6 +71,7 @@ class SinglePostAPI(GenericAPIView):
 
 class PostAPI(GenericAPIView):
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         tags=['Posts'],
@@ -102,7 +102,6 @@ class PostAPI(GenericAPIView):
             tags=['Posts'],
             operation_description='Create a new post.',)
     def post(self, request, author_id):
-
         post, code = post_api_serializer.add_new_post(author_id, request.data)
         if code == 201:
             return Response(post, status=status.HTTP_201_CREATED)

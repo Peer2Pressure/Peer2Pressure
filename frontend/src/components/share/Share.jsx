@@ -1,14 +1,15 @@
 import "./share.css";
 import { useState } from "react";
-import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch } from "@mui/material";
 import axios from "axios";
 import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
+import useGetTokens from "../../useGetTokens";
+import Button from "@mui/material/Button";
 
-const Share = () => {
-
+function Share (props) {
+    const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
     const [message, setMessage] = useState();
@@ -16,8 +17,8 @@ const Share = () => {
     const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
     // const [fileURL, setFileURL] = useState(null)
 
-
-    const {data, loading, error, authorID} = useGetAuthorData();
+    const {authorData, loading, authorError, authorID} = useGetAuthorData();
+    const {tokens, tokenError} = useGetTokens();
 
     const handleContentChange = event => {
         setContent(event.target.value);
@@ -39,33 +40,48 @@ const Share = () => {
     };
 
     const removeImage = (i) => {
-       setFiles(files.filter(x => x.name !== i));
-    }
+        setFiles(files.filter(x => x.name !== i));
+    } 
 
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`);
-        return response.data.items.map(obj => obj.id+"/inbox/");
+        const response = await axios.get(`/authors/${authorID}/followers`, {
+            headers:{
+                "Authorization": tokens[window.location.hostname]
+            }
+        });
+        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
     }
 
     const sendPost = async(event) => {
+        // console.log("author_data123: ", authorData, authorID);
+        console.log("tt", tokens);
+        console.log("ttttt", tokens[authorData.host]);
         event.preventDefault();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${data.host}/authors/${authorID}/posts/${uuidv4()}`,
+            "id": `${authorData.host}/authors/${authorID}/posts/${uuidv4()}`,
             "contentType": contentType,
             "content": content,
-            "author": data,
+            "author": authorData,
+        },
+        {
+            headers: {
+                "Authorization": tokens[window.location.hostname]
+            }
         })
         
         const p2 = p.then((response) => {
+            setPostsUpdated(response.data);
+            setContent("");
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
-                // console.log("p3", p3)
-                // console.log("r2", response2)
-                // console.log("rd", response.data)
-                const requestPromises = response2.map(endpoint => {
-                    axios.post(endpoint, response.data)
+                const requestPromises = response2.map(obj => {
+                    axios.post(obj[0], response.data, {
+                        headers: {
+                            "Authorization": tokens[obj[1]]
+                        }
+                    });
                 })
                 Promise
                 .all(requestPromises)
@@ -76,8 +92,8 @@ const Share = () => {
                     console.error('Error sending requests:', error);
                 })
                 .finally(() => {
-                    window.location.reload();
-                });
+                    console.log("empty text area")
+                })
             }
             )
         })
@@ -114,12 +130,6 @@ const Share = () => {
 
                 </div>
                 <div className="bottom">
-                    {/* <div className="shareText">
-                        <CreateOutlinedIcon 
-                            fontSize="small" 
-                            color="primary"
-                        /> <b>Create a Post</b>
-                    </div> */}
                     <div className="postOptionsContainer">
                         <div className="shareImage">
                             <input 
@@ -133,7 +143,8 @@ const Share = () => {
                                     <PhotoSizeSelectActualOutlinedIcon 
                                         fontSize="small"     
                                         color="primary"
-                                    /> <b> Upload a Photo</b>
+                                    />
+                                    <b> Upload a Photo</b>
                                     <img src = {Image} alt="" /> 
                                 </div>
                             </label>
@@ -149,12 +160,10 @@ const Share = () => {
                     </div>
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
-                            <button className="postButton" role="button" onClick={sendPost}>Post</button>
+                            <Button sx={{borderRadius: 20}} variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
                         </div>
                     </div>
-                    
                 </div>
-                
             </div>
         </div>
     );

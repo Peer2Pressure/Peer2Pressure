@@ -15,8 +15,10 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
 from drf_yasg.utils import swagger_auto_schema
+from django.contrib.auth.decorators import login_required
+
 
 # Local Libraries
 from .. import utils
@@ -60,18 +62,17 @@ class InboxAPI(GenericAPIView):
         tags=["Inbox"],
         operation_description="Send an object to an author's obj",
     )
+    @permission_classes([IsAuthenticated])
     def post(self, request, author_id):
-        # if request.user.is_authenticated:
-        #     pass
-        # else:
-        #     pass
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')    
+
         response = None
         code = None
         if "type" in list(request.data.keys()):
             if request.data["type"].lower() == "post":
-                response, code = inbox_api_serializer.handle_post(author_id, request.data)
+                response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "follow":
-                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data)
+                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data, auth_header)
         if code == 200:
             return Response(response, status=status.HTTP_200_OK)
         elif code == 400:

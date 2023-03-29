@@ -1,21 +1,22 @@
-import os
+import os 
 from uuid import uuid4
 from abc import abstractclassmethod
 from varname import nameof
 from typing import List
 
+# Third-party libraries
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+# Local Libraries
 from .config import *
 
 MAX_CHARFIELD_LENGTH = 300
-
-# default_user = User.objects.get(username="deafult_user")
 
 class AbstractModel(models.Model):
     class Meta:
@@ -34,6 +35,17 @@ class AbstractModel(models.Model):
     def __repr__(self):
         return str(self)
 
+
+class Node(AbstractModel):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_server", default=None, null=True)
+    host = models.URLField()
+    # username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+    # password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
+    token = models.CharField(max_length=512, default="")
+
+    def __str__(self):
+        return str(self.host)
+    
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)
@@ -43,18 +55,18 @@ class Author(AbstractModel):
     url = models.URLField()
     email = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
     password = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True)
-    avatar = models.URLField(default="", blank=True)
-    github = models.URLField(default="", blank=True)
+    avatar = models.URLField(default="", blank=True, null=True)
+    github = models.URLField(default="", blank=True, null=True)
     
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["username", "email", "password"], name="Unique user properties")]
+        constraints = [models.UniqueConstraint(fields=["id"], name="Unique user properties")]
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
         return [nameof(cls.username), nameof(cls.name), nameof(cls.host)]
 
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
 
     def save(self, *args, **kwargs):
         if not self.url:

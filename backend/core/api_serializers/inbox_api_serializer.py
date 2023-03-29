@@ -79,22 +79,20 @@ class InboxAPISerializer(serializers.ModelSerializer):
         else:
             return serializer.errors, 400
     
-    def handle_post(self, author_id, request_data):
+    def handle_post(self, author_id, request_data, auth_header):
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist."}, 404
         
         author = author_serializer.get_author_by_id(author_id)
 
         serializer = PostSerializer(data=request_data)
-
         if serializer.is_valid():
             # TODO: Validate post_id is a UUID
             # Get post author id.
-            post_id_url = urlparse(request_data["id"]).path.split('/')
-            foreign_author_id = uuid.UUID(post_id_url[2])
-            post_id = post_id_url[4]
-
-            print("inbox author: ", author_id, "post author: ", foreign_author_id)
+            post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
+            foreign_author_id = uuid.UUID(post_id_url[-3])
+            post_id = post_id_url[-1]
+            
             # Check if current author is followed by foreign author to receive posts.
             if author_id != foreign_author_id and not follower_serializer.follower_exists(foreign_author_id, author_id):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
@@ -108,7 +106,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             # Create or update post.
             url = f"{BASE_HOST}/authors/{foreign_author_id}/posts/{post_id}/"
-            headers = {"Content-Type": "application/json"}
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"{auth_header}"
+            }
+
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
             if res.status_code in [200, 201]:
@@ -125,26 +127,29 @@ class InboxAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     
-    def handle_follow_request(self, author_id, request_data):
+    def handle_follow_request(self, author_id, request_data, auth_header):
         follow_serializer = FollowerSerializer(data=request_data)
         
         if follow_serializer.is_valid():
             validated_data = follow_serializer.validated_data
             
             # get post author id 
-            actor_id_path = urlparse(request_data["actor"]["id"]).path.split('/')
-            foreign_author_id = uuid.UUID(actor_id_path[2])
+            actor_id_path = urlparse(request_data["actor"]["id"]).path.rstrip("/").split('/')
+            foreign_author_id = uuid.UUID(actor_id_path[-1])
 
             # If local author recives a follow request
-            headers = {"Content-Type": "application/json"}
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"{auth_header}"
+                }
             url = f"{BASE_HOST}/authors/{author_id}/followers/{foreign_author_id}/"
 
             approved = False
 
             # If local author gets a response of request being approved
             if author_id == foreign_author_id:
-                actor_id_path = urlparse(request_data["object"]["id"]).path.split('/')
-                foreign_author_id = uuid.UUID(actor_id_path[2])
+                actor_id_path = urlparse(request_data["object"]["id"]).path.rstrip("/").split('/')
+                foreign_author_id = uuid.UUID(actor_id_path[-1])
 
                 # Check if local author has not send a follow request
                 if not follow_serializer.follower_exists(foreign_author_id, author_id):
@@ -153,7 +158,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 url = f"{BASE_HOST}/authors/{foreign_author_id}/followers/{author_id}/"
                 request_data["approved"] = True
                 approved = True
-
 
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
             if res.status_code in [200, 201]:

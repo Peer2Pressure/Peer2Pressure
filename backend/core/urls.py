@@ -4,7 +4,7 @@ from drf_yasg import openapi
 from django.urls import path, re_path, include
 from django.shortcuts import redirect, render
 
-from .views import account_views, author_views, follower_views, post_views, comment_views, like_views, inbox_views
+from .views import account_views, author_views, follower_views, node_api, post_views, comment_views, like_views, inbox_views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -25,12 +25,12 @@ urlpatterns = [
     
     # Account views
     re_path(r"^$", account_views.index, name="index"),
-    path('signin/', account_views.signin, name='signin'),
-    path('signup/', account_views.signup, name='signup'),
+    path('accounts/login/', account_views.signin, name='signin'),
+    path('accounts/signup/', account_views.signup, name='signup'),
     path('accounts/logout/', account_views.logout_view, name='logout'),
 
     # Author views
-    path('get_author_id/', author_views.CurrentAuthorID.as_view(), name="get_author_id"),
+    path('get_author_id/', author_views.get_author_id, name="get_author_id"),
     path('authors/', author_views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', author_views.AuthorAPI.as_view(), name='author_api'),
 
@@ -55,4 +55,9 @@ urlpatterns = [
 
    # # Liked Views
    #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
+
+   # Nodes
+   path('nodes/tokens/', node_api.get_tokens, name="get_tokens"),
+   path('nodes/hostnames/', node_api.get_hostnames, name="get_hostnames")
+
 ]
