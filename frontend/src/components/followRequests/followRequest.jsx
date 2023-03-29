@@ -23,7 +23,7 @@ function FollowRequest() {
   const fetchIncomingRequests = async () => {
     try {
       const requestPromises = hostnames.map(async (hostname) => {
-        const response = await axios.get(`${authorData.id}/inbox/`, {
+        const response = await axios.get(`${authorData.id}/inbox?type=request`, {
           headers: {
             'Authorization': tokens[hostname],
           },
