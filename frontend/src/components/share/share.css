@@ -36,6 +36,13 @@
     justify-content: center;
 }
 
+.imgPreviewBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
 .bottom {
     padding-top: 0.5rem;
     margin-bottom: 0.5em;
@@ -75,9 +82,7 @@ textarea {
     padding: 2rem;
     border-radius: 20px;
     border: none;
-    /* background-color: rgba(190, 190, 190, 0.4); */
     background-color: rgba(222, 222, 222, 0.5);
-
     resize: none;
 }
 
@@ -112,9 +117,12 @@ textarea:focus {
     /* border: 1px solid red; */
 }
 
-/* .imgPreview {
-    border: 1px solid black;
-} */
+.imgPreview {
+    /* border: 1px solid black; */
+    width: fit-content;
+    /* position: relative; */
+    /* padding-left: 3rem; */
+}
 
 img {
     max-width: 10rem;

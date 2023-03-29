@@ -11,29 +11,23 @@ import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Switch } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Switch, Button } from "@mui/material";
 
 
 function Share (props) {
     const {setPostsUpdated} = props;
 
-    const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
-    const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
         { value: 'text/markdown', label: 'Markdown' },
     ];
     const [contentType, setContentType] = useState(contentOptions[0].value);
-    const [hasImage, setHasImage] = useState(false);
-    const [postImage, setPostImage] = useState({ 
-        type: "",
-        image: "",
-     });
-    
 
+    const [imageFile, setImageFile] = useState(null);
+    const [imageBase64, setImageBase64] = useState(null);
+    
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
@@ -47,26 +41,20 @@ function Share (props) {
         setContent(event.target.value);
     };
 
-    // selecting an image from browser
-    // const handleFile = (e) => {
-    //     setMessage("");
-    //     setHasImage(true);
-    //     let file = e.target.files;
-        
-    //     for (let i = 0; i < file.length; i++) {
-    //         const fileType = file[i]['type'];
-    //         const validImageTypes = ['image/jpeg', 'image/png'];
-    //         if (validImageTypes.includes(fileType)) {
-    //             setFiles([...files,file[i]]);
-    //         } else {
-    //             setMessage("only jpeg and png accepted");
-    //         }
-    //     }
-    // };
+    // select image from browser NEW!
+    const handleFileUpload = (event) => {
+        setImageFile(event.target.files[0]);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImageBase64(reader.result);
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
 
-    const removeImage = (i) => {
-        setFiles(files.filter(x => x.name !== i));
-        setHasImage(false);
+    // delete image
+    const handleDeleteImage = () => {
+        setImageFile(null)
+        setImageBase64(null);
     }
 
     // get followers to send a public post
@@ -79,12 +67,14 @@ function Share (props) {
         return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
     }
 
-    const sendPost = async(event) => {
-        // console.log("author_data123: ", authorData, authorID);
-        console.log("tt", tokens);
-        console.log("ttttt", tokens[authorData.host]);
-        // console.log("base64", postImage.image);
-        event.preventDefault();
+    const sendImagePost = async() => {
+        console.log(imageBase64);
+        console.log(imageFile.type)
+    }
+
+    const sendPost = async() => {
+        // console.log("tt", tokens);
+        // console.log("ttttt", tokens[authorData.host]);
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
@@ -102,6 +92,7 @@ function Share (props) {
         const p2 = p.then((response) => {
             setPostsUpdated(response.data);
             setContent("");
+            handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
                 const requestPromises = response2.map(obj => {
@@ -119,19 +110,17 @@ function Share (props) {
                 .catch((error) => {
                     console.error('Error sending requests:', error);
                 })
-                .finally(() => {
-                    console.log("empty text area")
-                })
-            }
-            )
+            })
         })
     }
 
     return (
         <div className="share">
+
             <div className="shareCard">
             
                 <div className="top">
+                    {/* write content of post */}
                     <div className="textBox">
                         <textarea 
                             name="text" 
@@ -140,38 +129,30 @@ function Share (props) {
                             onChange={handleTextChange}
                         />
                     </div>
-                       
+                </div>
+
+                <div className="imgPreviewBox">
                     {/* show the image in a preview box */}
-                    <div className="imgPreview" role="test">
-                        <span className="errorMsg">{message}</span>
-                        {files.map((file, key) => {
-                            return (
-                                <div key={key} className="imgContainer">
-                                    <button onClick={() => { removeImage(file.name)}}>x</button>
-                                    <img src={URL.createObjectURL(file)} alt={file}/>   
-                                </div>
-                            )
-                        })}
+                    <div className="imgPreview">
+                        {imageBase64 && (
+                            <div className="imgContainer">
+                                <img src={imageBase64} alt="Image Preview" />
+                                <button onClick={handleDeleteImage}>x</button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="bottom">
                     <div className="postOptionsContainer">
-                        
                         {/* actual image choice */}
-                        <div className="shareImage">
-                            <FileBase64                           
-                                multiple={false}
-                                onDone={({base64, type}) => setPostImage({ 
-                                    ...postImage, image: base64, type: type 
-                                })}
-                                
-                            />
-                            {/* <input 
+                        <div className="shareImage">                    
+                            <input 
                                 type="file"
                                 id="file" 
+                                accept="image/png, image/jpeg"
                                 style={{display:"none"}} 
-                                onChange={handleFile}
+                                onChange={handleFileUpload}
                             />
                             <label htmlFor="file">
                                 <div className="uploadImg">
@@ -180,9 +161,8 @@ function Share (props) {
                                         color="primary"
                                     />
                                     <b> Upload a Photo</b>
-                                    <img src = {Image} alt="" /> 
                                 </div>
-                            </label> */}
+                            </label>
                         </div>
 
                         <div className="isPrivateSwitch">
@@ -205,7 +185,17 @@ function Share (props) {
                     
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
-                            <Button sx={{borderRadius: 20}} variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
+                            <Button 
+                                sx={{borderRadius: 20}} 
+                                variant="contained" 
+                                className="postButton" 
+                                role="button" 
+                                onClick={imageBase64 ? sendImagePost : sendPost}>
+                                    {/* TODO: if it's an image post, then you actually have to call both 
+                                    sendPost and sendImagePost.. maybe do a conditional inside sendPost? 
+                                    or call sendImagePost, and then call sendPost inside sendImagePost */}
+                                Post
+                            </Button>
                         </div>
                     </div>
                 </div>
