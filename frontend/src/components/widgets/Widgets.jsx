@@ -24,7 +24,7 @@ function Widgets() {
     console.log('tokens:', tokens);
     console.log('authorData:', authorData);
     console.log('hostnames:', hostnames);
-    console.log('authorID:', authorID);
+    
     if (tokens && authorData && hostnames) {
       fetchAllUsers(tokens);
     }
@@ -129,7 +129,6 @@ function Widgets() {
       console.error('Error sending follow request:', error);
     }
   };
-  
 
   return (
     <div className="widgets">
