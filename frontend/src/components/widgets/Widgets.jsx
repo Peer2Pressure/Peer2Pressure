@@ -12,7 +12,7 @@ function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [followedUsers, setFollowedUsers] = useState({});
+  const [followedUsers, setFollowedUsers] = useState(false);
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
   const { tokens } = useGetTokens();
@@ -24,6 +24,7 @@ function Widgets() {
     console.log('tokens:', tokens);
     console.log('authorData:', authorData);
     console.log('hostnames:', hostnames);
+    console.log('authorID:', authorID);
     if (tokens && authorData && hostnames) {
       fetchAllUsers(tokens);
     }
@@ -90,13 +91,21 @@ function Widgets() {
 
   const sendFollowRequest = async (user) => {
     console.log('sendFollowRequest called');
-
-    if (followedUsers[user.id]) {
-      console.log('User already followed');
-      return;
-    }
-
+      
     try {
+      // Check if already following
+      const response = await axios.get(`/authors/${user.id.split('/')[4]}/followers/`, {
+        headers: {
+          'Authorization': tokens[window.location.hostname],
+        },
+      });
+      console.log('Already following user', response.data.items);
+      const following = response.data.items.some((item) => item.id === authorData.id);
+      if (following) {
+        setFollowedUsers(true);
+        setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+        return;
+      }
       const data = {
         type: "Follow",
         summary: `${authorData.displayName} wants to follow ${user.displayName}`,
@@ -108,18 +117,19 @@ function Widgets() {
       console.log('User host:', user.host);
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
+      console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
       await axios.post(`${user.id}/inbox/`, data, {
         headers: {
-          'Authorization': tokens[user.host],
+          'Authorization': tokens[new URL(user.host).hostname],
         },
       });
       console.log('Follow request sent successfully.');
-
-      // setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+      setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
     } catch (error) {
       console.error('Error sending follow request:', error);
     }
   };
+  
 
   return (
     <div className="widgets">
@@ -144,12 +154,8 @@ function Widgets() {
                     <div key={user.id} className="userResult">
                       <span>{user.displayName}</span>
                       {user.id !== authorID && (
-                        <button className="followButton" onClick={() => sendFollowRequest(user)}>
-                          {followedUsers[user.id] ? (
-                            <HowToRegIcon />
-                          ) : (
-                            <PersonAddIcon />
-                          )}
+                        <button className={`followButton ${followedUsers[user.id] ? 'sent' : ''}`} onClick={() => sendFollowRequest(user)}>
+                        <PersonAddIcon/>
                         </button>
                       )}
                     </div>
