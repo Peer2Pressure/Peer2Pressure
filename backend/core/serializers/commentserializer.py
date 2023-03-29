@@ -11,10 +11,17 @@ author_serializer = AuthorSerializer()
 post_serializer = PostSerializer()
 
 class CommentSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(required=False, max_length=10, default="comment", read_only=True)
+    author = AuthorSerializer(required=True)
+    comment = serializers.CharField(required=True)
+    contentType = serializers.CharField(source="content_type", required=True)
+    object = serializers.URLField(required=True)
+
     class Meta:
         model = Comment
-        fields = "__all__"
-    
+        fields = ["type", "author", "comment", "contentType", "object"]
+
+    # TODO: Need to modify this to include all the fields in the comment model    
     def create_comment(self, author_id, post_id, comment):
 
         try:

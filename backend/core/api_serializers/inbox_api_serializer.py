@@ -6,9 +6,10 @@ import pprint
 
 # Third-party libraries
 from django.core.paginator import Paginator
-
+from django.http import HttpResponseBadRequest
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from django.http import HttpResponse
 
 # Local libraries
 from .. import utils
@@ -19,6 +20,8 @@ from ..serializers.followerserializer import FollowerSerializer
 from ..serializers.inboxserializer import InboxItemsSerializer, InboxFollowRequestSerializer
 from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
+from ..serializers.postlikeserializer import PostLikeSerializer
+from ..serializers.commentserializer import CommentSerializer
 from ..config import *
 
 author_serializer = AuthorSerializer()
@@ -26,7 +29,8 @@ author_api_serializer = AuthorAPISerializer()
 post_api_serializer = PostAPISerializer()
 post_serializer = PostSerializer()
 follower_serializer = FollowerSerializer()
-
+post_like_serializer = PostLikeSerializer()
+# post_comment_serializer = CommentSerializer()
 
 pp = pprint.PrettyPrinter()
 
@@ -226,3 +230,65 @@ class InboxAPISerializer(serializers.ModelSerializer):
         else:
             return follow_serializer.errors, 400
         
+    def handle_like_request(self, author_id, request_data):
+        try:
+            if not author_serializer.author_exists(author_id):
+                return {"msg": "Author does not exist."}, 404
+        
+            author = author_serializer.get_author_by_id(author_id)
+
+            post_like_serializer = PostLikeSerializer(data=request_data)
+
+            if post_like_serializer.is_valid():
+                validated_data = post_like_serializer.validated_data
+
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+
+                validated_data["author"] = foreign_author
+
+                post_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
+                post_id = post_id_url[-1]
+                post = post_serializer.get_author_post(author_id, post_id)
+                validated_data["post"] = post
+                post_like_object = post_like_serializer.save()
+                
+                inbox_post = Inbox.objects.create(content_object=post_like_object, author=author, type="like")
+                inbox_post.save()
+
+                return "Like has been added to the author post", 200 
+            else:
+                return post_like_serializer.errors, 400
+        except Exception as e:
+            return str(e), 500
+    
+    def handle_comment_request(self, author_id, request_data):
+        try:
+            if not author_serializer.author_exists(author_id):
+                return {"msg": "Author does not exist."}, 404
+        
+            author = author_serializer.get_author_by_id(author_id)
+
+            post_comment_serializer = CommentSerializer(data=request_data)
+
+            if post_comment_serializer.is_valid():
+                validated_data = post_comment_serializer.validated_data
+
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+                validated_data["author"] = foreign_author
+
+                post_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
+                post_id = post_id_url[-1]
+                post = post_serializer.get_author_post(author_id, post_id)
+                validated_data["post"] = post
+                post_comment_object = post_comment_serializer.save()
+                
+                inbox_post = Inbox.objects.create(content_object=post_comment_object, author=author, type="comment")
+                inbox_post.save()
+
+                return "Comment has been added to the author post", 200
+            else:
+                return "Comment has not been added to the author post", 400
+        except Exception as e:
+            return str(e), 500
