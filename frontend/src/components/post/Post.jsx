@@ -119,7 +119,6 @@ const Post = forwardRef(
                   <p>{text}</p>
               }
               
-              {/* <p><ReactMarkdown>{text}</ReactMarkdown></p> */}
             </div>
           </div>
           <img src={image} alt="" />
