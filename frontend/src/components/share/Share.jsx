@@ -21,7 +21,6 @@ function Share (props) {
         { value: 'text/markdown', label: 'Markdown' },
     ];
     const [contentType, setContentType] = useState(contentOptions[0].value);
-    // const [fileURL, setFileURL] = useState(null)
     const [hasImage, setHasImage] = useState(false);
     const [imageBase64, setImageBase64] = useState(null);
     const [postImage, setPostImage] = useState({
