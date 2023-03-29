@@ -14,6 +14,8 @@ function FollowRequest() {
   const hostnames = useGetNodeHosts();
   const { authorData } = useGetAuthorData();
   const [acceptedRequests, setAcceptedRequests] = useState({});
+  const [showAcceptedIcon, setShowAcceptedIcon] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (tokens && authorData && hostnames) {
@@ -22,6 +24,7 @@ function FollowRequest() {
   }, [tokens, authorData, hostnames]);
 
   const fetchIncomingRequests = async () => {
+    setLoading(true);
     console.log('author Data:', authorData);
     try {
       const response = await axios.get(`${authorData.id}/inbox?type=request`, {
@@ -39,6 +42,8 @@ function FollowRequest() {
       }
     } catch (error) {
       console.error('Error fetching requests:', error);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -47,6 +52,7 @@ function FollowRequest() {
   const handleAccept = async (request) => {
     console.log('handleAccept called');
     if (authorData) {
+      setLoading(true);
       try {
         const data = {
           type: 'follow',
@@ -71,13 +77,21 @@ function FollowRequest() {
             },
           });
        }
-        console.log('Follower added to the local database.');
+       console.log('Follower added to the local database.');
+      setShowAcceptedIcon((prev) => ({ ...prev, [request.id]: true }));
+      setTimeout(async () => {
         setAcceptedRequests((prev) => ({ ...prev, [request.id]: true }));
         setFollowedUsers((prev) => ({ ...prev, [request.id]: true }));
-      } catch (error) {
-        console.error('Error accepting follow request:', error);
-      }
-  }};
+        setShowAcceptedIcon((prev) => ({ ...prev, [request.id]: false }));
+        await fetchIncomingRequests();
+      }, 2000);
+    } catch (error) {
+      console.error('Error accepting follow request:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+};
   
 
   // const handleDecline = async (request) => {
@@ -102,23 +116,29 @@ function FollowRequest() {
 
   return (
     <div className="followRequest">
-      <div className="widgets__title">Follow Requests</div>
-      {incomingRequests.length === 0 ? (
-        <div>No incoming requests.</div>
-      ) : (
-        <div className="searchResults">
-          {incomingRequests
-            .filter((request) => !acceptedRequests[request.id])
-            .map((request) => (
+    <div className="widgets__title">Follow Requests</div>
+    {loading ? (
+      <div>Loading...</div>
+    ) : incomingRequests.length === 0 ? (
+      <div>No incoming requests.</div>
+    ) : (
+      <div className="searchResults">
+        {incomingRequests
+          .filter((request) => !acceptedRequests[request.id])
+          .map((request) => (
               <div key={request.id} className="request">
                 <span>{request.displayName}</span>
                 <div>
+                {showAcceptedIcon[request.id] ? (
+                  <HowToRegIcon className={`acceptedIcon ${showAcceptedIcon[request.id] ? "acceptedIcon" : ""}`} />
+                ) : (
                   <button
                     className={`acceptButton ${acceptedRequests[request.id] ? "accepted" : ""}`}
                     onClick={() => handleAccept(request)}
                   >
                     <HowToRegIcon />
                   </button>
+                )}
                 </div>
               </div>
           ))}
@@ -126,6 +146,7 @@ function FollowRequest() {
       )}
     </div>
   );
+  
   
 }
 export default FollowRequest

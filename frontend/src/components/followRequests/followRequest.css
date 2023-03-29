@@ -45,8 +45,7 @@
     font-weight: bold;
   }
   
-  .acceptButton,
-  .declineButton {
+  .acceptButton {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +71,20 @@
     font-weight: bold;
   }
   
-  .acceptButton,
+  .acceptedIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: green;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
   .declineButton {
     display: flex;
     justify-content: center;
