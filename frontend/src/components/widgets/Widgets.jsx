@@ -100,7 +100,7 @@ function Widgets() {
         },
       });
       console.log('Already following user', response.data.items);
-      const following = response.data.items.some((item) => item.actor.id === authorData.id);
+      const following = response.data.items.some((item) => item.id === authorData.id);
       if (following) {
         
         setFollowedUsers(true)
