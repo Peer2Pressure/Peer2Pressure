@@ -90,10 +90,12 @@
 input[name="title"] {
     min-width: 30rem;
     width: fit-content;
-    padding: 0.5rem 2rem;
-    border-radius: 10px;
+    padding: 1rem 2rem;
+    border-radius: 15px;
     border: none;
     background-color: rgba(222, 222, 222, 0.5);
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 input[name="title"]:focus {
