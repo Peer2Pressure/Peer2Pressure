@@ -8,7 +8,7 @@ def get_pagination_variables(query_params):
         return None, None
     if len(query_params) == 1:
         data_type = query_params.get("type", None)
-        if data_type == "type":
+        if data_type is not None:
             return None, None
 
     page = query_params.get("page")
