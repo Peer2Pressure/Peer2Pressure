@@ -91,19 +91,19 @@ function Widgets() {
 
   const sendFollowRequest = async (user) => {
     console.log('sendFollowRequest called');
-    
+      
     try {
       // Check if already following
       const response = await axios.get(`/authors/${user.id.split('/')[4]}/followers/`, {
-      headers: {
-        'Authorization': tokens[window.location.hostname],
+        headers: {
+          'Authorization': tokens[window.location.hostname],
         },
       });
       console.log('Already following user', response.data.items);
       const following = response.data.items.some((item) => item.id === authorData.id);
       if (following) {
-        
-        setFollowedUsers(true)
+        setFollowedUsers(true);
+        setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
         return;
       }
       const data = {
@@ -124,12 +124,12 @@ function Widgets() {
         },
       });
       console.log('Follow request sent successfully.');
-
-      // setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+      setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
     } catch (error) {
       console.error('Error sending follow request:', error);
     }
   };
+  
 
   return (
     <div className="widgets">
@@ -154,12 +154,8 @@ function Widgets() {
                     <div key={user.id} className="userResult">
                       <span>{user.displayName}</span>
                       {user.id !== authorID && (
-                        <button className="followButton" onClick={() => sendFollowRequest(user)}>
-                          {followedUsers? (
-                            <HowToRegIcon />
-                          ) : (
-                            <PersonAddIcon />
-                          )}
+                        <button className={`followButton ${followedUsers[user.id] ? 'sent' : ''}`} onClick={() => sendFollowRequest(user)}>
+                        <PersonAddIcon/>
                         </button>
                       )}
                     </div>
