@@ -25,7 +25,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
+  ({ id, displayName, username, text, image, avatar, likes, comments, contentType, title }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -110,6 +110,9 @@ const Post = forwardRef(
                       ))}
                     </Menu>
               </span>
+            </div>
+            <div className="post__headerTitle">
+              <b>{title}</b>
             </div>
             <div className="post__headerDescription">
               

@@ -18,6 +18,7 @@ function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
+    const [titleText, setTitle] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
@@ -40,6 +41,11 @@ function Share (props) {
     // updating content text
     const handleTextChange = event => {
         setContent(event.target.value);
+    };
+
+    // updating title text
+    const handleTitleChange = event => {
+        setTitle(event.target.value);
     };
 
     // select image from browser NEW!
@@ -86,6 +92,7 @@ function Share (props) {
             "origin": `${authorData.id}/posts/${uuid}`,
             "contentType": contentType,
             "content": contentText,
+            "title": titleText,
             "author": authorData,
         },
         {
@@ -97,6 +104,7 @@ function Share (props) {
         const p2 = p.then((response) => {
             setPostsUpdated(response.data);
             setContent("");
+            setTitle("");
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
@@ -123,6 +131,17 @@ function Share (props) {
         <div className="share">
 
             <div className="shareCard">
+                {/* write title of post */}
+                <div className="titleBox">
+                    <div className="titleField">
+                        <input
+                            name="title"
+                            placeholder={"Add a title..."}
+                            value={titleText}
+                            onChange={handleTitleChange}
+                        />
+                    </div>
+                </div>
             
                 <div className="top">
                     {/* write content of post */}
