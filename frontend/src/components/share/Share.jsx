@@ -12,11 +12,14 @@ import useGetTokens from "../../useGetTokens";
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch, Button } from "@mui/material";
 
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 function Share (props) {
     const {setPostsUpdated} = props;
-
+    const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
+    const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
@@ -173,7 +176,6 @@ function Share (props) {
                             />
                             <b>Private</b>  
                         </div>
-
                         <div className="chooseContentType">
                             <Dropdown 
                                 options={contentOptions}
