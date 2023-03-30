@@ -22,6 +22,7 @@ from ..api_serializers.author_api_serializer import AuthorAPISerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 from ..serializers.postlikeserializer import PostLikeSerializer
 from ..serializers.commentserializer import CommentSerializer
+from ..serializers.commentlikeserialzier import CommentLikeSerializer
 from ..config import *
 
 author_serializer = AuthorSerializer()
@@ -30,7 +31,7 @@ post_api_serializer = PostAPISerializer()
 post_serializer = PostSerializer()
 follower_serializer = FollowerSerializer()
 post_like_serializer = PostLikeSerializer()
-# post_comment_serializer = CommentSerializer()
+post_comment_serializer = CommentSerializer()
 
 pp = pprint.PrettyPrinter()
 
@@ -259,6 +260,43 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 return "Like has been added to the author post", 200 
             else:
                 return post_like_serializer.errors, 400
+        except Exception as e:
+            return str(e), 500
+        
+    def handle_comment_like_request(self, author_id, request_data):
+        try:
+            if not author_serializer.author_exists(author_id):
+                return {"msg": "Author does not exist."}, 404
+        
+            author = author_serializer.get_author_by_id(author_id)
+
+            comment_like_serializer = CommentLikeSerializer(data=request_data)
+
+            if comment_like_serializer.is_valid():
+                validated_data = comment_like_serializer.validated_data
+
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                print("Comment Liked by author: ", foreign_author_id)
+                foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+
+                validated_data["author"] = foreign_author
+
+                post_id = urlparse(request_data["object"]["id"]).path.rstrip('/').split('/')[-3]
+                print("post_id", post_id)
+
+                comment_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
+                comment_id = comment_id_url[-1]
+                print("comment_id", comment_id)
+                comment = post_comment_serializer.get_author_comment(author_id, post_id, comment_id)
+                validated_data["comment"] = comment
+                comment_like_object = comment_like_serializer.save()
+                
+                inbox_post = Inbox.objects.create(content_object=comment_like_object, author=author, type="like")
+                inbox_post.save()
+
+                return "Like has been added to the author comment", 200 
+            else:
+                return comment_like_serializer.errors, 400
         except Exception as e:
             return str(e), 500
     
