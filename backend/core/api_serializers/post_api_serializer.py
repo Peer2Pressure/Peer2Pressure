@@ -69,10 +69,11 @@ class PostAPISerializer(serializers.ModelSerializer):
                 errors["contentType"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
 
             if validated_post_data["content"] == "":
-                if validated_post_data["content_type"] not in valid_image_content_types:
-                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
-                if validated_post_data["content_type"] in valid_image_content_types:
-                    errors["content"] = f"No image data found."
+                if validated_post_data["image_url"] == "":
+                    if validated_post_data["content_type"] not in valid_image_content_types:
+                        errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+                    if validated_post_data["content_type"] in valid_image_content_types:
+                        errors["content"] = f"No image data found."
             
             if len(errors) > 0:
                 return errors, 400
@@ -140,15 +141,16 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
-
+            
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
             
             if validated_post_data["content"] == "":
-                if validated_post_data["content_type"] not in valid_image_content_types:
-                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
-                if validated_post_data["content_type"] in valid_image_content_types:
-                    errors["content"] = f"No image data found."
+                if validated_post_data["image_url"] == "":
+                    if validated_post_data["content_type"] not in valid_image_content_types:
+                        errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+                    if validated_post_data["content_type"] in valid_image_content_types:
+                        errors["content"] = f"No image data found."
 
 
             if len(errors) > 0:

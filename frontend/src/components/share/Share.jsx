@@ -111,7 +111,6 @@ function Share (props) {
                 .all(requestPromises)
                 .then((responses) => {
                     console.log('All requests sent successfully:', responses);
-                    console.log("IMAGE ID finally!!!!!!!!!!", imageID);
                 })
                 .catch((error) => {
                     console.error('Error sending requests:', error);
