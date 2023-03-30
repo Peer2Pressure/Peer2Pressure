@@ -21,7 +21,7 @@ function Stream(props) {
           const authorId = response1.data.author_id;
           
           // let's get all the posts under for current author ID
-          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+          const response2 = await axios.get("/authors/" + authorId + "/inbox", {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
@@ -34,7 +34,7 @@ function Stream(props) {
       };
   
       getPosts();
-    }, 5000);
+    }, 1500);
     return () => clearInterval(interval);
   }, [postsUpdated, tokens]);
 
@@ -65,6 +65,7 @@ function Stream(props) {
                 avatar={post.author.profileImage}
                 likes={post.likes}
                 comments={post.comments}
+                contentType={post.contentType}
               />
             </div>
           ))}

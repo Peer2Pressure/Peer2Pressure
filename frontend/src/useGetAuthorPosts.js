@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function usePostAuthorPosts() {
+function useGetAuthorPosts() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
@@ -16,8 +16,8 @@ function usePostAuthorPosts() {
         console.log("author ID: " + authorId);
         // authorId = "1ead7fea-2483-463d-94d7-6e0ea244a1ff"
         // let's get all the posts under this author ID
-        const response2 = await axios.get("/authors/" + authorId + "/inbox/");
-        console.log("/authors/" + authorId + "/inbox/");
+        const response2 = await axios.get("/authors/" + authorId + "/inbox");
+        console.log("/authors/" + authorId + "/inbox");
 
         setPosts(response2.data);
 
@@ -31,4 +31,4 @@ function usePostAuthorPosts() {
   return {posts, error};
 }
 
-export default usePostAuthorPosts;
+export default useGetAuthorPosts;

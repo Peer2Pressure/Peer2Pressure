@@ -18,6 +18,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth.decorators import login_required
+from urllib.parse import urlparse
 
 
 # Local Libraries
@@ -47,7 +48,9 @@ class InboxAPI(GenericAPIView):
         except ValidationError:
             return Response(data={"msg": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
 
-        response, code = inbox_api_serializer.get_all_inbox_posts(author_id, page, size)
+        data_type = request.query_params.get("type", "post")
+        
+        response, code = inbox_api_serializer.get_all_inbox_posts(author_id, page=page, size=size, data_type=data_type)
         if code == 200:
             return Response(response, status=status.HTTP_200_OK)
         elif code == 400:
@@ -73,9 +76,20 @@ class InboxAPI(GenericAPIView):
                 response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "follow":
                 response, code = inbox_api_serializer.handle_follow_request(author_id, request.data, auth_header)
+            elif request.data["type"].lower() == "like":
+                post_or_comment = urlparse(request.data["object"]).path.split('/')[-2]
+                if post_or_comment == "posts":    
+                    response, code = inbox_api_serializer.handle_like_request(author_id, request.data)
+                elif post_or_comment == "comments":
+                    response, code = inbox_api_serializer.handle_comment_like_request(author_id, request.data)
+            elif request.data["type"].lower() == "comment":
+                print("COMMENT REQUEST: ", request.data)
+                response, code = inbox_api_serializer.handle_comment_request(author_id, request.data)
         if code == 200:
             return Response(response, status=status.HTTP_200_OK)
         elif code == 400:
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
             return Response(response, status=status.HTTP_404_NOT_FOUND)
+        elif code == 500:
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

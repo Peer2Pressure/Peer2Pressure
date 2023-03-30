@@ -6,40 +6,42 @@ import './widgets.css';
 import axios from 'axios';
 import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
-import useGetNodeHosts from '../../useGetNodeHosts';
+import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [followedUsers, setFollowedUsers] = useState({});
+  const [followedUsers, setFollowedUsers] = useState(false);
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
   const { tokens } = useGetTokens();
-  const hostnames  = useGetNodeHosts();
+  const apiEndpoints  = useGetNodeAPIEndpoints();
   const { authorData, authorID } = useGetAuthorData();
   
   
   useEffect(() => {
     console.log('tokens:', tokens);
     console.log('authorData:', authorData);
-    console.log('hostnames:', hostnames);
-    if (tokens && authorData && hostnames) {
+    console.log('apiEndpoints:', apiEndpoints);
+    
+    if (tokens && authorData && apiEndpoints) {
       fetchAllUsers(tokens);
     }
-  }, [tokens, authorData, hostnames]);
+  }, [tokens, authorData, apiEndpoints]);
 
   const fetchAllUsers = async () => {
     try {
       setIsLoading(true);
-      const requestPromises = hostnames.map(async (hostname) => {
-        let url = `http://${hostname}/authors`;
+      const requestPromises = apiEndpoints.map(async (endpoint) => {
+        const hostname = new URL(endpoint).hostname
+        let url = `${endpoint}/authors`;
         
-        // Update host if host is localhost
-        if (hostname === "localhost") {
-          url = `http://${window.location.host}/authors`;
-          console.log("this is a localhost", url)
-        };
+        // // Update host if host is localhost
+        // if (hostname === "localhost") {
+        //   url = `http://${window.location.host}/authors`;
+        //   console.log("this is a localhost", url)
+        // };
 
         const response = await axios.get(url, {
           headers: {
@@ -90,13 +92,21 @@ function Widgets() {
 
   const sendFollowRequest = async (user) => {
     console.log('sendFollowRequest called');
-
-    if (followedUsers[user.id]) {
-      console.log('User already followed');
-      return;
-    }
-
+      
     try {
+      // Check if already following
+      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/`, {
+        headers: {
+          'Authorization': tokens[window.location.hostname],
+        },
+      });
+      console.log('Already following user', response.data.items);
+      const following = response.data.items.some((item) => item.id === authorData.id);
+      if (following) {
+        setFollowedUsers(true);
+        setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+        return;
+      }
       const data = {
         type: "Follow",
         summary: `${authorData.displayName} wants to follow ${user.displayName}`,
@@ -108,14 +118,14 @@ function Widgets() {
       console.log('User host:', user.host);
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
-      await axios.post(`${user.id}/inbox/`, data, {
+      console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
+      await axios.post(`${user.id}/inbox`, data, {
         headers: {
-          'Authorization': tokens[user.host],
+          'Authorization': tokens[new URL(user.host).hostname],
         },
       });
       console.log('Follow request sent successfully.');
-
-      // setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
+      setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
     } catch (error) {
       console.error('Error sending follow request:', error);
     }
@@ -144,12 +154,8 @@ function Widgets() {
                     <div key={user.id} className="userResult">
                       <span>{user.displayName}</span>
                       {user.id !== authorID && (
-                        <button className="followButton" onClick={() => sendFollowRequest(user)}>
-                          {followedUsers[user.id] ? (
-                            <HowToRegIcon />
-                          ) : (
-                            <PersonAddIcon />
-                          )}
+                        <button className={`followButton ${followedUsers[user.id] ? 'sent' : ''}`} onClick={() => sendFollowRequest(user)}>
+                        <PersonAddIcon/>
                         </button>
                       )}
                     </div>
