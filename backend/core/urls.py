@@ -31,7 +31,7 @@ urlpatterns = [
 
     # Author views
     path('get_author_id/', author_views.get_author_id, name="get_author_id"),
-    path('authors/', author_views.AuthorListAPI.as_view(), name='author_list'),
+    path('authors', author_views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', author_views.AuthorAPI.as_view(), name='author_api'),
 
     # Follower views
@@ -50,8 +50,8 @@ urlpatterns = [
     path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', like_views.CommentLikeAPI.as_view(), name="comment_likes"),
 
    # Inbox views
-    path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
-    path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox1"),
+    path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox"),
+   #  path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox1"),
 
    # Liked Views
     path('authors/<uuid:author_id>/liked/', like_views.PostLikedAPI.as_view(), name="author_liked"),
