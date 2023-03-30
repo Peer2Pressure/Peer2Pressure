@@ -34,7 +34,7 @@ function Stream(props) {
       };
   
       getPosts();
-    }, 5000);
+    }, 1000);
     return () => clearInterval(interval);
   }, [postsUpdated, tokens]);
 

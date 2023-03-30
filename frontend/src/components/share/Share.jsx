@@ -29,7 +29,7 @@ function Share (props) {
     const [imageFile, setImageFile] = useState(null);
     const [imageBase64, setImageBase64] = useState(null);
     const [imageID, setImageID] = useState("");
-    
+       
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
@@ -45,6 +45,8 @@ function Share (props) {
 
     // select image from browser NEW!
     const handleFileUpload = (event) => {
+        const imageUUID = uuidv4();
+        setImageID(`${authorData.id}/posts/${imageUUID}`)
         setImageFile(event.target.files[0]);
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -70,20 +72,16 @@ function Share (props) {
     }
 
     const sendImagePost = async() => {
-        // console.log(imageBase64);  // content
-        // console.log(imageFile.type)  // contentType
-
         // const postUUID = uuidv4();
-        const imageUUID = uuidv4();
-        setImageID(`${authorData.id}/posts/${imageUUID}/image`)
+        
         console.log("IMAGE ID HERE!!!!!!!!!!", imageID);
         sendPost();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${authorData.id}/posts/${imageUUID}`,
-            "source": `${authorData.id}/posts/${imageUUID}`,
-            "origin": `${authorData.id}/posts/${imageUUID}`,
+            "id": `${imageID}`,
+            "source": `${imageID}`,
+            "origin": `${imageID}`,
             "contentType": imageFile.type + ";base64",
             "content": imageBase64,
             "author": authorData,
@@ -138,13 +136,15 @@ function Share (props) {
             "contentType": contentType,
             "content": contentText,
             "author": authorData,
-            "image_url": imageID
+            "image_url": imageID+"/image"
         },
         {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
         })
+        .catch((error) => {
+            console.log(error)})
         
         const p2 = p.then((response) => {
             setPostsUpdated(response.data);
