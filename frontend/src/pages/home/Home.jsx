@@ -8,6 +8,7 @@ import Stream from "../../components/stream/Stream";
 import Widgets from "../../components/widgets/Widgets";
 import Post from "../../components/post/Post";
 import NavBar from "../../components/navBar/NavBar";
+import Comment from "../../components/comment/Comment";
 
 const Home = () => {
   const [postsUpdated, setPostsUpdated] = useState(false);

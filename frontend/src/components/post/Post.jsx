@@ -12,6 +12,7 @@ import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 import axios from "axios";
 import { useEffect } from "react";
+import Comment from "../comment/Comment";
 
 // menu source: https://mui.com/material-ui/react-menu/
 
@@ -140,59 +141,66 @@ const Post = forwardRef(
     return (
       <div className="post" ref={ref}>
         <div className="placeHolder">
-          <div className="post__avatar">
-            <Avatar src={avatar} />
-          </div>
           <div className="post__body">
-          <div className="post__header">
-            <div className="post_headerTop">
-              <div className="post__headerText">
-                <h3>
-                  {displayName}{" "}
-                  <span className="post__headerSpecial">
-                  @{username}
-                  </span>
-                </h3>
+            <div className="avatarAndNameContainer">
+              <div className="post__avatar">
+                <Avatar src={avatar} />
               </div>
-              <span className="post_headerMenu">
-                    <IconButton
-                      aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-                      id="long-button"
-                      aria-controls={open ? 'long-menu' : undefined}
-                      aria-expanded={open ? 'true' : undefined}
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                      >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      id="long-menu"
-                      MenuListProps={{
-                        'aria-labelledby': 'long-button',
-                      }}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      PaperProps={{
-                        style: {
-                          // maxHeight: ITEM_HEIGHT * 4.5,
-                          width: '20ch',
-                        },
-                      }}
-                    >
-                      {options.map((option) => (
-                        <MenuItem key={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-              </span>
-            </div>
+              <div className="post__header">
+                <div className="post_headerTop">
+                  <div className="post__headerText">
+                    <h3>
+                      {displayName}{" "}
+                      <span className="post__headerSpecial">
+                      {/* @{username} */}
+                      </span>
+                    </h3>
+                  </div>
+                  <span className="post_headerMenu">
+                        <IconButton
+                          aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
+                          id="long-button"
+                          aria-controls={open ? 'long-menu' : undefined}
+                          aria-expanded={open ? 'true' : undefined}
+                          aria-haspopup="true"
+                          onClick={handleClick}
+                          >
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          id="long-menu"
+                          MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                          }}
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleClose}
+                          PaperProps={{
+                            style: {
+                              // maxHeight: ITEM_HEIGHT * 4.5,
+                              width: '20ch',
+                            },
+                          }}
+                        >
+                          {options.map((option) => (
+                            <MenuItem key={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                  </span>
+                </div>
+              </div>
+            </div> 
             <div className="post__headerDescription">
-              <p>{text}</p>
+                <p>{text}</p>
+                <img src={image} alt="" />
             </div>
-          </div>
-          <img src={image} alt="" />
+            <div className="commentsContainer">
+              {/* were going go put comment component here */}
+                  <Comment/>
+                  <Comment/>
+            </div>
           </div>
         </div>
         <div className="post__footer">

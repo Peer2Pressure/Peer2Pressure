@@ -25,7 +25,7 @@
 
 .post__body {
   flex: 1;
-  padding: 10px;
+  /* padding: 10px; */
 }
 
 .post__body > img {
@@ -150,6 +150,7 @@
   display: flex;
   width: 100%;
   /* border: 1px solid red; */
+  column-gap: 1em;
 }
 
 .placeHolder {
@@ -174,3 +175,35 @@
   width: 100%;
   display: flex;
 }
+
+.commentsContainer {
+  /* padding: 20px; */
+  width: 100%;
+  display: flex;
+  /* border: 1px solid red; */
+  flex-direction: column;
+}
+/* 
+.post__body {
+  border: 1px solid green;
+} */
+
+.avatarAndNameContainer {
+  /* border: 1px solid violet; */
+  display: flex;
+  align-items: center;
+}
+
+.post__header {
+  /* border: 1px solid red; */
+  width: 100%;
+}
+
+.post__headerDescription {
+  /* border: 1px solid black; */
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  height: auto;
+  padding: 20px;
+}
+
