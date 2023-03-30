@@ -27,7 +27,7 @@ function Stream(props) {
             }
           });
           setInboxPosts(response2.data.items);
-
+          
         } catch(error) {
           setError(error);
         };
@@ -57,6 +57,7 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
+                id={post.id}
                 key={post.id}
                 displayName={post.author.displayName}
                 username={post.author.displayName}

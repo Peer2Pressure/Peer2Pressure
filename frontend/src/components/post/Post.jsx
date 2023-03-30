@@ -9,7 +9,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
-
+import axios from "axios";
+import useGetAuthorData from "../../useGetAuthorData";
+import useGetTokens from "../../useGetTokens";
 // menu source: https://mui.com/material-ui/react-menu/
 
 // optios users can choose from upon clicking ellipsis
@@ -30,9 +32,19 @@ const Post = forwardRef(
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
-
+    const { authorData, authorID } = useGetAuthorData();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const { tokens } = useGetTokens();
+    // console.log("id:",id);
+    // console.log("displayName:",displayName);
+    // console.log("username:",username);
+    // console.log("text:",text);
+    // console.log("image:",image);
+    // console.log("avatar:",avatar);
+    // console.log("likes:",likes);
+    // console.log("comments:",comments);
+    // console.log("contentType:",contentType);
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -40,7 +52,7 @@ const Post = forwardRef(
       setAnchorEl(null);
     };
 
-    const handleLikeClick = () => {
+    const handleLikeClick = () => { 
       setLike(!like);
       if (like) {
         setLikeCount(likeCount + 1);
@@ -53,10 +65,43 @@ const Post = forwardRef(
       setShowCommentArea(!showCommentArea);
     };
 
-    const handleCommentSubmit = (event) => {
+    const handleCommentSubmit = async (event) => {
       event.preventDefault();
-      console.log(commentText); // Need to replace this with a post request to the API
-      setCommentText("");
+      console.log("comment submitted;", id);
+      console.log("Hostname;",comments);
+      console.log("This is the m_id;", authorID);
+      console.log("This is the m_data;", authorData);
+        try {
+          const data = {
+            type: 'comment',
+               author: {
+                    type: 'author',
+                    id: authorData.id,
+                    url: authorData.id,
+                    host: window.location.hostname,
+                    displayName: authorData.displayName,
+                    github: null,
+                    profileImage: null    
+            },
+            comment: commentText,
+            contentType: 'text/markdown',
+            object: id
+          };
+        const response = await axios.post(`${authorData.id}/inbox/`, data, {
+        }, {
+          headers: {
+            'Authorization': tokens[new URL (comments).hostname],
+        },
+      });
+    
+        // Do something with the response, such as displaying the new comment
+        console.log("This is post",response.data);
+    
+        // Clear the comment text area
+        setCommentText('');
+      } catch (error) {
+        console.error(error);
+      }
     };
 
 
