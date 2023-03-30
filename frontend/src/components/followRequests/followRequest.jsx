@@ -4,23 +4,23 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import axios from 'axios';
 import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
-import useGetNodeHosts from '../../useGetNodeHosts';
+import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 import './followRequest.css';
 
 function FollowRequest() {
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [followedUsers, setFollowedUsers] = useState({});
   const { tokens } = useGetTokens();
-  const hostnames = useGetNodeHosts();
+  const apiEndpoints = useGetNodeAPIEndpoints();
   const { authorData } = useGetAuthorData();
   const [acceptedRequests, setAcceptedRequests] = useState({});
   const [removedRequests, setRemovedRequests] = useState({});
 
   useEffect(() => {
-    if (tokens && authorData && hostnames) {
+    if (tokens && authorData && apiEndpoints) {
       fetchIncomingRequests(tokens);
     }
-  }, [tokens, authorData, hostnames]);
+  }, [tokens, authorData, apiEndpoints]);
 
   const fetchIncomingRequests = async () => {
     console.log('author Data:', authorData);

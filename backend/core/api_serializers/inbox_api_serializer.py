@@ -166,7 +166,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
             }
 
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
-
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 # create new inbox entry referencing the post send to inbox.
@@ -174,6 +173,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 inbox_post.save()
                 # return {"msg": f"Post has been send to {author_id} inbox"}, 200
                 return PostSerializer(post).data, 200
+            elif res.status_code == 500:
+                return {"msg": "Internal Server Error"}, 500
             else:
                 return json.loads(res.text), 404
         else: 

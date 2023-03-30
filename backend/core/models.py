@@ -37,7 +37,6 @@ class AbstractModel(models.Model):
 
 
 class Node(AbstractModel):
-    # host = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
     api_endpoint = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
     token = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
 

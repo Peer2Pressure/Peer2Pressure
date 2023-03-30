@@ -6,7 +6,7 @@ import './widgets.css';
 import axios from 'axios';
 import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
-import useGetNodeHosts from '../../useGetNodeAPIEndpoints';
+import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');

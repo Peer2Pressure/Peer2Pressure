@@ -2,21 +2,21 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 function useGetNodeAPIEndpoints() {
-    const [hosts, setHosts] = useState([]);
+    const [endpoints, setEndpoints] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const getHosts = async() => {
+        const getEndpoints = async() => {
             try {
                 const response = await axios.get(`/nodes/api_endpoints/`);
-                setHosts(response.data.items)
+                setEndpoints(response.data.items)
             } catch (error) {
                 setError(error);
             }
         }; 
-        getHosts();
+        getEndpoints();
     }, []);
-    return hosts;
+    return endpoints;
 }
 
 export default useGetNodeAPIEndpoints;
