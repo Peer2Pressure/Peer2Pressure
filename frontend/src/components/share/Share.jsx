@@ -96,7 +96,6 @@ function Share (props) {
         
         const p2image = p.then((response) => {
             setPostsUpdated(response.data);
-            // setImageID(`${response.data.id}/image`)
             setContent("");
             handleDeleteImage();
             const p3image = getFollowers()
@@ -121,21 +120,20 @@ function Share (props) {
     }
 
     const sendPost = async () => {
-        // console.log("tt", tokens);
-        // console.log("ttttt", tokens[authorData.host]);
         const postUUID = uuidv4();
-        const p1 = axios
-        .post(`/authors/${authorID}/inbox/`, {
+        const data = {
             "type": "post",
             "id": `${authorData.id}/posts/${postUUID}`,
             "source": `${authorData.id}/posts/${postUUID}`,
             "origin": `${authorData.id}/posts/${postUUID}`,
-            "contentType": contentType,
-            "content": contentText,
+            "contentType": imageID ?  "text/markdown" : contentType,
+            "content": imageID ? contentText + `\n\n![](${imageID}/image)` : contentText,
             "author": authorData,
-            "image_url": imageID ? imageID+"/image" : "",
-        },
-        {
+            "image_url": imageID ? imageID+"/image" : ""
+        }
+        console.log("DATA!", data);
+        const p1 = axios
+        .post(`/authors/${authorID}/inbox/`, data, {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
