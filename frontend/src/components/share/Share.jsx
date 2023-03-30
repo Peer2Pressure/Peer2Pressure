@@ -128,6 +128,7 @@ function Share (props) {
             "origin": `${authorData.id}/posts/${postUUID}`,
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n![](${imageID}/image)` : contentText,
+            // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
             "image_url": imageID ? imageID+"/image" : ""
         }
