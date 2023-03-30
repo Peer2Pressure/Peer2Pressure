@@ -6,7 +6,7 @@ import './widgets.css';
 import axios from 'axios';
 import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
-import useGetNodeHosts from '../../useGetNodeHosts';
+import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,31 +16,32 @@ function Widgets() {
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
   const { tokens } = useGetTokens();
-  const hostnames  = useGetNodeHosts();
+  const apiEndpoints  = useGetNodeAPIEndpoints();
   const { authorData, authorID } = useGetAuthorData();
   
   
   useEffect(() => {
     console.log('tokens:', tokens);
     console.log('authorData:', authorData);
-    console.log('hostnames:', hostnames);
-    console.log('authorID:', authorID);
-    if (tokens && authorData && hostnames) {
+    console.log('apiEndpoints:', apiEndpoints);
+    
+    if (tokens && authorData && apiEndpoints) {
       fetchAllUsers(tokens);
     }
-  }, [tokens, authorData, hostnames]);
+  }, [tokens, authorData, apiEndpoints]);
 
   const fetchAllUsers = async () => {
     try {
       setIsLoading(true);
-      const requestPromises = hostnames.map(async (hostname) => {
-        let url = `http://${hostname}/authors`;
+      const requestPromises = apiEndpoints.map(async (endpoint) => {
+        const hostname = new URL(endpoint).hostname
+        let url = `${endpoint}/authors`;
         
-        // Update host if host is localhost
-        if (hostname === "localhost") {
-          url = `http://${window.location.host}/authors`;
-          console.log("this is a localhost", url)
-        };
+        // // Update host if host is localhost
+        // if (hostname === "localhost") {
+        //   url = `http://${window.location.host}/authors`;
+        //   console.log("this is a localhost", url)
+        // };
 
         const response = await axios.get(url, {
           headers: {
@@ -94,7 +95,7 @@ function Widgets() {
       
     try {
       // Check if already following
-      const response = await axios.get(`/authors/${user.id.split('/')[4]}/followers/`, {
+      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/`, {
         headers: {
           'Authorization': tokens[window.location.hostname],
         },
@@ -129,7 +130,6 @@ function Widgets() {
       console.error('Error sending follow request:', error);
     }
   };
-  
 
   return (
     <div className="widgets">
