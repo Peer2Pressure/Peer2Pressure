@@ -61,7 +61,7 @@ function Stream(props) {
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
-                image={post.image}
+                image_url={post.image_url}
                 avatar={post.author.profileImage}
                 likes={post.likes}
                 comments={post.comments}

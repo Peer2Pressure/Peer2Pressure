@@ -80,7 +80,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # Get all inbox posts.
         if data_type == "post":
             inbox = author.inbox.all().filter(type="post")    
-            inbox_items = [inbox_obj.content_object for inbox_obj in inbox]
+            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
         
         # Get all inbox follow requests.
         if data_type == "request":

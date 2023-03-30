@@ -28,6 +28,7 @@ function Share (props) {
 
     const [imageFile, setImageFile] = useState(null);
     const [imageBase64, setImageBase64] = useState(null);
+    const [imageID, setImageID] = useState("");
     
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
@@ -69,24 +70,75 @@ function Share (props) {
     }
 
     const sendImagePost = async() => {
-        console.log(imageBase64);  // content
-        console.log(imageFile.type)  // contentType
-        // visibility: "unlisted"
-    }
+        // console.log(imageBase64);  // content
+        // console.log(imageFile.type)  // contentType
 
-    const sendPost = async() => {
-        // console.log("tt", tokens);
-        // console.log("ttttt", tokens[authorData.host]);
-        const uuid = uuidv4()
+        // const postUUID = uuidv4();
+        const imageUUID = uuidv4();
+        setImageID(`${authorData.id}/posts/${imageUUID}/image`)
+        console.log("IMAGE ID HERE!!!!!!!!!!", imageID);
+        sendPost();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${authorData.id}/posts/${uuid}`,
-            "source": `${authorData.id}/posts/${uuid}`,
-            "origin": `${authorData.id}/posts/${uuid}`,
+            "id": `${authorData.id}/posts/${imageUUID}`,
+            "source": `${authorData.id}/posts/${imageUUID}`,
+            "origin": `${authorData.id}/posts/${imageUUID}`,
+            "contentType": imageFile.type + ";base64",
+            "content": imageBase64,
+            "author": authorData,
+            "unlisted": true,
+            "visibility": "PUBLIC"
+        },
+        {
+            headers: {
+                "Authorization": tokens[window.location.hostname]
+            }
+        })
+        
+        const p2 = p.then((response) => {
+            console.log("IMAGE2!!!!!!!!!!", imageID);
+            setPostsUpdated(response.data);
+            // setImageID(`${response.data.id}/image`)
+            setContent("");
+            handleDeleteImage();
+            const p3 = getFollowers()
+            const p4 = p3.then((response2) => {
+                const requestPromises = response2.map(obj => {
+                    axios.post(obj[0], response.data, {
+                        headers: {
+                            "Authorization": tokens[obj[1]]
+                        }
+                    });
+                })
+                Promise
+                .all(requestPromises)
+                .then((responses) => {
+                    console.log('All requests sent successfully:', responses);
+                    console.log("IMAGE ID finally!!!!!!!!!!", imageID);
+                })
+                .catch((error) => {
+                    console.error('Error sending requests:', error);
+                })
+            })
+        })
+    }
+
+    const sendPost = async() => {
+        console.log("Image3", imageID);
+        // console.log("tt", tokens);
+        // console.log("ttttt", tokens[authorData.host]);
+        const postUUID = uuidv4()
+        const p = axios
+        .post(`/authors/${authorID}/inbox/`, {
+            "type": "post",
+            "id": `${authorData.id}/posts/${postUUID}`,
+            "source": `${authorData.id}/posts/${postUUID}`,
+            "origin": `${authorData.id}/posts/${postUUID}`,
             "contentType": contentType,
             "content": contentText,
             "author": authorData,
+            "image_url": imageID
         },
         {
             headers: {
@@ -111,6 +163,8 @@ function Share (props) {
                 .all(requestPromises)
                 .then((responses) => {
                     console.log('All requests sent successfully:', responses);
+                    // setImageID("");
+
                 })
                 .catch((error) => {
                     console.error('Error sending requests:', error);
