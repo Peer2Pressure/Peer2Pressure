@@ -144,6 +144,7 @@ class Comment(AbstractModel):
         return str(self.id)
 
     def save(self, *args, **kwargs):
+        # TODO: Need to update this id and url to be self.author.url instead of self.post.url
         if not self.url:
             # Generate a URL based on the object's ID
             self.id = f"{self.post.url}/comments/{self.m_id}"
@@ -169,14 +170,17 @@ class PostLike(AbstractModel):
 
 
 class CommentLike(AbstractModel):
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="like")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    # post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="comment_like")
     created_at = models.DateTimeField(default=timezone.now)
+    summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    object = models.URLField(default="")
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.author), nameof(cls.post)]
+        return [nameof(cls.author), nameof(cls.comment)]
 
 
 class Inbox(AbstractModel):
