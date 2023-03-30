@@ -65,6 +65,8 @@ function Stream(props) {
                 avatar={post.author.profileImage}
                 comments={post.comments}
                 object={post.id}
+                contentType={post.contentType}
+                host={post.author.host}
                 // likes={post.like}
               />
             </div>

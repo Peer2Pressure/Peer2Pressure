@@ -28,7 +28,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, comments, object}, ref) => {
+  ({ id, displayName, username, text, image, avatar, comments, object, host}, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -41,6 +41,7 @@ const Post = forwardRef(
     const {tokens} = useGetTokens();
     const postIdSplit = id.split("/")
     const postAuthorID = postIdSplit[4];
+    const postAuthorHost = host;
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -117,7 +118,7 @@ const Post = forwardRef(
           data,
           {
             headers: {
-              "Authorization": tokens[window.location.hostname]
+              "Authorization": tokens[postAuthorHost]
             }
           });
           console.log("axios post worked. Like sent");
