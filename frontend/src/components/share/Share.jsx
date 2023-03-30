@@ -28,7 +28,7 @@ function Share (props) {
 
     const [imageFile, setImageFile] = useState(null);
     const [imageBase64, setImageBase64] = useState(null);
-    const [imageID, setImageID] = useState("");
+    const [imageID, setImageID] = useState(null);
        
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
@@ -74,8 +74,6 @@ function Share (props) {
 
     const sendImagePost = async() => {
         // const postUUID = uuidv4();
-        
-        console.log("IMAGE ID HERE!!!!!!!!!!", imageID);
         sendPost();
         const p = axios
         .post(`/authors/${authorID}/inbox/`, {
@@ -95,14 +93,13 @@ function Share (props) {
             }
         })
         
-        const p2 = p.then((response) => {
-            console.log("IMAGE2!!!!!!!!!!", imageID);
+        const p2image = p.then((response) => {
             setPostsUpdated(response.data);
             // setImageID(`${response.data.id}/image`)
             setContent("");
             handleDeleteImage();
-            const p3 = getFollowers()
-            const p4 = p3.then((response2) => {
+            const p3image = getFollowers()
+            const p4image = p3image.then((response2) => {
                 const requestPromises = response2.map(obj => {
                     axios.post(obj[0], response.data, {
                         headers: {
@@ -123,12 +120,11 @@ function Share (props) {
         })
     }
 
-    const sendPost = async() => {
-        console.log("Image3", imageID);
+    const sendPost = async () => {
         // console.log("tt", tokens);
         // console.log("ttttt", tokens[authorData.host]);
-        const postUUID = uuidv4()
-        const p = axios
+        const postUUID = uuidv4();
+        const p1 = axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
             "id": `${authorData.id}/posts/${postUUID}`,
@@ -137,7 +133,7 @@ function Share (props) {
             "contentType": contentType,
             "content": contentText,
             "author": authorData,
-            "image_url": imageID+"/image"
+            "image_url": imageID ? imageID+"/image" : "",
         },
         {
             headers: {
@@ -147,7 +143,7 @@ function Share (props) {
         .catch((error) => {
             console.log(error)})
         
-        const p2 = p.then((response) => {
+        const p2 = p1.then((response) => {
             setPostsUpdated(response.data);
             setContent("");
             handleDeleteImage();
@@ -164,8 +160,6 @@ function Share (props) {
                 .all(requestPromises)
                 .then((responses) => {
                     console.log('All requests sent successfully:', responses);
-                    // setImageID("");
-
                 })
                 .catch((error) => {
                     console.error('Error sending requests:', error);
@@ -250,9 +244,6 @@ function Share (props) {
                                 className="postButton" 
                                 role="button" 
                                 onClick={imageBase64 ? sendImagePost : sendPost}>
-                                    {/* TODO: if it's an image post, then you actually have to call both 
-                                    sendPost and sendImagePost.. maybe do a conditional inside sendPost? 
-                                    or call sendImagePost, and then call sendPost inside sendImagePost */}
                                 Post
                             </Button>
                         </div>

@@ -121,7 +121,7 @@ const Post = forwardRef(
               
             </div>
           </div>
-          <img src={image_url} alt="" />
+          <img src={image_url} alt=""/>
           </div>
         </div>
         <div className="post__footer">
