@@ -78,7 +78,7 @@ const Post = forwardRef(
                     type: 'author',
                     id: authorData.id,
                     url: authorData.id,
-                    host: window.location.hostname,
+                    host: authorData.host,
                     displayName: authorData.displayName,
                     github: null,
                     profileImage: null    
@@ -87,7 +87,7 @@ const Post = forwardRef(
             contentType: 'text/markdown',
             object: id
           };
-        const response = await axios.post(`${authorData.id}/inbox/`, data, {
+        const response = await axios.post(`${authorData.id}/inbox`, data, {
         }, {
           headers: {
             'Authorization': tokens[new URL (comments).hostname],
