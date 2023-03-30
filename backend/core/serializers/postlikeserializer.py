@@ -12,7 +12,6 @@ class PostLikeSerializer(serializers.ModelSerializer):
     summary = serializers.CharField(required=False)
     author = AuthorSerializer(required=True)
     object = serializers.URLField(required=True)
-    post = PostSerializer(required=True)
 
     class Meta:
         model = PostLike

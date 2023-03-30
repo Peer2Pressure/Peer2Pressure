@@ -75,7 +75,7 @@ class InboxAPI(GenericAPIView):
             if request.data["type"].lower() == "post":
                 response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "follow":
-                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data)
+                response, code = inbox_api_serializer.handle_follow_request(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "like":
                 post_or_comment = urlparse(request.data["object"]).path.split('/')[-2]
                 if post_or_comment == "posts":    
@@ -91,3 +91,5 @@ class InboxAPI(GenericAPIView):
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
             return Response(response, status=status.HTTP_404_NOT_FOUND)
+        elif code == 500:
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

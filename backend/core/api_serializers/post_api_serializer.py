@@ -60,7 +60,6 @@ class PostAPISerializer(serializers.ModelSerializer):
         valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
         serializer = PostSerializer(data=request_data)
-
         errors = {}
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
