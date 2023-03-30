@@ -144,6 +144,7 @@ class Comment(AbstractModel):
         return str(self.id)
 
     def save(self, *args, **kwargs):
+        # TODO: Need to update this id and url to be self.author.url instead of self.post.url
         if not self.url:
             # Generate a URL based on the object's ID
             self.id = f"{self.post.url}/comments/{self.m_id}"

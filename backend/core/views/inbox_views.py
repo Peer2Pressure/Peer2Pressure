@@ -18,6 +18,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth.decorators import login_required
+from urllib.parse import urlparse
 
 
 # Local Libraries
@@ -76,7 +77,11 @@ class InboxAPI(GenericAPIView):
             elif request.data["type"].lower() == "follow":
                 response, code = inbox_api_serializer.handle_follow_request(author_id, request.data)
             elif request.data["type"].lower() == "like":
-                response, code = inbox_api_serializer.handle_like_request(author_id, request.data)
+                post_or_comment = urlparse(request.data["object"]).path.split('/')[-2]
+                if post_or_comment == "posts":    
+                    response, code = inbox_api_serializer.handle_like_request(author_id, request.data)
+                elif post_or_comment == "comments":
+                    response, code = inbox_api_serializer.handle_comment_like_request(author_id, request.data)
             elif request.data["type"].lower() == "comment":
                 print("COMMENT REQUEST: ", request.data)
                 response, code = inbox_api_serializer.handle_comment_request(author_id, request.data)
