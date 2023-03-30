@@ -16,7 +16,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 # Local Libraries
 from .config import *
 
-MAX_CHARFIELD_LENGTH = 300
+MAX_CHARFIELD_LENGTH = 512
 
 class AbstractModel(models.Model):
     class Meta:
@@ -37,12 +37,14 @@ class AbstractModel(models.Model):
 
 
 class Node(AbstractModel):
-    host = models.URLField()
-    token = models.CharField(max_length=512, default="")
+    # host = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    api_endpoint = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    token = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
 
     def __str__(self):
-        return str(self.host)
+        return str(self.api_endpoint)
     
+
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)
@@ -88,7 +90,7 @@ class Follower(AbstractModel):
         return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
     
     def __str__(self):
-        return str(self.m_id)
+        return str(self.from_author.name)+" -> "+str(self.to_author.name)
 
 
 class Post(AbstractModel):
@@ -113,7 +115,7 @@ class Post(AbstractModel):
         return [nameof(cls.author)]
 
     def __str__(self):
-        return str(self.id)
+        return self.author.name + " post:" +str(self.id)
     
     def save(self, *args, **kwargs):
         if not self.url:
