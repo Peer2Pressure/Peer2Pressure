@@ -18,7 +18,10 @@ function FollowRequest() {
 
   useEffect(() => {
     if (tokens && authorData && apiEndpoints) {
-      fetchIncomingRequests(tokens);
+      const interval = setInterval(() => {
+        fetchIncomingRequests(tokens);
+      }, 1500);
+      return () => clearInterval(interval);
     }
   }, [tokens, authorData, apiEndpoints]);
 
@@ -58,7 +61,7 @@ function FollowRequest() {
         };
         console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
-        await axios.post(`${request.id}/inbox/`, data, {
+        await axios.post(`${request.id}/inbox`, data, {
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
           },
@@ -94,7 +97,7 @@ function FollowRequest() {
   //       object: request,
   //     };
   //     console.log('Sending decline request:', data);
-  //     await axios.post(`${request.actor.id}/inbox/`, data, {
+  //     await axios.post(`${request.actor.id}/inbox`, data, {
   //       headers: {
   //         'Authorization': tokens[request.actor.host],
   //       },

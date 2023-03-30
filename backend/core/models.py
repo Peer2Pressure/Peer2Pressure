@@ -98,6 +98,7 @@ class Post(AbstractModel):
     url = models.URLField(default="")
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
     image = models.ImageField(upload_to='post_images', blank=True, null=True)
+    image_url = models.URLField(default="")
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     visibility = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="PUBLIC")

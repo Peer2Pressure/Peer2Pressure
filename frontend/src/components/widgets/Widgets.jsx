@@ -119,7 +119,7 @@ function Widgets() {
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
       console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
-      await axios.post(`${user.id}/inbox/`, data, {
+      await axios.post(`${user.id}/inbox`, data, {
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
