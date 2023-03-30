@@ -52,7 +52,9 @@ function Widgets() {
       });
   
       const results = await Promise.all(requestPromises);
+      console.log("ALL authors results: ", results)
       const combinedUsers = results.flatMap((data) => {
+        console.log("DATATATATA 11: ", data)
         if (Array.isArray(data.items)) {
           console.log('Fetched users:', data.items);
           return data.items;
