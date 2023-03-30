@@ -24,5 +24,5 @@ class PostImageHandler():
 
         img_data = post.content.split(',')[1]
         img_bytes = base64.b64decode(img_data)
-
+        
         return img_bytes, 200

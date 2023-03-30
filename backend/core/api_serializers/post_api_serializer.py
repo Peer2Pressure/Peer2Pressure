@@ -158,8 +158,6 @@ class PostAPISerializer(serializers.ModelSerializer):
             serializer.save()
             post = post_serializer.get_author_post(author_id, post_id)
             return PostSerializer(post).data, 200
-            
-            
         else:
             return post_serializer.errors, 400
 
