@@ -57,8 +57,9 @@ function Share (props) {
 
     // delete image
     const handleDeleteImage = () => {
-        setImageFile(null)
+        setImageFile(null);
         setImageBase64(null);
+        setImageID("");
     }
 
     // get followers to send a public post
