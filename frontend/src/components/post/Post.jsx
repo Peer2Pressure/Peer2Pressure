@@ -26,7 +26,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
+  ({ id, host, displayName, username, text, image_url, avatar, likes, comments, contentType, title }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -60,6 +60,7 @@ const Post = forwardRef(
       setCommentText("");
     };
 
+    console.log("HOST: ", host);
 
     return (
       <div className="post" ref={ref}>
@@ -72,9 +73,9 @@ const Post = forwardRef(
             <div className="post_headerTop">
               <div className="post__headerText">
                 <h3>
-                  {displayName}{" "}
-                  <span className="post__headerSpecial">
-                  @{username}
+                  {displayName}{"  "}
+                  <span className={host !== window.location.hostname ? "post__headerSpecial--different" : "post__headerSpecial"}>
+                  @{host}
                   </span>
                 </h3>
               </div>
@@ -112,6 +113,9 @@ const Post = forwardRef(
                     </Menu>
               </span>
             </div>
+            <div className="post__headerTitle">
+              <b>{title}</b>
+            </div>
             <div className="post__headerDescription">
               
               {contentType === "text/markdown" ?
@@ -122,7 +126,7 @@ const Post = forwardRef(
               
             </div>
           </div>
-          <img src={image} alt="" />
+          {/* <img src={image_url} alt=""/> */}
           </div>
         </div>
         <div className="post__footer">

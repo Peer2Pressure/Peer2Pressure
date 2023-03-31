@@ -32,7 +32,7 @@ author_api_serializer = AuthorAPISerializer()
 def get_author_id(request):
     author_id = request.user.author_profile.m_id
     return JsonResponse({'author_id': author_id})
-        
+
 
 class AuthorListAPI(GenericAPIView):
     serializer_class = AllAuthorSerializer

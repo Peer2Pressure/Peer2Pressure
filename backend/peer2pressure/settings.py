@@ -30,9 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = ["https://p2psd.herokuapp.com", 
                  "https://nevil-p2p.herokuapp.com", 
                  "https://peer2test.herokuapp.com",
-                 "https://www.distribution.social",
-                 "https://sociallydistributed.herokuapp.com",
-                 "https://cmput404-project-app.herokuapp.com"
+                #  "https://www.distribution.social",
+                #  "https://sociallydistributed.herokuapp.com",
+                #  "http://cmput404-project-data.herokuapp.com"
                  ]
 
 # Application definition
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "core.middleware.AddTrailingSlashMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -68,6 +69,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://peer2test.herokuapp.com",  # test app
     "https://p2psd.herokuapp.com",
     "https://cmput404-project-app.herokuapp.com",
+    "https://cmput404-project-data.herokuapp.com",
+    "https://socialdistcmput404.herokuapp.com",
     "https://www.distribution.social",
     "https://sociallydistributed.herokuapp.com",
     "http://localhost:3000",

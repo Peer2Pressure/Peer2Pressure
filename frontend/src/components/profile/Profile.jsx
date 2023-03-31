@@ -10,6 +10,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import useGetTokens from "../../useGetTokens";
 import useGetAuthorData from "../../useGetAuthorData";
 
+
 function getCsrfToken() {
   // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
   // return csrfToken ? csrfToken[1] : '';

@@ -70,7 +70,7 @@ def signup(request):
 
                 user_model = User.objects.get(username=username)
 
-                new_author_profile = Author.objects.create(user=user_model, name=name, username=username, email=email, password=password)
+                new_author_profile = Author.objects.create(user=user_model, name=name, username=username, email=email, password=password, avatar="", github="")
                 new_author_profile.save()
                 return redirect("signin")
         else:
