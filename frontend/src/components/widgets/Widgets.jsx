@@ -104,7 +104,7 @@ function Widgets() {
     .then(() => {
       // Send follow request
       const data = {
-        type: "Follow",
+        type: "follow",
         summary: `${authorData.displayName} wants to follow ${user.displayName}`,
         actor: authorData,
         object: user,
