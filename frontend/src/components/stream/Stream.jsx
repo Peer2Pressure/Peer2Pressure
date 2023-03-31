@@ -70,6 +70,7 @@ function Stream(props) {
                 likes={post.likes}
                 comments={post.comments}
                 contentType={post.contentType}
+                title={post.title}
               />
             </div>
           ))}
