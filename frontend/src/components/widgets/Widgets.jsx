@@ -40,6 +40,7 @@ function Widgets() {
 
       try {
         axios.get(url, {
+          maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
           },
