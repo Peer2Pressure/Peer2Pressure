@@ -68,6 +68,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://peer2test.herokuapp.com",  # test app
     "https://p2psd.herokuapp.com",
     "https://cmput404-project-app.herokuapp.com",
+    "https://cmput404-project-data.herokuapp.com"
     "https://www.distribution.social",
     "https://sociallydistributed.herokuapp.com",
     "http://localhost:3000",
