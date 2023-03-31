@@ -10,6 +10,11 @@ class AddTrailingSlashMiddleware:
         if not is_valid_path(request.path_info) and not request.path_info.endswith('/'):
             # Add a trailing slash to the path
             new_url = request.path_info + '/'
+
+            query_params = request.GET.urlencode()
+            if query_params:
+                new_url += '?' + query_params
+
             # Redirect to the new URL
             return redirect(new_url, permanent=True)
         
