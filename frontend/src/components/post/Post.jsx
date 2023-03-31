@@ -27,7 +27,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
+  ({object, id, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -71,6 +71,7 @@ const Post = forwardRef(
       console.log("Hostname;",comments);
       console.log("This is the m_id;", authorID);
       console.log("This is the m_data;", authorData);
+      console.log("This is the KEY;", object);
         try {
           const data = {
             type: 'comment',
@@ -85,9 +86,9 @@ const Post = forwardRef(
             },
             comment: commentText,
             contentType: 'text/markdown',
-            object: id
+            object: object
           };
-        const response = await axios.post(`${authorData.id}/inbox`, data, {
+        const response = await axios.post(`${id}/inbox`, data, {
         }, {
           headers: {
             'Authorization': tokens[new URL (comments).hostname],

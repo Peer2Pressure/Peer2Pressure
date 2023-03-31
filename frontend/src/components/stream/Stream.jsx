@@ -35,6 +35,7 @@ function Stream(props) {
   
       getPosts();
     }, 1500);
+
     return () => clearInterval(interval);
   }, [postsUpdated, tokens]);
 
@@ -49,7 +50,7 @@ function Stream(props) {
   const sortedInboxPosts = inboxPosts.sort((a, b) => {
     return new Date(b.published) - new Date(a.published);
   });
-
+  console.log("This is the inbox posts", sortedInboxPosts);
   return (
     <div className="stream">
         <Flipmove className="flippy">
@@ -57,8 +58,8 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
-                id={post.id}
-                key={post.id}
+                id={post.author.id}
+                object={post.id}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
