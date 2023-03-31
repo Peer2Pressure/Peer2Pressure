@@ -87,14 +87,18 @@ function Widgets() {
       
     try {
       // Check if already following
-      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers`, {
+      
+      // const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers`, {
+
+      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/${authorID}`, {
         headers: {
           'Authorization': tokens[window.location.hostname],
         },
       });
       console.log('Already following user', response.data.items);
-      const following = response.data.items.some((item) => item.id === authorData.id);
-      if (following) {
+      // const following = response.data.items.some((item) => item.id === authorData.id);
+
+      if (response.status === 200) {
         setFollowedUsers(true);
         setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
         return;
