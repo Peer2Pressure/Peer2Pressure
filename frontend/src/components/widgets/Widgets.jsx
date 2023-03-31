@@ -31,46 +31,38 @@ function Widgets() {
   }, [tokens, authorData, apiEndpoints]);
 
   const fetchAllUsers = async () => {
-    try {
-      setIsLoading(true);
-      const requestPromises = apiEndpoints.map(async (endpoint) => {
-        const hostname = new URL(endpoint).hostname
-        let url = `${endpoint}/authors`;
-        
-        // // Update host if host is localhost
-        // if (hostname === "localhost") {
-        //   url = `http://${window.location.host}/authors`;
-        //   console.log("this is a localhost", url)
-        // };
+    setIsLoading(true);
+    let combinedUsers = [];
 
-        const response = await axios.get(url, {
+    apiEndpoints.forEach((endpoint) => {
+      const hostname = new URL(endpoint).hostname
+      const url = `${endpoint}/authors`;
+
+      try {
+        axios.get(url, {
           headers: {
             'Authorization': tokens[hostname],
           },
+        }).then((response) => {
+          if (response.status === 200) {
+            combinedUsers.push(...response.data.items)
+            setAllUsers(combinedUsers);
+          } 
+          else {
+            console.error(`Error fetching users from ${url}: response status is not 200 or response data is not an array`);
+          }
+        }).catch((error) => {
+          console.error(`Error fetching users from ${url}:`, error);
         });
-        return response.data;
-      });
-  
-      const results = await Promise.all(requestPromises);
-      console.log("ALL authors results: ", results)
-      const combinedUsers = results.flatMap((data) => {
-        console.log("DATATATATA 11: ", data)
-        if (Array.isArray(data.items)) {
-          console.log('Fetched users:', data.items);
-          return data.items;
-        } else {
-          console.error('Error fetching users: response data is not an array');
-          return [];
-        }
-      });
-      console.log('Combined users:', combinedUsers);
-      setAllUsers(combinedUsers);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      } 
+      catch (error) {
+        console.error(`Error fetching users from ${url}:`, error);
+      }
+    })
+    
+    setIsLoading(false);
+    return combinedUsers;
+  }
   
 
   const filterUsers = useCallback((query) => {
@@ -78,7 +70,6 @@ function Widgets() {
       const filteredUsers = allUsers.filter((user) => {
         return user.displayName !== authorData.displayName && user.displayName.toLowerCase().includes(query.toLowerCase());
       });
-      console.log('Filtered users:', filteredUsers);
       setDisplayedUsers(filteredUsers);
     }
   }, [allUsers, authorData]);
@@ -93,7 +84,6 @@ function Widgets() {
   };
 
   const sendFollowRequest = async (user) => {
-    console.log('sendFollowRequest called');
       
     try {
       // Check if already following
@@ -169,5 +159,5 @@ function Widgets() {
         );
       }
       
-      export default Widgets;
+export default Widgets;
               

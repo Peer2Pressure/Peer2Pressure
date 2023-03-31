@@ -26,17 +26,17 @@ function FollowRequest() {
   }, [tokens, authorData, apiEndpoints]);
 
   const fetchIncomingRequests = async () => {
-    console.log('author Data:', authorData);
+    // console.log('author Data:', authorData);
     try {
       const response = await axios.get(`${authorData.id}/inbox?type=request`, {
         headers: {
           'Authorization': tokens[window.location.hostname],
         },
       });
-      console.log('response:', response.data);
+      // console.log('response:', response.d);
       const data = response.data;
       if (Array.isArray(data.items)) {
-        console.log('Fetched requests:', data.items);
+        // console.log('Fetched requests:', data.items);
         setIncomingRequests(response.data.items);
       } else {
         console.error('Error fetching requests: response data is not an array');
@@ -59,7 +59,7 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
-        console.log('author Data:', authorData);
+        // console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
         await axios.post(`${request.id}/inbox`, data, {
           headers: {

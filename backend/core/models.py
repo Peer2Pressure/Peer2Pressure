@@ -192,3 +192,7 @@ class Inbox(AbstractModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     created_at = models.DateTimeField(default=timezone.now)
     
+    # post = 1
+    # comment =1
+    # post_like = 2
+    # comment_like = 3
