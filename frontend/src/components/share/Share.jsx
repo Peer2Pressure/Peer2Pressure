@@ -14,7 +14,6 @@ import { Switch, Button } from "@mui/material";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
-axios.defaults.maxRedirects = 2;
 
 function Share (props) {
     const {setPostsUpdated} = props;
@@ -161,6 +160,7 @@ function Share (props) {
             const p4 = p3.then((response2) => {
                 const requestPromises = response2.map(obj => {
                     axios.post(obj[0], response.data, {
+                        maxRedirects: 3,
                         headers: {
                             "Authorization": tokens[obj[1]]
                         }

@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-axios.defaults.maxRedirects = 2;
-
 function useGetAuthorPosts() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);

@@ -7,8 +7,6 @@ import useGetAuthorData from '../../useGetAuthorData';
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 import './followRequest.css';
 
-axios.defaults.maxRedirects = 2;
-
 function FollowRequest() {
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [followedUsers, setFollowedUsers] = useState({});
@@ -64,6 +62,7 @@ function FollowRequest() {
         // console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
         await axios.post(`${request.id}/inbox/`, data, {
+          maxRedirects: 3,
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
           },
@@ -99,7 +98,7 @@ function FollowRequest() {
   //       object: request,
   //     };
   //     console.log('Sending decline request:', data);
-  //     await axios.post(`${request.actor.id}/inbox`, data, {
+  //     await axios.post(`${request.actor.id}/inbox/`, data, {
   //       headers: {
   //         'Authorization': tokens[request.actor.host],
   //       },
