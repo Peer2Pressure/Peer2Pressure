@@ -60,6 +60,7 @@ const Post = forwardRef(
       setCommentText("");
     };
 
+    console.log("HOST: ", host);
 
     return (
       <div className="post" ref={ref}>
@@ -72,9 +73,9 @@ const Post = forwardRef(
             <div className="post_headerTop">
               <div className="post__headerText">
                 <h3>
-                  {displayName}{" "}
-                  <span className="post__headerSpecial">
-                  @{username}
+                  {displayName}{"  "}
+                  <span className={host !== window.location.hostname ? "post__headerSpecial--different" : "post__headerSpecial"}>
+                  @{host}
                   </span>
                 </h3>
               </div>

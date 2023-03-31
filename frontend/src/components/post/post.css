@@ -65,9 +65,25 @@ img {
 }
 
 .post__headerSpecial {
+  margin-bottom: 1px;
+  background-color: rgb(160, 247, 160);
+  /* padding: 1px;*/
+  padding-left: 4px;
+  padding-right: 4px;
   font-weight: 600;
   font-size: 12px;
-  color: gray;
+  color: rgb(91, 91, 91);
+  border-radius: 20px;
+}
+
+.post__headerSpecial--different {
+  margin-bottom: 1px;
+  background-color: rgb(247, 211, 165);
+  font-weight: 600;
+  font-size: 12px;
+  color: rgb(91, 91, 91);
+  border-radius: 20px;
+  border: 2px solid rgb(247, 211, 165);
 }
 
 .post__avatar {
@@ -128,12 +144,6 @@ img {
 .post__badge {
   font-size: 14px !important;
   color: var(--main-color);
-}
-
-.post__headerSpecial {
-  font-weight: 600;
-  font-size: 12px;
-  color: gray;
 }
 
 .post__avatar {

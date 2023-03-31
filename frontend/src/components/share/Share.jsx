@@ -70,14 +70,14 @@ function Share (props) {
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
+        return response.data.items.map(obj => [obj.id+"/inbox", new URL(obj.host).hostname]);
     }
 
     const sendImagePost = async() => {
         // const postUUID = uuidv4();
         sendPost();
         const p = axios
-        .post(`/authors/${authorID}/inbox/`, {
+        .post(`/authors/${authorID}/inbox`, {
             "type": "post",
             "id": `${imageID}`,
             "source": `${imageID}`,

@@ -67,7 +67,9 @@ CORS_ALLOWED_ORIGINS = [
     "https://nevil-p2p.herokuapp.com",  # test app
     "https://peer2test.herokuapp.com",  # test app
     "https://p2psd.herokuapp.com",
-    "http://cmput404-project-data.herokuapp.com",
+    "https://cmput404-project-app.herokuapp.com",
+    "https://cmput404-project-data.herokuapp.com",
+    "https://socialdistcmput404.herokuapp.com",
     "https://www.distribution.social",
     "https://sociallydistributed.herokuapp.com",
     "http://localhost:3000",
