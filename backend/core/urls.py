@@ -51,13 +51,17 @@ urlpatterns = [
 
    # Inbox views
     path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
-    path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox1"),
+   #  path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox1"),
+
+   # Liked Views
+    path('authors/<uuid:author_id>/liked/', like_views.PostLikedAPI.as_view(), name="author_liked"),
 
    # # Liked Views
    #  path('authors/<uuid:author_id>/liked/', inbox_views.InboxLike.as_view(), name="author_liked")
 
    # Nodes
    path('nodes/tokens/', node_api.get_tokens, name="get_tokens"),
-   path('nodes/hostnames/', node_api.get_hostnames, name="get_hostnames")
+   path('nodes/hostnames/', node_api.get_hostnames, name="get_hostnames"),
+   path('nodes/api_endpoints/', node_api.get_api_endpoints, name="get_api_endpoints")
 
 ]

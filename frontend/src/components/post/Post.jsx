@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
 
+
 // menu source: https://mui.com/material-ui/react-menu/
 
 // optios users can choose from upon clicking ellipsis
@@ -25,7 +26,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, likes, comments, contentType, title }, ref) => {
+  ({ id, host, displayName, username, text, image, avatar, likes, comments, contentType, title }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -59,6 +60,7 @@ const Post = forwardRef(
       setCommentText("");
     };
 
+    console.log("HOST: ", host);
 
     return (
       <div className="post" ref={ref}>
@@ -71,9 +73,9 @@ const Post = forwardRef(
             <div className="post_headerTop">
               <div className="post__headerText">
                 <h3>
-                  {displayName}{" "}
-                  <span className="post__headerSpecial">
-                  @{username}
+                  {displayName}{"  "}
+                  <span className={host !== window.location.hostname ? "post__headerSpecial--different" : "post__headerSpecial"}>
+                  @{host}
                   </span>
                 </h3>
               </div>

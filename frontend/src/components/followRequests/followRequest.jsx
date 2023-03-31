@@ -4,36 +4,41 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import axios from 'axios';
 import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
-import useGetNodeHosts from '../../useGetNodeHosts';
+import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 import './followRequest.css';
+
+axios.defaults.maxRedirects = 2;
 
 function FollowRequest() {
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [followedUsers, setFollowedUsers] = useState({});
   const { tokens } = useGetTokens();
-  const hostnames = useGetNodeHosts();
+  const apiEndpoints = useGetNodeAPIEndpoints();
   const { authorData } = useGetAuthorData();
   const [acceptedRequests, setAcceptedRequests] = useState({});
   const [removedRequests, setRemovedRequests] = useState({});
 
   useEffect(() => {
-    if (tokens && authorData && hostnames) {
-      fetchIncomingRequests(tokens);
+    if (tokens && authorData && apiEndpoints) {
+      const interval = setInterval(() => {
+        fetchIncomingRequests(tokens);
+      }, 1500);
+      return () => clearInterval(interval);
     }
-  }, [tokens, authorData, hostnames]);
+  }, [tokens, authorData, apiEndpoints]);
 
   const fetchIncomingRequests = async () => {
-    console.log('author Data:', authorData);
+    // console.log('author Data:', authorData);
     try {
-      const response = await axios.get(`${authorData.id}/inbox?type=request`, {
+      const response = await axios.get(`${authorData.id}/inbox/?type=request`, {
         headers: {
           'Authorization': tokens[window.location.hostname],
         },
       });
-      console.log('response:', response.data);
+      // console.log('response:', response.d);
       const data = response.data;
       if (Array.isArray(data.items)) {
-        console.log('Fetched requests:', data.items);
+        // console.log('Fetched requests:', data.items);
         setIncomingRequests(response.data.items);
       } else {
         console.error('Error fetching requests: response data is not an array');
@@ -56,7 +61,7 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
-        console.log('author Data:', authorData);
+        // console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
         await axios.post(`${request.id}/inbox/`, data, {
           headers: {
@@ -66,7 +71,7 @@ function FollowRequest() {
         console.log('Follow request accepted successfully.');
         if (new URL(request.host).hostname !== window.location.hostname) {
           // Make a PUT request to the followers API
-          await axios.put(`${authorData.id}/followers/${request.id}`, data,  {
+          await axios.put(`${authorData.id}/followers/${request.id}/`, data,  {
             headers: {
               'Authorization': tokens[window.location.hostname],
             },
@@ -94,7 +99,7 @@ function FollowRequest() {
   //       object: request,
   //     };
   //     console.log('Sending decline request:', data);
-  //     await axios.post(`${request.actor.id}/inbox/`, data, {
+  //     await axios.post(`${request.actor.id}/inbox`, data, {
   //       headers: {
   //         'Authorization': tokens[request.actor.host],
   //       },

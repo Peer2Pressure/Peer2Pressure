@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function usePostAuthorPosts() {
+axios.defaults.maxRedirects = 2;
+
+function useGetAuthorPosts() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
@@ -31,4 +33,4 @@ function usePostAuthorPosts() {
   return {posts, error};
 }
 
-export default usePostAuthorPosts;
+export default useGetAuthorPosts;

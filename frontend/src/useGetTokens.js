@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+axios.defaults.maxRedirects = 2;
+
 function useGetTokens() {
     const [tokens, setTokens] = useState("");
     const [error, setError] = useState(null);

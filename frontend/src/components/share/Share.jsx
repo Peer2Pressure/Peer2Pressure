@@ -14,6 +14,8 @@ import { Switch, Button } from "@mui/material";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
+axios.defaults.maxRedirects = 2;
+
 function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
@@ -66,7 +68,7 @@ function Share (props) {
 
     // get followers to send a public post
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`, {
+        const response = await axios.get(`/authors/${authorID}/followers/`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
