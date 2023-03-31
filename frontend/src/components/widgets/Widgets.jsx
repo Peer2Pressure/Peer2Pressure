@@ -83,26 +83,26 @@ function Widgets() {
     filterUsers(searchTerm);
   };
 
-  const sendFollowRequest = async (user) => {
-      
-    try {
-      // Check if already following
-      
-      // const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers`, {
-
-      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/${authorID}`, {
-        headers: {
-          'Authorization': tokens[window.location.hostname],
-        },
-      });
+  const sendFollowRequest = (user) => {
+    // Check if already following
+    axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/${authorID}`, {
+      headers: {
+        'Authorization': tokens[window.location.hostname],
+      },
+    })
+    .then((response) => {
       console.log('Already following user', response.data.items);
-      // const following = response.data.items.some((item) => item.id === authorData.id);
-
       if (response.status === 200) {
         setFollowedUsers(true);
         setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
         return;
       }
+    })
+    .catch((error) => {
+      console.error('Author not following user', error);
+    })
+    .then(() => {
+      // Send follow request
       const data = {
         type: "Follow",
         summary: `${authorData.displayName} wants to follow ${user.displayName}`,
@@ -115,16 +115,19 @@ function Widgets() {
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
       console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
-      await axios.post(`${user.id}/inbox`, data, {
+      return axios.post(`${user.id}/inbox`, data, {
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
       });
-      console.log('Follow request sent successfully.');
+    })
+    .then((response) => {
+      console.log('Follow request sent successfully.', response.data);
       setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
-    } catch (error) {
+    })
+    .catch((error) => {
       console.error('Error sending follow request:', error);
-    }
+    });
   };
 
   return (
