@@ -25,6 +25,7 @@ function Stream(props) {
           
           // let's get all the posts under for current author ID
           const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+            maxRedirects: 3,
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
