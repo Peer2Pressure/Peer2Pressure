@@ -6,7 +6,7 @@ import "./stream.css";
 import Post from "../post/Post";
 import useGetTokens from "../../useGetTokens";
 
-axios.defaults.maxRedirects = 2;
+
 
 function Stream(props) {
   const { postsUpdated } = props;
@@ -15,6 +15,7 @@ function Stream(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    axios.defaults.maxRedirects = 5;
     const interval = setInterval(() => {
       async function getPosts() {
         try {
