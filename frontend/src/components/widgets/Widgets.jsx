@@ -87,7 +87,7 @@ function Widgets() {
       
     try {
       // Check if already following
-      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/`, {
+      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers`, {
         headers: {
           'Authorization': tokens[window.location.hostname],
         },
