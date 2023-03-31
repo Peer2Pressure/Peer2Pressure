@@ -28,7 +28,7 @@ function FollowRequest() {
   const fetchIncomingRequests = async () => {
     // console.log('author Data:', authorData);
     try {
-      const response = await axios.get(`${authorData.id}/inbox?type=request`, {
+      const response = await axios.get(`${authorData.id}/inbox/?type=request`, {
         headers: {
           'Authorization': tokens[window.location.hostname],
         },
@@ -61,7 +61,7 @@ function FollowRequest() {
         };
         // console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
-        await axios.post(`${request.id}/inbox`, data, {
+        await axios.post(`${request.id}/inbox/`, data, {
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
           },
@@ -69,7 +69,7 @@ function FollowRequest() {
         console.log('Follow request accepted successfully.');
         if (new URL(request.host).hostname !== window.location.hostname) {
           // Make a PUT request to the followers API
-          await axios.put(`${authorData.id}/followers/${request.id}`, data,  {
+          await axios.put(`${authorData.id}/followers/${request.id}/`, data,  {
             headers: {
               'Authorization': tokens[window.location.hostname],
             },

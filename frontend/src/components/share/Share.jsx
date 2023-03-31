@@ -94,12 +94,12 @@ function Share (props) {
     } 
 
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`, {
+        const response = await axios.get(`/authors/${authorID}/followers/`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox", new URL(obj.host).hostname]);
+        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
     }
 
     const sendPost = async(event) => {
@@ -109,7 +109,7 @@ function Share (props) {
         const uuid = uuidv4()
         event.preventDefault();
         const p = axios
-        .post(`/authors/${authorID}/inbox`, {
+        .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
             "id": `${authorData.id}/posts/${uuid}`,
             "source": `${authorData.id}/posts/${uuid}`,

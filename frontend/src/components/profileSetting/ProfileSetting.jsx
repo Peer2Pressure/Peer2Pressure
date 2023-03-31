@@ -32,31 +32,6 @@ export default function ProfileSetting() {
     };
     // grabbing data from /get_author_id/ and /authors/author_id APIs
     const {authorData, loading, error, authorID} = useGetAuthorData();
-    
-    // console.log(data.profileImage);
-    // get current author ID (note: not UUID)
-    // const [authorIDD, setAuthorIDD] = useState(null);
-
-    // const [submitForm, setSubmitForm] = useState(false);
-
-    // useEffect(() => {
-    //     const getAuthorIDD = async () => {
-    //         try {
-    //             console.log("test123", authorID);
-    //             const response = await axios.get("/authors/" + authorID + "/");
-    //             setAuthorIDD(response.data.id);
-                
-    //             setIsDataReady(true);
-    //         } catch(error) {
-    //             setError2(error2);
-    //         }
-    //     };
-    //     getAuthorIDD();
-    // }, [authorID]);
-
-    
-
-
 
     const handleSubmit = (e) => {
 
@@ -76,13 +51,6 @@ export default function ProfileSetting() {
         formData.append('profileImage', userData.profileImage || authorData?.profileImage);
         formData.append('id', authorIDD);
 
-        // console.log(userData.displayName);
-        // if (userData.avatar) {
-        //     formData.append('avatar', userData.avatar, userData.avatar.name);
-        // }
-    
-        // console.log("usernameeeee: "+userData);
-        // console.log("/authors/" + authorID + '/');
         console.log("FORM DATA: ", formData);
         axios
         .post(
@@ -102,8 +70,8 @@ export default function ProfileSetting() {
             console.log("Error Response: ", error.response);
             console.log("Error Data: ", error.response.data)
         }).finally(() => {
-            window.location.reload();
-        })
+            {navigate('/profilepage')};
+        });
     };
 
     return (
@@ -124,17 +92,17 @@ export default function ProfileSetting() {
                     </div> */}
                     <div className="avatarBox">
                         <h2 className="fieldTitle">Profile Avatar</h2>
-                        <TextField label="Avatar Link" placeholder={authorData?.profileImage} value={userData.profileImage} onChange={(e) => handleChange2("profileImage", e.target.value)} />
+                        <TextField label="Avatar URL" placeholder={authorData?.profileImage} value={userData.profileImage} onChange={(e) => handleChange2("profileImage", e.target.value)} />
                     </div>
                     <div className="fullNameBox">
                         <h2 className="fieldTitle">Full Name</h2>
-                        <TextField label="Name" placeholder={authorData?.displayName} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
+                        <TextField label="Full Name" placeholder={authorData?.displayName} value={userData.name} onChange={(e) => handleChange2("name", e.target.value)} />
                         {/* <TextField label="First Name" placeholder={authorData??.displayName} />
                         <TextField label="Last Name" placeholder={authorData??.type} /> */}
                     </div>
                     <div className="gitHubBox">
                         <h2 className="fieldTitle">GitHub</h2>
-                        <TextField label="GitHub Profile ID" placeholder={authorData?.github} value={userData.github} onChange={(e) => handleChange2("github", e.target.value)} />
+                        <TextField label="GitHub Profile" placeholder={authorData?.github} value={userData.github} onChange={(e) => handleChange2("github", e.target.value)} />
                     </div>
                     {/* <div className="emailBox">
                         <h2 className="fieldTitle">Email</h2>
@@ -147,7 +115,7 @@ export default function ProfileSetting() {
                     </div> */}
                 </div>  
                 <div className="buttonBox">
-                    <Button variant="outlined" onClick={()=>{navigate(-1)}}>Cancel</Button>
+                    <Button variant="outlined" onClick={()=>{navigate(-1)}}>Back</Button>
                     <Button type='submit' variant="contained" onClick={handleSubmit}>Save</Button>
                     {/* onClick={() => setButtonClicked(!buttonClicked)} */}
                     {/* disabled={authorID === null && authorIDD === null} */}

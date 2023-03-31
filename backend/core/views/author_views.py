@@ -32,7 +32,15 @@ author_api_serializer = AuthorAPISerializer()
 def get_author_id(request):
     author_id = request.user.author_profile.m_id
     return JsonResponse({'author_id': author_id})
-        
+
+# def redirect_authorlist_api(request):
+#     # Get the current URL and headers
+#     current_url = request.build_absolute_uri()
+#     headers = dict(request.headers.items())
+    
+#     # Redirect to the new endpoint with all headers and query parameters
+#     new_url = 'https://example.com/new-endpoint'
+#     return redirect(new_url, permanent=False, **headers)
 
 class AuthorListAPI(GenericAPIView):
     serializer_class = AllAuthorSerializer

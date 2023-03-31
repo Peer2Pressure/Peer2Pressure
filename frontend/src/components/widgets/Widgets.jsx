@@ -85,7 +85,8 @@ function Widgets() {
 
   const sendFollowRequest = (user) => {
     // Check if already following
-    axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/${authorID}`, {
+    const followURL = `/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/${authorID}/`;
+    axios.get(followURL, {
       headers: {
         'Authorization': tokens[window.location.hostname],
       },
@@ -115,7 +116,18 @@ function Widgets() {
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
       console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
-      return axios.post(`${user.id}/inbox`, data, {
+      if (new URL(user.host).hostname !== window.location.hostname) {
+        axios.put(followURL, data, {
+          headers: {
+            'Authorization': tokens[window.location.hostname],
+            },
+          }
+        )
+        .catch((error) => {
+          console.error('Error updating follow request on local server:', error);
+        });
+      }
+      return axios.post(`${user.id}/inbox/`, data, {
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },

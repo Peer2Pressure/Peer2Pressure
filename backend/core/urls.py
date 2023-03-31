@@ -31,11 +31,11 @@ urlpatterns = [
 
     # Author views
     path('get_author_id/', author_views.get_author_id, name="get_author_id"),
-    path('authors', author_views.AuthorListAPI.as_view(), name='author_list'),
+    path('authors/', author_views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', author_views.AuthorAPI.as_view(), name='author_api'),
 
     # Follower views
-    path('authors/<uuid:author_id>/followers', follower_views.FollowerListAPI.as_view(), name='followers_list'),
+    path('authors/<uuid:author_id>/followers/', follower_views.FollowerListAPI.as_view(), name='followers_list'),
     path('authors/<uuid:author_id>/followers/<uuid:foreign_author_id>/', follower_views.FollowerAPI.as_view(), name="follower_api"),
 
     # Post views
@@ -43,14 +43,14 @@ urlpatterns = [
     path('authors/<uuid:author_id>/posts/', post_views.PostAPI.as_view(), name="post"),
 
     # Comment views
-    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments', comment_views.CommentAPI.as_view(), name="comments"),
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/', comment_views.CommentAPI.as_view(), name="comments"),
 
    #  # Like views
-    path('authors/<uuid:author_id>/posts/<uuid:post_id>/likes', like_views.PostLikeAPI.as_view(), name="post_likes"),
+    path('authors/<uuid:author_id>/posts/<uuid:post_id>/likes/', like_views.PostLikeAPI.as_view(), name="post_likes"),
     path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', like_views.CommentLikeAPI.as_view(), name="comment_likes"),
 
    # Inbox views
-    path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox"),
+    path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
    #  path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox1"),
 
    # Liked Views
