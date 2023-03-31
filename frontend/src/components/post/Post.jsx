@@ -26,7 +26,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image_url, avatar, likes, comments, contentType }, ref) => {
+  ({ id, host, displayName, username, text, image, avatar, likes, comments, contentType }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -123,7 +123,7 @@ const Post = forwardRef(
               
             </div>
           </div>
-          {/* <img src={image_url} alt=""/> */}
+          {/* <img src={image} alt=""/> */}
           </div>
         </div>
         <div className="post__footer">
