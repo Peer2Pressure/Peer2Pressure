@@ -24,7 +24,7 @@ function Stream(props) {
           const authorId = response1.data.author_id;
           
           // let's get all the posts under for current author ID
-          const response2 = await axios.get("/authors/" + authorId + "/inbox", {
+          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
