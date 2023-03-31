@@ -7,6 +7,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 
+axios.defaults.maxRedirects = 2;
+
 export default function ProfileSetting() {
 
     const {tokens, tokenError} = useGetTokens();

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+axios.defaults.maxRedirects = 2;
+
 function postComment(authorId,postId, commentText) {
   const post = async () => {
     try {

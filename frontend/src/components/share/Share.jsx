@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
+axios.defaults.maxRedirects = 2;
 
 function Share (props) {
     const {setPostsUpdated} = props;

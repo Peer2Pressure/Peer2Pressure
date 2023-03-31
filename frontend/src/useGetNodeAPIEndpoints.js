@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+axios.defaults.maxRedirects = 2;
+
 function useGetNodeAPIEndpoints() {
     const [endpoints, setEndpoints] = useState([]);
     const [error, setError] = useState(null);

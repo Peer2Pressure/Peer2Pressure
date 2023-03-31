@@ -8,6 +8,8 @@ import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
+axios.defaults.maxRedirects = 2;
+
 function Widgets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
@@ -36,11 +38,10 @@ function Widgets() {
 
     apiEndpoints.forEach((endpoint) => {
       const hostname = new URL(endpoint).hostname
-      const url = `${endpoint}/authors`;
+      const url = `${endpoint}/authors/`;
 
       try {
         axios.get(url, {
-          maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
           },
