@@ -14,11 +14,13 @@ import { Switch, Button } from "@mui/material";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
+axios.defaults.maxRedirects = 2;
 
 function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
+    const [titleText, setTitle] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
@@ -44,6 +46,10 @@ function Share (props) {
         setContent(event.target.value);
     };
 
+    // updating title text
+    const handleTitleChange = event => {
+        setTitle(event.target.value);
+    };
     // select image from browser NEW!
     const handleFileUpload = (event) => {
         const imageUUID = uuidv4();
@@ -65,23 +71,24 @@ function Share (props) {
 
     // get followers to send a public post
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`, {
+        const response = await axios.get(`/authors/${authorID}/followers/`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox", new URL(obj.host).hostname]);
+        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
     }
 
     const sendImagePost = async() => {
         // const postUUID = uuidv4();
         sendPost();
-        const p = axios
-        .post(`/authors/${authorID}/inbox`, {
+        axios
+        .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
             "id": `${imageID}`,
             "source": `${imageID}`,
             "origin": `${imageID}`,
+            "title": titleText,
             "contentType": imageFile.type + ";base64",
             "content": imageBase64,
             "author": authorData,
@@ -92,31 +99,32 @@ function Share (props) {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
-        })
+        }).catch((error) => {
+            console.log("Error sending image post to current author's inbox: ", error)
+        });
         
-        const p2image = p.then((response) => {
-            setPostsUpdated(response.data);
-            setContent("");
-            handleDeleteImage();
-            const p3image = getFollowers()
-            const p4image = p3image.then((response2) => {
-                const requestPromises = response2.map(obj => {
-                    axios.post(obj[0], response.data, {
-                        headers: {
-                            "Authorization": tokens[obj[1]]
-                        }
-                    });
-                })
-                Promise
-                .all(requestPromises)
-                .then((responses) => {
-                    console.log('All requests sent successfully:', responses);
-                })
-                .catch((error) => {
-                    console.error('Error sending requests:', error);
-                })
-            })
-        })
+        // Might not need to send to followers' inboxes
+        
+        // .then((response) => {
+        //     const p3image = getFollowers()
+        //     const p4image = p3image.then((response2) => {
+        //         const requestPromises = response2.map(obj => {
+        //             axios.post(obj[0], response.data, {
+        //                 headers: {
+        //                     "Authorization": tokens[obj[1]]
+        //                 }
+        //             });
+        //         })
+        //         Promise
+        //         .all(requestPromises)
+        //         .then((responses) => {
+        //             console.log('All requests sent successfully:', responses);
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error sending requests:', error);
+        //         })
+        //     })
+        // });
     }
 
     const sendPost = async () => {
@@ -126,8 +134,9 @@ function Share (props) {
             "id": `${authorData.id}/posts/${postUUID}`,
             "source": `${authorData.id}/posts/${postUUID}`,
             "origin": `${authorData.id}/posts/${postUUID}`,
+            "title": titleText,
             "contentType": imageID ?  "text/markdown" : contentType,
-            "content": imageID ? contentText + `\n\n![](${imageID}/image)` : contentText,
+            "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
             "image_url": imageID ? imageID+"/image" : ""
@@ -143,8 +152,10 @@ function Share (props) {
             console.log(error)})
         
         const p2 = p1.then((response) => {
+            handleDeleteImage();
             setPostsUpdated(response.data);
             setContent("");
+            setTitle("");
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
@@ -171,6 +182,17 @@ function Share (props) {
         <div className="share">
 
             <div className="shareCard">
+                {/* write title of post */}
+                <div className="titleBox">
+                    <div className="titleField">
+                        <input
+                            name="title"
+                            placeholder={"Add a title..."}
+                            value={titleText}
+                            onChange={handleTitleChange}
+                        />
+                    </div>
+                </div>
             
                 <div className="top">
                     {/* write content of post */}

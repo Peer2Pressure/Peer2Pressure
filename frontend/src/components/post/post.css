@@ -136,6 +136,20 @@ img {
   width: fit-content;
 }
 
+.post__headerDescription {
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.post__headerTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  /* text-decoration: underline; */
+  /* color: #0058A2; */
+  /* text-transform: uppercase; */
+}
+
 .post__headerText > h3 {
   font-size: 15px;
   margin-bottom: 5px;

@@ -6,6 +6,8 @@ import "./stream.css";
 import Post from "../post/Post";
 import useGetTokens from "../../useGetTokens";
 
+axios.defaults.maxRedirects = 2;
+
 function Stream(props) {
   const { postsUpdated } = props;
   const {tokens, tokenError} = useGetTokens();
@@ -68,6 +70,7 @@ function Stream(props) {
                 likes={post.likes}
                 comments={post.comments}
                 contentType={post.contentType}
+                title={post.title}
               />
             </div>
           ))}

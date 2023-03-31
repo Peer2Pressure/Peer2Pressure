@@ -36,6 +36,17 @@
     justify-content: center;
 }
 
+.titleBox {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}
+
 .imgPreviewBox {
     display: flex;
     flex-direction: row;
@@ -71,9 +82,24 @@
     width: fit-content;
 }
 
-.textBox{
+.textBox, .titleField {
     width: fit-content;
     height: fit-content;
+}
+
+input[name="title"] {
+    min-width: 30rem;
+    width: fit-content;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    border: none;
+    background-color: rgba(222, 222, 222, 0.5);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+input[name="title"]:focus {
+    outline: 0;
 }
 
 textarea {

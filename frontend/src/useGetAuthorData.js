@@ -6,6 +6,7 @@ import useGetTokens from './useGetTokens';
 // hook <- component but in this case, we don't return jsx (ie. any visual stuff, ui). We only return data and states
 // that we may need upon calling the hook.
 // installed axios to use this hook
+axios.defaults.maxRedirects = 2;
 
 export default function useGetAuthorData() {
     // do an api call whenever we call this hook.
