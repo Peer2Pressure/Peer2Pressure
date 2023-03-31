@@ -31,7 +31,8 @@ function Share (props) {
 
     const [imageFile, setImageFile] = useState(null);
     const [imageBase64, setImageBase64] = useState(null);
-    
+    const [imageID, setImageID] = useState(null);
+       
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
@@ -49,9 +50,10 @@ function Share (props) {
     const handleTitleChange = event => {
         setTitle(event.target.value);
     };
-
     // select image from browser NEW!
     const handleFileUpload = (event) => {
+        const imageUUID = uuidv4();
+        setImageID(`${authorData.id}/posts/${imageUUID}`)
         setImageFile(event.target.files[0]);
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -62,8 +64,9 @@ function Share (props) {
 
     // delete image
     const handleDeleteImage = () => {
-        setImageFile(null)
+        setImageFile(null);
         setImageBase64(null);
+        setImageID("");
     }
 
     // get followers to send a public post
@@ -77,33 +80,79 @@ function Share (props) {
     }
 
     const sendImagePost = async() => {
-        console.log(imageBase64);  // content
-        console.log(imageFile.type)  // contentType
-        // visibility: "unlisted"
-    }
-
-    const sendPost = async() => {
-        // console.log("tt", tokens);
-        // console.log("ttttt", tokens[authorData.host]);
-        const uuid = uuidv4()
-        const p = axios
+        // const postUUID = uuidv4();
+        sendPost();
+        axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${authorData.id}/posts/${uuid}`,
-            "source": `${authorData.id}/posts/${uuid}`,
-            "origin": `${authorData.id}/posts/${uuid}`,
-            "contentType": contentType,
-            "content": contentText,
+            "id": `${imageID}`,
+            "source": `${imageID}`,
+            "origin": `${imageID}`,
             "title": titleText,
+            "contentType": imageFile.type + ";base64",
+            "content": imageBase64,
             "author": authorData,
+            "unlisted": true,
+            "visibility": "PUBLIC"
         },
         {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
-        })
+        }).catch((error) => {
+            console.log("Error sending image post to current author's inbox: ", error)
+        });
         
-        const p2 = p.then((response) => {
+        // Might not need to send to followers' inboxes
+        
+        // .then((response) => {
+        //     const p3image = getFollowers()
+        //     const p4image = p3image.then((response2) => {
+        //         const requestPromises = response2.map(obj => {
+        //             axios.post(obj[0], response.data, {
+        //                 headers: {
+        //                     "Authorization": tokens[obj[1]]
+        //                 }
+        //             });
+        //         })
+        //         Promise
+        //         .all(requestPromises)
+        //         .then((responses) => {
+        //             console.log('All requests sent successfully:', responses);
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error sending requests:', error);
+        //         })
+        //     })
+        // });
+    }
+
+    const sendPost = async () => {
+        const postUUID = uuidv4();
+        const data = {
+            "type": "post",
+            "id": `${authorData.id}/posts/${postUUID}`,
+            "source": `${authorData.id}/posts/${postUUID}`,
+            "origin": `${authorData.id}/posts/${postUUID}`,
+            "title": titleText,
+            "contentType": imageID ?  "text/markdown" : contentType,
+            "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
+            // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
+            "author": authorData,
+            "image_url": imageID ? imageID+"/image" : ""
+        }
+        console.log("DATA!", data);
+        const p1 = axios
+        .post(`/authors/${authorID}/inbox/`, data, {
+            headers: {
+                "Authorization": tokens[window.location.hostname]
+            }
+        })
+        .catch((error) => {
+            console.log(error)})
+        
+        const p2 = p1.then((response) => {
+            handleDeleteImage();
             setPostsUpdated(response.data);
             setContent("");
             setTitle("");
@@ -216,9 +265,6 @@ function Share (props) {
                                 className="postButton" 
                                 role="button" 
                                 onClick={imageBase64 ? sendImagePost : sendPost}>
-                                    {/* TODO: if it's an image post, then you actually have to call both 
-                                    sendPost and sendImagePost.. maybe do a conditional inside sendPost? 
-                                    or call sendImagePost, and then call sendPost inside sendImagePost */}
                                 Post
                             </Button>
                         </div>
