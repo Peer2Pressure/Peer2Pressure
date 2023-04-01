@@ -7,7 +7,7 @@ class AddTrailingSlashMiddleware:
         
     def __call__(self, request):
         # Check if the path is valid and does not end with a trailing slash
-        if not is_valid_path(request.path_info) and not request.path_info.endswith('/'):
+        if not is_valid_path(request.path_info) and not request.path_info.endswith('/') and request.method != "OPTIONS":
             # Add a trailing slash to the path
             new_url = request.path_info + '/'
 
