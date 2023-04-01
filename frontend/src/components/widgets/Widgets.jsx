@@ -33,26 +33,26 @@ function Widgets() {
   const fetchAllUsers = async () => {
     setIsLoading(true);
     let combinedUsers = [];
-
     apiEndpoints.forEach((endpoint) => {
       const hostname = new URL(endpoint).hostname
       const url = `${endpoint}/authors/`;
 
       try {
-        // axios.get(url, {
+        // axios({
+        //   method: "get",
+        //   url: url, 
         //   maxRedirects: 3,
         //   headers: {
         //     'Authorization': tokens[hostname],
         //   },
         // })
-        axios.get({
-          method: "get",
-          url: url, 
+        axios.get(url, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
           },
-        }).then((response) => {
+        })
+        .then((response) => {
           if (response.status === 200) {
             combinedUsers.push(...response.data.items)
             setAllUsers(combinedUsers);
