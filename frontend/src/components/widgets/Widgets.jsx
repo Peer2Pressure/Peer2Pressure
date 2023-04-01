@@ -39,7 +39,15 @@ function Widgets() {
       const url = `${endpoint}/authors/`;
 
       try {
-        axios.get(url, {
+        // axios.get(url, {
+        //   maxRedirects: 3,
+        //   headers: {
+        //     'Authorization': tokens[hostname],
+        //   },
+        // })
+        axios.get({
+          method: "get",
+          url: url, 
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
