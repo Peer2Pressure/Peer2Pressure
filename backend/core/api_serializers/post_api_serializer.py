@@ -109,6 +109,8 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         if page and size:
             paginator = Paginator(posts, size)
+            if page > paginator.num_pages:
+                return {}, 404
             posts = paginator.get_page(page)
 
         post_serializer = PostSerializer(posts, many=True)

@@ -96,6 +96,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # Paginate inbox items.
         if page and size:
             paginator = Paginator(inbox_items, size)
+            if page > paginator.num_pages:
+                return {}, 404
             inbox_items = paginator.get_page(page)
 
         # Serialize inbox items based on type.
