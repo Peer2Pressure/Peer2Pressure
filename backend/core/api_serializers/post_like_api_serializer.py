@@ -36,7 +36,7 @@ class PostLikeAPISerializer(serializers.ModelSerializer):
         post_likes = post.post_like.all()
 
         result_dict = {}
-        result_dict["type"] = "post_likes"
+        result_dict["type"] = "likes"
 
         post_likes_list = []
 
