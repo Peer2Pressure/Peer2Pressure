@@ -138,7 +138,6 @@ function Share (props) {
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
-            "image_url": imageID ? imageID+"/image" : ""
         }
         console.log("DATA!", data);
         const p1 = axios
