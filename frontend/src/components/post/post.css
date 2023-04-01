@@ -227,7 +227,7 @@ img {
 .post__headerDescription {
   /* border: 1px solid black; */
   /* border-top: 1px solid black; */
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #9B9C9B;
   height: auto;
   padding: 20px;
 }

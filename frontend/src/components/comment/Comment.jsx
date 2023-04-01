@@ -77,17 +77,17 @@ const Comment = forwardRef(({
         <div className="commentContainer">
             <div className="commentHeader">
                 <div className="avatarContainer">
-                    <Avatar sx={{width: 24, height: 24}} src={commentAvatar}/>
+                    <Avatar sx={{width: 32, height: 32}} src={commentAvatar}/>
                     {/* <Avatar sx={{width: 24, height: 24}}/> */}
                 </div>
                 <div className="authorAndCommentContainer">
                     <div className="authorContainer">
                         {/* <h5>John Doe</h5> */}
-                        <h3>{commentDisplayName}{" "}
+                        <h4 id='authorNAme'>{commentDisplayName}{" "}
                         <span className={commentAuthorHost !== window.location.hostname ? "post__headerSpecial--different" : "post__headerSpecial"}>
                         @{commentAuthorHost}
                         </span>
-                        </h3>
+                        </h4>
                     </div>
                     <div className="commentBody">
                         {/* <p>To be or not to be, that is the question.</p> */}

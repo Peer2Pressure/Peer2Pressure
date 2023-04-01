@@ -5,6 +5,8 @@
     width: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
+    background-color: #f8f8f8;
+    border-radius: 20px;
 }
 
 .commentHeader {
@@ -14,6 +16,7 @@
     margin-left: 20px;
     padding-left: 20px;
     padding-right: 20px;
+    height: 2.5em;
     /* border: 1px solid black; */
 }
 
@@ -23,12 +26,17 @@
     align-items: center;
 }
 
+#authorName {
+    font-family: 15px;
+}
+
 .authorAndCommentContainer {
     display: flex;
     align-items: center;
     /* padding: 10px; */
     flex-direction: column;
     align-items: flex-start;
+    justify-content: space-between;
 }
 
 .iconContainer {
