@@ -62,10 +62,11 @@
   
 
 .streamContainer {
-    visibility: hidden;
+    /* visibility: hidden; */
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     /* background-color: red; */
+    
 }
