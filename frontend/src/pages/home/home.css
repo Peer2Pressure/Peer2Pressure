@@ -50,10 +50,16 @@
 }
 
 .widgetContainer {
+    display: flex;
     top: 2em;
     right: 6em;
     position: fixed;
-}
+    flex-direction: column;
+    justify-content: space-between;
+    height: 50%; /* set a fixed height to the container */
+  }
+  
+  
 
 .streamContainer {
     visibility: hidden;

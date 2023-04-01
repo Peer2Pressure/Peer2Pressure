@@ -36,6 +36,24 @@
     justify-content: center;
 }
 
+.titleBox {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.imgPreviewBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
 .bottom {
     padding-top: 0.5rem;
     margin-bottom: 0.5em;
@@ -64,9 +82,24 @@
     width: fit-content;
 }
 
-.textBox{
+.textBox, .titleField {
     width: fit-content;
     height: fit-content;
+}
+
+input[name="title"] {
+    min-width: 30rem;
+    width: fit-content;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    border: none;
+    background-color: rgba(222, 222, 222, 0.5);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+input[name="title"]:focus {
+    outline: 0;
 }
 
 textarea {
@@ -75,9 +108,7 @@ textarea {
     padding: 2rem;
     border-radius: 20px;
     border: none;
-    /* background-color: rgba(190, 190, 190, 0.4); */
     background-color: rgba(222, 222, 222, 0.5);
-
     resize: none;
 }
 
@@ -112,9 +143,12 @@ textarea:focus {
     /* border: 1px solid red; */
 }
 
-/* .imgPreview {
-    border: 1px solid black;
-} */
+.imgPreview {
+    /* border: 1px solid black; */
+    width: fit-content;
+    /* position: relative; */
+    /* padding-left: 3rem; */
+}
 
 img {
     max-width: 10rem;
@@ -139,3 +173,21 @@ img {
     cursor: pointer;
     border-radius: 100%;
   }
+
+.chooseContentType {
+    margin-left: 1.5rem;
+}
+
+.Dropdown-root {
+    font-weight: bold;
+}
+
+.Dropdown-control {
+    border-radius: 10px !important;
+    /* padding: 8px 40px 8px 10px !important; */
+}
+
+.Dropdown-menu {
+    font-weight: bold;
+    border-radius: 10px !important;
+}

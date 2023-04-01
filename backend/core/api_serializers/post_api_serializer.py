@@ -60,26 +60,30 @@ class PostAPISerializer(serializers.ModelSerializer):
         valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
         serializer = PostSerializer(data=request_data)
-
         errors = {}
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
 
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["contentType"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
+
+            if validated_post_data["content"] == "":
+                if validated_post_data["image_url"] == "":
+                    if validated_post_data["content_type"] not in valid_image_content_types:
+                        errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+                    if validated_post_data["content_type"] in valid_image_content_types:
+                        errors["content"] = f"No image data found."
             
-            if validated_post_data["content_type"] not in valid_image_content_types:
-                if validated_post_data["content"] == "":
-                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+            if len(errors) > 0:
+                return errors, 400
             
-            if len(errors) == 0:
-                validated_post_data["author"] = author
-                if post_id:
-                    validated_post_data["m_id"] = post_id
-                post = serializer.create(validated_post_data)
-                post.save()
-                return PostSerializer(post).data, 201
-            return errors, 0
+            validated_post_data["author"] = author
+            if post_id:
+                validated_post_data["m_id"] = post_id
+            post = serializer.create(validated_post_data)
+            post.save()
+            return PostSerializer(post).data, 201
+
         else:
             return post_serializer.errors, 400
 
@@ -136,21 +140,25 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
-
+            
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
             
-            if validated_post_data["content_type"] not in valid_image_content_types:
-                if validated_post_data["content"] == "":
-                    errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
-            
-            if len(errors) == 0:
-                validated_post_data.pop("author")
-                serializer.save()
-                post = post_serializer.get_author_post(author_id, post_id)
-                return PostSerializer(post).data, 200
-            
-            return errors, 400
+            if validated_post_data["content"] == "":
+                if validated_post_data["image_url"] == "":
+                    if validated_post_data["content_type"] not in valid_image_content_types:
+                        errors["content"] = f"Cannot post empty content for contentTypes: {valid_content_types}"
+                    if validated_post_data["content_type"] in valid_image_content_types:
+                        errors["content"] = f"No image data found."
+
+
+            if len(errors) > 0:
+                return errors, 400
+
+            validated_post_data.pop("author")
+            serializer.save()
+            post = post_serializer.get_author_post(author_id, post_id)
+            return PostSerializer(post).data, 200
         else:
             return post_serializer.errors, 400
 

@@ -8,7 +8,7 @@ import Stream from "../../components/stream/Stream";
 import Widgets from "../../components/widgets/Widgets";
 import Post from "../../components/post/Post";
 import NavBar from "../../components/navBar/NavBar";
-import Comment from "../../components/comment/Comment";
+import FollowRequest from "../../components/followRequests/followRequest";
 
 const Home = () => {
   const [postsUpdated, setPostsUpdated] = useState(false);
@@ -27,6 +27,7 @@ const Home = () => {
         </div>
         <div className="widgetContainer">
            <Widgets/>
+           <FollowRequest/>
         </div>
       </div>
     </div>

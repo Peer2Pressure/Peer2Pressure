@@ -8,6 +8,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
+import ReactMarkdown from 'react-markdown'
+
 import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 import axios from "axios";
@@ -29,19 +31,28 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, displayName, username, text, image, avatar, comments, object}, ref) => {
+  ({ id, host, displayName, username, text, image_url, avatar, comments, contentType, title, object}, ref) => {
+
+
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [error, setError] = useState(null);
-    const [inboxLikesID, setInboxLikesID] = useState(null);
+    const [inboxLikes, setInboxLikes] = useState([]);
+    const [inboxComments, setInboxComments] = useState([]);
+    const [likeCounter, setLikeCounter] = useState(0);
+    const [authorLikedList, setAuthorLikedList] = useState([]);
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
     const postIdSplit = id.split("/")
     const postAuthorID = postIdSplit[4];
+    const postID = postIdSplit[6];
+    // console.log("postIDSplit: " + postIdSplit);
+    // console.log("postAuthorID: " + postAuthorID);
+    // console.log("postID: " + postID);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -67,16 +78,26 @@ const Post = forwardRef(
               }
             });
             // get all elements inside items of type "Like" and check if there exist a like in the specified object
-            const response3 = response2.data.items.filter((item) => item.type === "like" && item.id === object);
-            setInboxLikesID(response3);
+            // const response3 = response2.data.items.filter((item) => item.type === "like" && item.id === object);
+            // setInboxLikesID(response3);
+            const response_likes = await axios.get(`/authors/${postAuthorID}/posts/${postID}/likes/`)
+            setInboxLikes(response_likes.data.items); 
+            setLikeCounter(response_likes.data.items.length);
+            const responseLikesAuthors = response_likes.data.items.map((item) => item.author.id);
+            const responseLikesAuthorsSplit = responseLikesAuthors.map((item) => item.split("/"));
+            const responseLikesAuthorsSplit2 = responseLikesAuthorsSplit.map((item) => item[4]);
+            setAuthorLikedList(responseLikesAuthorsSplit2);
 
-             // checks if post has a like 
-            if (inboxLikesID.length === 0) {
-              // means theres no like
+            const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
+            setInboxComments(response_comments.data.comments);
+
+            if (responseLikesAuthorsSplit2.includes(authorId)) {
+              // console.log("author is here!")
               setLike(true);
             } else {
               setLike(false);
             };
+
           } catch(error) {
             setError(error);
           };
@@ -85,14 +106,15 @@ const Post = forwardRef(
         getPosts();
       }, 5000);
       return () => clearInterval(interval);
-    }, [tokens]);
+    }, [tokens, postAuthorID, postID]);
 
-
+    // console.log("inboxLikes: ", inboxLikes);
+    // console.log("inboxComments: ", inboxComments);
     // console.log(inboxLikes);
+    // console.log("authorLikedList: ", authorLikedList);
     // upon like click execute this
     const handleLikeClick = async () => {
-      // set to false initially
-      setLike(true);
+
       if (like) {
         return;
       }
@@ -122,6 +144,7 @@ const Post = forwardRef(
             }
           });
           console.log("axios post worked. Like sent");
+          setLike(true);
       } catch(error) {
         console.log(error);
       }
@@ -137,7 +160,6 @@ const Post = forwardRef(
       setCommentText("");
     };
 
-
     return (
       <div className="post" ref={ref}>
         <div className="placeHolder">
@@ -150,9 +172,9 @@ const Post = forwardRef(
                 <div className="post_headerTop">
                   <div className="post__headerText">
                     <h3>
-                      {displayName}{" "}
-                      <span className="post__headerSpecial">
-                      {/* @{username} */}
+                      {displayName}{"  "}
+                      <span className={host !== window.location.hostname ? "post__headerSpecial--different" : "post__headerSpecial"}>
+                      @{host}
                       </span>
                     </h3>
                   </div>
@@ -192,14 +214,21 @@ const Post = forwardRef(
                 </div>
               </div>
             </div> 
+            <div className="post__headerTitle">
+              <b>{title}</b>
+            </div>
             <div className="post__headerDescription">
-                <p>{text}</p>
-                <img src={image} alt="" />
+              
+              {contentType === "text/markdown" ?
+                  <p><ReactMarkdown>{text}</ReactMarkdown></p>
+                  :
+                    <p>{text}</p>
+              }
+              
+                {/* <img src={image} alt="" /> */}
             </div>
             <div className="commentsContainer">
               {/* were going go put comment component here */}
-                  <Comment/>
-                  <Comment/>
             </div>
           </div>
         </div>
@@ -207,10 +236,10 @@ const Post = forwardRef(
               <div className="iconArea">
                 <div className="post__likes" onClick={handleLikeClick}>
                   {like ? (
-                    <><FavoriteIcon fontSize="small" />
-                      {/* <p>{likes + 1}</p> */}</>
+                    <><FavoriteIcon fontSize="small"/>
+                    {likeCounter}</>
                   ):(<><FavoriteBorderIcon fontSize="small" />
-                      {/* <p>{likes}</p> */}</>
+                      {likeCounter}</>
                   )}
                 </div>
                 <div className="post__comments" onClick={handleCommentClick}>
@@ -222,6 +251,22 @@ const Post = forwardRef(
                   {showCommentArea && (
                   <form onSubmit={handleCommentSubmit}>
                     <div className="addCommentContainer">
+                      {inboxComments.map((comment) => (
+                        <div className="comment">
+                          <Comment
+                            commentAuthorID={comment.author.id}
+                            commentID={comment.id}
+                            commenntAvatar={comment.author.profileImage}
+                            commentDisplayName={comment.author.displayName}
+                            commentAuthorHost={comment.author.host}
+                            comment={comment.comment}
+                            commentPublished={comment.published}
+                            postAuthorID={postAuthorID}
+                            postID={postID}
+                            commentAuthorData={comment.author}
+                          />
+                        </div>
+                      ))}
                       <textarea className="post__commentInput"
                       placeholder="Add a comment..."
                       value={commentText}

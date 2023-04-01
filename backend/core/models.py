@@ -16,7 +16,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 # Local Libraries
 from .config import *
 
-MAX_CHARFIELD_LENGTH = 300
+MAX_CHARFIELD_LENGTH = 512
 
 class AbstractModel(models.Model):
     class Meta:
@@ -37,15 +37,13 @@ class AbstractModel(models.Model):
 
 
 class Node(AbstractModel):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client_server", default=None, null=True)
-    host = models.URLField()
-    # username = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
-    # password = models.CharField(max_length=MAX_CHARFIELD_LENGTH)
-    token = models.CharField(max_length=512, default="")
+    api_endpoint = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    token = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
 
     def __str__(self):
-        return str(self.host)
+        return str(self.api_endpoint)
     
+
 class Author(AbstractModel):
     id = models.URLField()
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="author_profile", default=None, null=True)
@@ -91,7 +89,7 @@ class Follower(AbstractModel):
         return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
     
     def __str__(self):
-        return str(self.m_id)
+        return str(self.from_author.name)+" -> "+str(self.to_author.name)
 
 
 class Post(AbstractModel):
@@ -99,7 +97,7 @@ class Post(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.URLField(default="")
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
-    image = models.ImageField(upload_to='post_images', blank=True, null=True)
+    image_url = models.URLField(default="")
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     visibility = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="PUBLIC")
@@ -116,7 +114,7 @@ class Post(AbstractModel):
         return [nameof(cls.author)]
 
     def __str__(self):
-        return str(self.id)
+        return self.author.name + " post:" +str(self.id)
     
     def save(self, *args, **kwargs):
         if not self.url:
@@ -128,13 +126,16 @@ class Post(AbstractModel):
 
 
 class Comment(AbstractModel):
-    id = models.URLField()
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="comment")
+    id = models.URLField(default="")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
     comment = models.TextField(default="")
-    url = models.URLField()
+    url = models.URLField(default="")
+    content_type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=False, null=False, default="text/plain")
     created_at = models.DateTimeField(default=timezone.now)
     updated_on = models.DateTimeField(default=timezone.now)
+    object = models.URLField(default="")
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
@@ -144,6 +145,7 @@ class Comment(AbstractModel):
         return str(self.id)
 
     def save(self, *args, **kwargs):
+        # TODO: Need to update this id and url to be self.author.url instead of self.post.url
         if not self.url:
             # Generate a URL based on the object's ID
             self.id = f"{self.post.url}/comments/{self.m_id}"
@@ -152,12 +154,16 @@ class Comment(AbstractModel):
 
 
 class PostLike(AbstractModel):
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="like")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post_like")
     created_at = models.DateTimeField(default=timezone.now)
+    summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    object = models.URLField(default="")
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["author", "post"], name="A user can only like post onces")]
+
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
@@ -165,14 +171,17 @@ class PostLike(AbstractModel):
 
 
 class CommentLike(AbstractModel):
+    type = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="like")
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    # post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="comment_like")
     created_at = models.DateTimeField(default=timezone.now)
+    summary = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="")
+    object = models.URLField(default="")
 
     @classmethod
     def get_default_fields(cls) -> List[str]:
-        return [nameof(cls.author), nameof(cls.post)]
+        return [nameof(cls.author), nameof(cls.comment)]
 
 
 class Inbox(AbstractModel):
@@ -181,3 +190,9 @@ class Inbox(AbstractModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    # post = 1
+    # comment =1
+    # post_like = 2
+    # comment_like = 3

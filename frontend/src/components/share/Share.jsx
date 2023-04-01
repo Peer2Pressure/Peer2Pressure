@@ -1,50 +1,76 @@
 import "./share.css";
-import { useState } from "react";
-import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Switch } from "@mui/material";
+
 import axios from "axios";
-import useGetAuthorData from "../../useGetAuthorData";
 import { v4 as uuidv4 } from 'uuid';
+
+import { useState } from "react";
+
+import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
-import Button from "@mui/material/Button";
+
+import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { Switch, Button } from "@mui/material";
+
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+
 
 function Share (props) {
     const {setPostsUpdated} = props;
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
+    const [contentText, setContent] = useState("");
+    const [titleText, setTitle] = useState("");
     const [message, setMessage] = useState();
     const [isPrivate, setIsPrivate] = useState(false); 
-    const [contentType, setContentType] = useState("text/plain");  // TODO: figure out markdown, then images
-    // const [fileURL, setFileURL] = useState(null)
+    const contentOptions = [
+        { value: 'text/plain', label: 'Plaintext' },
+        { value: 'text/markdown', label: 'Markdown' },
+    ];
+    const [contentType, setContentType] = useState(contentOptions[0].value);
 
+    const [imageFile, setImageFile] = useState(null);
+    const [imageBase64, setImageBase64] = useState(null);
+    const [imageID, setImageID] = useState(null);
+       
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
 
-    const handleContentChange = event => {
-        setContent(event.target.value);
-      };
+    // change contentType
+    function handleContentTypeChange(option) {
+        setContentType(option.value);
+    }
 
-    const handleFile = (e) => {
-        setMessage("");
-        let file = e.target.files;
-        
-        for (let i = 0; i < file.length; i++) {
-            const fileType = file[i]['type'];
-            const validImageTypes = ['image/jpeg', 'image/png'];
-            if (validImageTypes.includes(fileType)) {
-                setFiles([...files,file[i]]);
-            } else {
-                setMessage("only jpeg and png accepted");
-            }
-        }
+    // updating content text
+    const handleTextChange = event => {
+        setContent(event.target.value);
     };
 
-    const removeImage = (i) => {
-        setFiles(files.filter(x => x.name !== i));
-    } 
+    // updating title text
+    const handleTitleChange = event => {
+        setTitle(event.target.value);
+    };
+    // select image from browser NEW!
+    const handleFileUpload = (event) => {
+        const imageUUID = uuidv4();
+        setImageID(`${authorData.id}/posts/${imageUUID}`)
+        setImageFile(event.target.files[0]);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImageBase64(reader.result);
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    };
 
+    // delete image
+    const handleDeleteImage = () => {
+        setImageFile(null);
+        setImageBase64(null);
+        setImageID("");
+    }
+
+    // get followers to send a public post
     async function getFollowers() {
-        const response = await axios.get(`/authors/${authorID}/followers`, {
+        const response = await axios.get(`/authors/${authorID}/followers/`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
@@ -52,32 +78,89 @@ function Share (props) {
         return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
     }
 
-    const sendPost = async(event) => {
-        // console.log("author_data123: ", authorData, authorID);
-        console.log("tt", tokens);
-        console.log("ttttt", tokens[authorData.host]);
-        event.preventDefault();
-        const p = axios
+    const sendImagePost = async() => {
+        // const postUUID = uuidv4();
+        sendPost();
+        axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
-            "id": `${authorData.host}/authors/${authorID}/posts/${uuidv4()}`,
-            "contentType": contentType,
-            "content": content,
+            "id": `${imageID}`,
+            "source": `${imageID}`,
+            "origin": `${imageID}`,
+            "title": titleText,
+            "contentType": imageFile.type + ";base64",
+            "content": imageBase64,
             "author": authorData,
+            "unlisted": true,
+            "visibility": "PUBLIC"
         },
         {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
-        })
+        }).catch((error) => {
+            console.log("Error sending image post to current author's inbox: ", error)
+        });
         
-        const p2 = p.then((response) => {
+        // Might not need to send to followers' inboxes
+        
+        // .then((response) => {
+        //     const p3image = getFollowers()
+        //     const p4image = p3image.then((response2) => {
+        //         const requestPromises = response2.map(obj => {
+        //             axios.post(obj[0], response.data, {
+        //                 headers: {
+        //                     "Authorization": tokens[obj[1]]
+        //                 }
+        //             });
+        //         })
+        //         Promise
+        //         .all(requestPromises)
+        //         .then((responses) => {
+        //             console.log('All requests sent successfully:', responses);
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error sending requests:', error);
+        //         })
+        //     })
+        // });
+    }
+
+    const sendPost = async () => {
+        const postUUID = uuidv4();
+        const data = {
+            "type": "post",
+            "id": `${authorData.id}/posts/${postUUID}`,
+            "source": `${authorData.id}/posts/${postUUID}`,
+            "origin": `${authorData.id}/posts/${postUUID}`,
+            "title": titleText,
+            "contentType": imageID ?  "text/markdown" : contentType,
+            "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
+            // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
+            "author": authorData,
+            "image_url": imageID ? imageID+"/image" : ""
+        }
+        console.log("DATA!", data);
+        const p1 = axios
+        .post(`/authors/${authorID}/inbox/`, data, {
+            headers: {
+                "Authorization": tokens[window.location.hostname]
+            }
+        })
+        .catch((error) => {
+            console.log(error)})
+        
+        const p2 = p1.then((response) => {
+            handleDeleteImage();
             setPostsUpdated(response.data);
             setContent("");
+            setTitle("");
+            handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
                 const requestPromises = response2.map(obj => {
                     axios.post(obj[0], response.data, {
+                        maxRedirects: 3,
                         headers: {
                             "Authorization": tokens[obj[1]]
                         }
@@ -91,52 +174,60 @@ function Share (props) {
                 .catch((error) => {
                     console.error('Error sending requests:', error);
                 })
-                .finally(() => {
-                    console.log("empty text area")
-                })
-            }
-            )
+            })
         })
     }
 
     return (
         <div className="share">
-            <div className="shareCard">
-                
 
+            <div className="shareCard">
+                {/* write title of post */}
+                <div className="titleBox">
+                    <div className="titleField">
+                        <input
+                            name="title"
+                            placeholder={"Add a title..."}
+                            value={titleText}
+                            onChange={handleTitleChange}
+                        />
+                    </div>
+                </div>
+            
                 <div className="top">
+                    {/* write content of post */}
                     <div className="textBox">
                         <textarea 
                             name="text" 
                             placeholder={"Write something..."}
-                            value={content}
-                            onChange={handleContentChange}
+                            value={contentText}
+                            onChange={handleTextChange}
                         />
-                          
                     </div>
-                       
-                    <div className="imgPreview" role="test">
-                        <span className="errorMsg">{message}</span>
-                        {files.map((file, key) => {
-                            return (
-                                <div key={key} className="imgContainer">
-                                    <button onClick={() => { removeImage(file.name)}}>x</button>
-                                    <img src={URL.createObjectURL(file)} alt={file}/>   
-                                    {/* alt for tests, idk what file actually is though */}
-                                </div>
-                            )
-                        })}
-                    </div>
-
                 </div>
+
+                <div className="imgPreviewBox">
+                    {/* show the image in a preview box */}
+                    <div className="imgPreview">
+                        {imageBase64 && (
+                            <div className="imgContainer">
+                                <img src={imageBase64} alt="Image Preview" />
+                                <button onClick={handleDeleteImage}>x</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="bottom">
                     <div className="postOptionsContainer">
-                        <div className="shareImage">
+                        {/* actual image choice */}
+                        <div className="shareImage">                    
                             <input 
                                 type="file"
                                 id="file" 
+                                accept="image/png, image/jpeg"
                                 style={{display:"none"}} 
-                                onChange={handleFile}
+                                onChange={handleFileUpload}
                             />
                             <label htmlFor="file">
                                 <div className="uploadImg">
@@ -145,10 +236,10 @@ function Share (props) {
                                         color="primary"
                                     />
                                     <b> Upload a Photo</b>
-                                    <img src = {Image} alt="" /> 
                                 </div>
                             </label>
                         </div>
+
                         <div className="isPrivateSwitch">
                             <Switch
                                 private={isPrivate}
@@ -157,10 +248,25 @@ function Share (props) {
                             />
                             <b>Private</b>  
                         </div>
+                        <div className="chooseContentType">
+                            <Dropdown 
+                                options={contentOptions}
+                                value={contentType}
+                                onChange={handleContentTypeChange}
+                            />
+                        </div>
                     </div>
+                    
                     <div className="postButtonContainer">
                         <div className="postButtonBox">
-                            <Button sx={{borderRadius: 20}} variant="contained" className="postButton" role="button" onClick={sendPost}>Post</Button>
+                            <Button 
+                                sx={{borderRadius: 20}} 
+                                variant="contained" 
+                                className="postButton" 
+                                role="button" 
+                                onClick={imageBase64 ? sendImagePost : sendPost}>
+                                Post
+                            </Button>
                         </div>
                     </div>
                 </div>

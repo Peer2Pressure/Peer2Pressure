@@ -56,8 +56,11 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         if not follower_serializer.follower_exists(author_id, foreign_author_id):
             return {"msg": "Follow relation does not exist"}, 404
         
-        follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id).filter(approved=True)
 
+        if not follow:
+            return {"msg": "Pending Approval"}, 404
+        
         serializer = FollowerSerializer(follow)
         
         return serializer.data, 200

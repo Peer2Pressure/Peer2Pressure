@@ -13,6 +13,7 @@ function Stream(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    axios.defaults.maxRedirects = 5;
     const interval = setInterval(() => {
       async function getPosts() {
         try {
@@ -34,7 +35,7 @@ function Stream(props) {
       };
   
       getPosts();
-    }, 5000);
+    }, 1500);
     return () => clearInterval(interval);
   }, [postsUpdated, tokens]);
 
@@ -57,13 +58,17 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
-                id={post.author.id}
+                postAuthorID={post.author.id}
+                id={post.id}
+                host={new URL(post.origin).hostname}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
-                image={post.image}
+                image_url={post.image_url}
                 avatar={post.author.profileImage}
                 comments={post.comments}
+                contentType={post.contentType}
+                title={post.title}
                 object={post.id}
                 // likes={post.like}
               />
