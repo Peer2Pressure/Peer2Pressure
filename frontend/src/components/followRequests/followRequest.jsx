@@ -61,7 +61,7 @@ function FollowRequest() {
         };
         // console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
-        await axios.post(`${request.id}/inbox/`, data, {
+        await axios.post(`${request.id.replace(/\/$/, "")}/inbox/`, data, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
