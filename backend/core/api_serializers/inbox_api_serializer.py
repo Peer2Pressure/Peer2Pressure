@@ -257,7 +257,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                         if post["visibility"] == "PUBLIC":
                             foreign_author = AuthorSerializer(data=request_data["author"]).save()
                         else:
-                            return "Author Needs to follow post author to like the post if the post visibility not PUBLIC", 404
+                            return "Author Needs to follow post author to like the post if the post visibility not PUBLIC", 400
                     else:
                         return str(e), 500
 
@@ -313,7 +313,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                         if post.visibility == "PUBLIC":
                             foreign_author = AuthorSerializer(data=request_data["author"]).save()
                         else:
-                            return "Author Needs to follow post author to like the post if the post visibility not PUBLIC", 404
+                            return "Author Needs to follow post author to like the post if the post visibility not PUBLIC", 400
                     else:
                         return str(e), 500
 
@@ -382,7 +382,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                         if post["visibility"] == "PUBLIC":
                             foreign_author = AuthorSerializer(data=request_data["author"]).save()
                         else:
-                            return "Author Needs to follow post author to comment on the post if the post visibility not PUBLIC", 404
+                            return "Author Needs to follow post author to comment on the post if the post visibility not PUBLIC", 400
                     else:
                         return str(e), 500
 

@@ -25,7 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
     contentType = serializers.CharField(source="content_type", required=False)
     content = serializers.CharField(required=False)
     # image = serializers.ImageField(required=False, default="")
-    image_url = serializers.URLField(required=False, allow_blank=True, default="")
+    # image_url = serializers.URLField(required=False, allow_blank=True, default="")
     author = AuthorSerializer(required=False)
     # categories = serializers.ListField(child=serializers.CharField(max_length=100), required=False)
     comments = serializers.URLField(required=False, allow_blank=True)
@@ -36,7 +36,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["type", "title", "id", "source", "origin", "description", "contentType",
-                "content", "author", "comments", "published", "visibility", "unlisted", "image_url" ]
+                "content", "author", "comments", "published", "visibility", "unlisted"]
         # fields = "__all__"
         extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
