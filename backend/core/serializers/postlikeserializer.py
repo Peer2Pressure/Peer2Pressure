@@ -17,31 +17,31 @@ class PostLikeSerializer(serializers.ModelSerializer):
         model = PostLike
         fields = ["type", "summary", "author", "object"]
 
-    def create_like(self, author_id, post_id):
+    # def create_like(self, author_id, post_id):
 
-        print(author_id)
-        try:
-            like_author_obj = Author.objects.get(id=author_id)
-        except Author.DoesNotExist:
-            raise ValueError("Like Author does not exist")
+    #     print(author_id)
+    #     try:
+    #         like_author_obj = Author.objects.get(id=author_id)
+    #     except Author.DoesNotExist:
+    #         raise ValueError("Like Author does not exist")
         
-        print("Like author id: ", like_author_obj.id)
+    #     print("Like author id: ", like_author_obj.id)
         
-        try:
-            post_obj = Post.objects.get(id=post_id)
-        except Post.DoesNotExist:
-            raise ValueError("Post does not exist")
+    #     try:
+    #         post_obj = Post.objects.get(id=post_id)
+    #     except Post.DoesNotExist:
+    #         raise ValueError("Post does not exist")
         
-        print("Post id: ", post_obj.id)
+    #     print("Post id: ", post_obj.id)
 
-        defaults = {
-            nameof(PostLike.author): like_author_obj,
-            nameof(PostLike.post): post_obj
-        }
+    #     defaults = {
+    #         nameof(PostLike.author): like_author_obj,
+    #         nameof(PostLike.post): post_obj
+    #     }
 
-        like_obj = PostLike.objects.create(**defaults)
+    #     like_obj = PostLike.objects.create(**defaults)
 
-        return like_obj.id
+    #     return like_obj.id
     
     def get_like_by_id(self, author_id, post_id):
         # try:
