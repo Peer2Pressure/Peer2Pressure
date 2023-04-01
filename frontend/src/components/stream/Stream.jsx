@@ -51,6 +51,7 @@ function Stream(props) {
     return new Date(b.published) - new Date(a.published);
   });
 
+  // console.log("inboxPosts: ", inboxPosts);
   return (
     <div className="stream">
         <Flipmove className="flippy">
