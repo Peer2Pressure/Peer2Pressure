@@ -97,7 +97,6 @@ class Post(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.URLField(default="")
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
-    # image_url = models.URLField(default="")
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     visibility = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="PUBLIC")
