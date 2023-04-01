@@ -21,6 +21,14 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["type", "author", "comment", "contentType", "object"]
 
+    def get_comment_post(self, comment_id):
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            raise ValueError("Comment does not exist.")
+        
+        return comment.post
+
     # TODO: Need to modify this to include all the fields in the comment model    
     def create_comment(self, author_id, post_id, comment):
 
