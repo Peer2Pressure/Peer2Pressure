@@ -342,7 +342,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 # comment_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
                 # comment_id = comment_id_url[-1]
                 # print("comment_id", comment_id)
-                comment = post_comment_serializer.get_comment_by_id(author_id, post_id, comment_id)
+                comment = post_comment_serializer.get_comment_by_id(comment_id)
                 validated_data["comment"] = comment
                 print("validated_data", validated_data)
                 print("Comment Like Serializer: ", comment_like_serializer)

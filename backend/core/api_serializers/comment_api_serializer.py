@@ -36,7 +36,7 @@ class CommentAPISerializer(serializers.ModelSerializer):
     def get_single_comment(self, author_id, post_id, comment_id):
         author_data = {}
         try:
-            comment = comment_serializer.get_comment_by_id(author_id, post_id, comment_id)
+            comment = comment_serializer.get_comment_by_id(comment_id)
             comment_data = self.get_comment_data(comment)
         except ValueError:
             return None
