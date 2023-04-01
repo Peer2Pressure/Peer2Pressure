@@ -136,7 +136,7 @@ function Widgets() {
           console.error('Error updating follow request on local server:', error);
         });
       }
-      return axios.post(`${user.id}/inbox/`, data, {
+      return axios.post(`${user.id.replace(/\/$/, "")}/inbox/`, data, {
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
