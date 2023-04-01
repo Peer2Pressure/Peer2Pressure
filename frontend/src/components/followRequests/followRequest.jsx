@@ -70,7 +70,7 @@ function FollowRequest() {
         console.log('Follow request accepted successfully.');
         if (new URL(request.host).hostname !== window.location.hostname) {
           // Make a PUT request to the followers API
-          await axios.put(`${authorData.id}/followers/${request.id}/`, data,  {
+          await axios.put(`${authorData.id}/followers/${request.id.replace(/\/$/, "").split("/").pop()}/`, data,  {
             headers: {
               'Authorization': tokens[window.location.hostname],
             },
