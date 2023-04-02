@@ -102,8 +102,10 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
         # Serialize inbox items based on type.
         if data_type == "post":
+            print("asdsa", print(author.id))
             post_serializer = PostSerializer(inbox_items, many=True)
             serializer = InboxItemsSerializer(data={
+                        'author': author.id,
                         'page': page,
                         'size': size,
                         'items': post_serializer.data
@@ -116,6 +118,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         elif data_type == "request":
             a_serializer = AuthorSerializer(inbox_items, many=True)
             serializer = InboxFollowRequestSerializer(data={
+                        'author': author.id,
                         'page': page,
                         'size': size,
                         'items': a_serializer.data
