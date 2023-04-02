@@ -33,7 +33,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin, visibility }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin, visibility, source }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -47,12 +47,15 @@ const Post = forwardRef(
     const [showShareOptions, setShowShareOptions] = useState(false);
     const [shareAnchorEl, setShareAnchorEl] = useState(null);
     const [shareVisibility, setShareVisibility] = useState(null);
+    const [sourceAuthorDisplayName, setSourceAuthorDisplayName] = useState(null);
+    const [sourceAuthorHost, setSourceAuthorHost] = useState(null);
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
     const postIdSplit = id.split("/")
     const postAuthorID = postIdSplit[4];
     const postID = postIdSplit[6];
+    const sourceAuthor = source.replace(/\/posts\/.*$/, "/");
     // console.log("postIDSplit: " + postIdSplit);
     // console.log("postAuthorID: " + postAuthorID);
     // console.log("postID: " + postID);
@@ -183,11 +186,28 @@ const Post = forwardRef(
           }
       });
       return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
+    }      
+
+    const getSourceAuthor = async () => {
+      axios.get(`${sourceAuthor}`, {
+        headers: {
+          "Authorization": tokens[window.location.hostname]
+        }
+      })
+      .then((response) => {
+        setSourceAuthorDisplayName(response.data.displayName);
+        setSourceAuthorHost(new URL(response.data.host).hostname);
+      })
+      .catch((error) => {
+      console.log("error that u may or may not be able to ignore lol");
+      });
     }
+    
+    useEffect(() => {
+      getSourceAuthor();
+    }, [sourceAuthor, tokens]);
 
     const sendPost = async () => {
-      console.log("id", id);
-      console.log("origin", origin);
       const postUUID = uuidv4();
       const data = {
           "type": "post",
@@ -333,6 +353,15 @@ const Post = forwardRef(
               {/* were going go put comment component here */}
             </div>
           </div>
+        </div>
+        <div className="repostInfoArea">
+          {id !== source && (
+              sourceAuthorDisplayName && (
+                <div className="repostInfo">
+                Reposted from {sourceAuthorDisplayName} @{sourceAuthorHost}
+                </div>
+              )
+          )}
         </div>
         <div className="post__footer">
               <div className="iconArea">
