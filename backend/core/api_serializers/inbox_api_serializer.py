@@ -251,7 +251,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 post = post_serializer.get_author_post(author_id, post_id)
                 validated_data["post"] = post
 
-                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.rstrip('/').split('/')[-1]
                 try:
                     foreign_author = author_serializer.get_author_by_id(foreign_author_id)
                 except Exception as e:
@@ -292,7 +292,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 validated_data = comment_like_serializer.validated_data
                 print("Comment Like Validated Data: ", validated_data)
 
-                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.rstrip('/').split('/')[-1]
                 print("Comment Liked by author: ", foreign_author_id)
 
                 comment_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
@@ -370,7 +370,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             if post_comment_serializer.is_valid():
                 validated_data = post_comment_serializer.validated_data
 
-                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.rstrip('/').split('/')[-1]
 
                 post_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
                 post_id = post_id_url[-1]

@@ -60,7 +60,7 @@ function Stream(props) {
                 className="post"
                 key={post.id}
                 id={post.id}
-                host={new URL(post.origin).hostname}
+                host={new URL(post.author.host).hostname}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
