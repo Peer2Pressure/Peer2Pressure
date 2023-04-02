@@ -28,7 +28,7 @@ function Share (props) {
     const visibilityOptions = [
         { value: 'PUBLIC', label: 'Public' },
         { value: 'FRIENDS', label: 'Friends' },
-        { value: 'DM', label: 'Select Friend' }
+        { value: 'PRIVATE', label: 'Select Friend' }
     ];
     const [visibility, setVisibility] = useState(visibilityOptions[0].value);
     const [showPopup, setShowPopup] = useState(false);
@@ -49,7 +49,7 @@ function Share (props) {
     // change visibility
     function handleVisibilityChange(option) {
         setVisibility(option.value);
-        if (option.value === "DM") {
+        if (option.value === "PRIVATE") {
             setShowPopup(true);
         } else {
             setSelectedUser(null);
@@ -57,7 +57,7 @@ function Share (props) {
         }
     }
 
-    // TODO: if selectedUser is null and visibility is DM, show error message
+    // TODO: if selectedUser is null and visibility is PRIVATE, show error message
 
     // change selected user
     const handleSelectUser = (user) => {
