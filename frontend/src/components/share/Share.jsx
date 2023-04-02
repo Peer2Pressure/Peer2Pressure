@@ -80,7 +80,7 @@ function Share (props) {
 
     const sendImagePost = async() => {
         // const postUUID = uuidv4();
-        sendPost();
+        
         axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
@@ -98,9 +98,13 @@ function Share (props) {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
-        }).catch((error) => {
+        })
+        .catch((error) => {
             console.log("Error sending image post to current author's inbox: ", error)
-        });
+        })
+        .then((res) => {
+            sendPost();
+        })
         
         // Might not need to send to followers' inboxes
         
@@ -168,14 +172,30 @@ function Share (props) {
                 team11Data["object"] = response.data;
                 
                 console.log(team11Data);
-
+                
+                const localRequests = response2.map(obj => {
+                    if (obj[1] === window.location.hostname) {
+                        axios.post(obj[0], response.data, {
+                            maxRedirects: 3,
+                            headers: {
+                                "Authorization": tokens[obj[1]]
+                            }
+                        })
+                        .then((r) => {
+                            console.log("Response", r)
+                        });
+                    }
+                }) 
+                
                 const requestPromises = response2.map(obj => {
-                    axios.post(obj[0], obj[1] !== "quickcomm-dev1.herokuapp.com" ? response.data : team11Data, {
-                        maxRedirects: 3,
-                        headers: {
-                            "Authorization": tokens[obj[1]]
-                        }
-                    });
+                    if (obj[1] !== window.location.hostname) {
+                        axios.post(obj[0], obj[1] !== "quickcomm-dev1.herokuapp.com" ? response.data : team11Data, {
+                            maxRedirects: 3,
+                            headers: {
+                                "Authorization": tokens[obj[1]]
+                            }
+                        });
+                    }
                 })
                 Promise
                 .all(requestPromises)
