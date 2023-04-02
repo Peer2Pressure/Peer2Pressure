@@ -251,3 +251,10 @@ img {
   /* border-bottom: 1px  black; */
   width: 100%;
 }
+
+.post__share {
+  cursor: pointer;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-top: 1px;
+}

@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
+import RepeatOutlinedIcon from '@mui/icons-material/RepeatOutlined';
 
 import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
@@ -42,6 +43,8 @@ const Post = forwardRef(
     const [inboxComments, setInboxComments] = useState([]);
     const [likeCounter, setLikeCounter] = useState(0);
     const [authorLikedList, setAuthorLikedList] = useState([]);
+    const [showShareOptions, setShowShareOptions] = useState(false);
+    const [shareAnchorEl, setShareAnchorEl] = useState(null);
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
@@ -158,6 +161,11 @@ const Post = forwardRef(
       setCommentText("");
     };
 
+    const handleShareClick = (event) => {
+      setShowShareOptions(!showShareOptions);
+      setShareAnchorEl(event.currentTarget);
+    };
+
     return (
       <div className="post" ref={ref}>
         <div className="placeHolder">
@@ -243,6 +251,16 @@ const Post = forwardRef(
                 <div className="post__comments" onClick={handleCommentClick}>
                 <ChatBubbleOutlineIcon fontSize="small" />
                 {/* <p>{comments}</p> */}
+                </div>
+                <div className="post__share" onClick={handleShareClick}>
+                  <RepeatOutlinedIcon fontSize="small" />
+                  <Menu
+                    anchorEl={shareAnchorEl}
+                    open={showShareOptions}>
+                    <MenuItem>Share Publically</MenuItem>   
+                    {/* // TODO: hide option if friends only post */}
+                    <MenuItem>Share to Friends</MenuItem>
+                  </Menu>
                 </div>
               </div>
               <div className="showCommentArea">
