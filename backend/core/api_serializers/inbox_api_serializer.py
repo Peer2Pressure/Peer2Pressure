@@ -145,8 +145,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 follower_serializer = FollowerSerializer(data=request_data)
 
                 if follower_serializer.is_valid():
-                    to_author_id = urlparse(request_data["object"].id).rstrip("/").split("/")[-1]
-                    from_author_id = urlparse(request_data["actor"].id).rstrip("/").split("/")[-1]
+                    to_author_id = urlparse(request_data["object"]["id"]).rstrip("/").split("/")[-1]
+                    from_author_id = urlparse(request_data["actor"]["id"]).rstrip("/").split("/")[-1]
                     follow = follower_serializer.get_relation_by_ids(to_author_id, from_author_id)
                     object_id = follow.m_id
                 
@@ -266,7 +266,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 approved = True
 
             print("\n\nHANDLING FOLLOW: ", url)
-            
+
             res = requests.request(method="PUT", url=url, headers=headers, data=json.dumps(request_data))
             if res.status_code in [200, 201]:
                 # create new inbox entry
