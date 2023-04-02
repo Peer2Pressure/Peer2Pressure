@@ -53,7 +53,7 @@ const Post = forwardRef(
     
     // console.log("postIDSplit: " + postIdSplit);
     // console.log("postAuthorID: " + postAuthorID);
-    console.log("ID: ", `${id}/likes/`);
+    // console.log("ID: ", `${id}/likes/`);
 
     const open = Boolean(anchorEl);
     // console.log("id:",id);
@@ -71,7 +71,7 @@ const Post = forwardRef(
       setAnchorEl(null);
     };
 
-    console.log("host: ", fullHost);
+    // console.log("host: ", fullHost);
     // calls the inbox api to get all data in items
     useEffect(() => {
       const interval = setInterval(() => {
@@ -119,13 +119,53 @@ const Post = forwardRef(
         };
     
         getPosts();
-      }, 5000);
+      }, 1000);
       return () => clearInterval(interval);
     }, [tokens, postAuthorID, postID]);
 
-    // console.log("inboxLikes: ", inboxLikes);
+    console.log("inboxLikes: ", inboxLikes);
     // console.log(inboxLikes);
     // console.log("authorLikedList: ", authorLikedList);
+
+    // // upon like click execute this
+    // useEffect(() => {
+    //   async function getLikes() {
+    //     try {
+    //       const response_likes = await axios.get(`${id}/likes/`);
+    //       setInboxLikes(response_likes.data.items);
+    //       setLikeCounter(response_likes.data.items.length);
+    //       const responseLikesAuthors = response_likes.data.items.map((item) => item.author.id);
+    //       const responseLikesAuthorsSplit = responseLikesAuthors.map((item) => item.split("/"));
+    //       const responseLikesAuthorsSplit2 = responseLikesAuthorsSplit.map((item) => item[4]);
+    //       setAuthorLikedList(responseLikesAuthorsSplit2);
+
+    //       const authorId = authorID;
+    //       if (responseLikesAuthorsSplit2.includes(authorId)) {
+    //         setLike(true);
+    //       } else {
+    //         setLike(false);
+    //       };
+
+    //     } catch (error) {
+    //       setError(error);
+    //     }
+    //   }
+
+    //   getLikes();
+    // }, [id, authorID]);
+
+    // useEffect(() => {
+    //   async function getComments() {
+    //     try {
+    //       const response_comments = await axios.get(`${id}/comments/`);
+    //       setInboxComments(response_comments.data.comments);
+    //     } catch (error) {
+    //       setError(error);
+    //     }
+    //   }
+
+    //   getComments();
+    // }, [id]);
 
     // upon like click execute this
     const handleLikeClick = async () => {
@@ -150,9 +190,9 @@ const Post = forwardRef(
         };
         // send axios post 
         if (host === "https://distribution.social/api/") {
-          setPostLikeString(`/authors/${postAuthorID}/posts/${postID}/likes`);
+          setPostLikeString(`/authors/${postAuthorID}/inbox`);
         } else {
-          setPostLikeString(`/authors/${postAuthorID}/posts/${postID}/likes/`);
+          setPostLikeString(`/authors/${postAuthorID}/inbox/`);
         }
 
         await axios.post(
