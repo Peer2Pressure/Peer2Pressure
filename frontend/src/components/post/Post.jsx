@@ -186,12 +186,13 @@ const Post = forwardRef(
     }
 
     const sendPost = async () => {
-      console.log("vis", shareVisibility);
+      console.log("id", id);
+      console.log("origin", origin);
       const postUUID = uuidv4();
       const data = {
           "type": "post",
           "id": `${authorData.id}/posts/${postUUID}`,
-          // "source": `${authorData.id}/posts/${postUUID}`,
+          "source": id,
           "origin": origin,
           "title": title,
           "contentType": contentType,
