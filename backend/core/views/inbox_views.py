@@ -74,7 +74,7 @@ class InboxAPI(GenericAPIView):
         if "type" in list(request.data.keys()):
             if request.data["type"].lower() == "post":
                 response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
-            elif request.data["type"].lower() == "follow":
+            elif request.data["type"].lower() in ["follow", "accept"]:
                 response, code = inbox_api_serializer.handle_follow_request(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "like":
                 post_or_comment = urlparse(request.data["object"]).path.split('/')[-2]

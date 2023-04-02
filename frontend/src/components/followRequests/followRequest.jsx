@@ -59,9 +59,14 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
+        let url = `${request.id.replace(/\/$/, "")}/inbox/`;
+      
+        if (new URL(request.id).hostname === "www.distribution.social") {
+          url = `${request.id.replace(/\/$/, "")}/inbox`;
+        }
         // console.log('author Data:', authorData);
         console.log('Sending accept request:', data);
-        await axios.post(`${request.id.replace(/\/$/, "")}/inbox/`, data, {
+        await axios.post(url, data, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
