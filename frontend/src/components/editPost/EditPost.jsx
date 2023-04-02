@@ -11,16 +11,15 @@ import useGetTokens from "../../useGetTokens";
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch, Button } from "@mui/material";
 
+import ReactMarkdown from 'react-markdown'
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 
 const EditPost = forwardRef(
     ({ postID, postTitle, postText, postContentType, postAuthorID, onClose }, ref) => {
-    // const {setPostsUpdated} = props;
     const [contentText, setContent] = useState(postText);
     const [titleText, setTitle] = useState(postTitle);
-    // console.log(JSON.stringify(postTitle));
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
@@ -28,12 +27,17 @@ const EditPost = forwardRef(
     ];
     const [contentType, setContentType] = useState(postContentType);
 
-    const [imageFile, setImageFile] = useState(null);
-    const [imageBase64, setImageBase64] = useState(null);
+    // const [imageFile, setImageFile] = useState(null);
+    // const [imageBase64, setImageBase64] = useState(null);
     const [imageID, setImageID] = useState(null);
        
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
+
+    // images are weird so markdown might be an ok compromise
+    const regex = /!\[.*?\]\((.*?)\)/;
+    const markdownImageMatch = regex.exec(contentText);
+    const markdownImage = markdownImageMatch ? markdownImageMatch[0] : null;
 
     const handleClose = () => {
         if (onClose) {
@@ -56,24 +60,24 @@ const EditPost = forwardRef(
         setTitle(event.target.value);
     };
 
-    // select image from browser
-    const handleFileUpload = (event) => {
-        const imageUUID = uuidv4();
-        setImageID(`${authorData.id}/posts/${imageUUID}`)
-        setImageFile(event.target.files[0]);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImageBase64(reader.result);
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    };
+    // // select image from browser
+    // const handleFileUpload2 = (event) => {
+    //     const imageUUID = uuidv4();
+    //     setImageID(`${authorData.id}/posts/${imageUUID}`)
+    //     setImageFile(event.target.files[0]);
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //         setImageBase64(reader.result);
+    //     };
+    //     reader.readAsDataURL(event.target.files[0]);
+    // };
 
-    // delete image
-    const handleDeleteImage = () => {
-        setImageFile(null);
-        setImageBase64(null);
-        setImageID("");
-    }
+    // // delete image
+    // const handleDeleteImage = () => {
+    //     setImageFile(null);
+    //     setImageBase64(null);
+    //     setImageID("");
+    // }
 
     // get followers to send a public post
     async function getFollowers() {
@@ -85,62 +89,12 @@ const EditPost = forwardRef(
         return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
     }
 
-    const sendImagePost = async() => {
-        // const postUUID = uuidv4();
-        sendPost();
-        axios
-        .post(`/authors/${authorID}/inbox/`, {
-            "type": "post",
-            "id": `${imageID}`,
-            "source": `${imageID}`,
-            "origin": `${imageID}`,
-            "title": titleText,
-            "contentType": imageFile.type + ";base64",
-            "content": imageBase64,
-            "author": authorData,
-            "unlisted": true,
-            "visibility": "PUBLIC"
-        },
-        {
-            headers: {
-                "Authorization": tokens[window.location.hostname]
-            }
-        }).catch((error) => {
-            console.log("Error sending image post to current author's inbox: ", error)
-        });
-        
-        // Might not need to send to followers' inboxes
-        
-        // .then((response) => {
-        //     const p3image = getFollowers()
-        //     const p4image = p3image.then((response2) => {
-        //         const requestPromises = response2.map(obj => {
-        //             axios.post(obj[0], response.data, {
-        //                 headers: {
-        //                     "Authorization": tokens[obj[1]]
-        //                 }
-        //             });
-        //         })
-        //         Promise
-        //         .all(requestPromises)
-        //         .then((responses) => {
-        //             console.log('All requests sent successfully:', responses);
-        //         })
-        //         .catch((error) => {
-        //             console.error('Error sending requests:', error);
-        //         })
-        //     })
-        // });
-    }
-
     const sendPost = async () => {
-        const postUUID = postID;
         const data = {
             "type": "post",
-            // "id": `${authorData.id}/posts/${postUUID}`,
             "id": postID,
-            "source": `${authorData.id}/posts/${postUUID}`,
-            "origin": `${authorData.id}/posts/${postUUID}`,
+            "source": `${authorData.id}/posts/${postID}`,
+            "origin": `${authorData.id}/posts/${postID}`,
             "title": titleText,
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
@@ -148,7 +102,7 @@ const EditPost = forwardRef(
         }
 
         console.log("DATA!", postID);
-        console.log(postAuthorID);
+
         const p1 = axios
         // .post(`/authors/${authorID}/inbox/`, data, {
         .post(postID+"/", data, {
@@ -160,11 +114,10 @@ const EditPost = forwardRef(
             console.log(error)})
         
         const p2 = p1.then((response) => {
-            handleDeleteImage();
+            // handleDeleteImage();
             // setPostsUpdated(response.data);
             setContent("");
             setTitle("");
-            handleDeleteImage();
             handleClose();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
@@ -230,10 +183,9 @@ const EditPost = forwardRef(
                 <div className="imgPreviewBox2">
                     {/* show the image in a preview box */}
                     <div className="imgPreview2">
-                        {imageBase64 && (
-                            <div className="imgContainer2">
-                                <img src={imageBase64} alt="Image Preview" />
-                                <button onClick={handleDeleteImage}>x</button>
+                        {contentType === "text/markdown" && (
+                            <div className="markdownPreview">
+                                <ReactMarkdown>{markdownImage}</ReactMarkdown>
                             </div>
                         )}
                     </div>
@@ -249,7 +201,7 @@ const EditPost = forwardRef(
                                 id="file" 
                                 accept="image/png, image/jpeg"
                                 style={{display:"none"}} 
-                                onChange={handleFileUpload}
+                                onChange={handleFileUpload2}
                             />
                             <label htmlFor="file">
                                 <div className="uploadImg2">
