@@ -33,7 +33,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -183,7 +183,7 @@ const Post = forwardRef(
           "type": "post",
           "id": `${authorData.id}/posts/${postUUID}`,
           // "source": `${authorData.id}/posts/${postUUID}`,
-          // "origin": `${authorData.id}/posts/${postUUID}`,
+          "origin": origin,
           "title": title,
           "contentType": contentType,
           "content": text,
