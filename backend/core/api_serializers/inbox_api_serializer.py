@@ -102,8 +102,10 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
         # Serialize inbox items based on type.
         if data_type == "post":
+            print("asdsa", print(author.id))
             post_serializer = PostSerializer(inbox_items, many=True)
             serializer = InboxItemsSerializer(data={
+                        'author': author.id,
                         'page': page,
                         'size': size,
                         'items': post_serializer.data
@@ -116,6 +118,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         elif data_type == "request":
             a_serializer = AuthorSerializer(inbox_items, many=True)
             serializer = InboxFollowRequestSerializer(data={
+                        'author': author.id,
                         'page': page,
                         'size': size,
                         'items': a_serializer.data
@@ -148,7 +151,9 @@ class InboxAPISerializer(serializers.ModelSerializer):
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = post_id_url[-1]
-            
+            print("\n\n\nPOST ID: ", post_id, "firedign author:  ", foreign_author_id,  "\n\n\n")
+            # request_data["id"] = request_data["id"].rstrip("/")
+
             # Check if current author is followed by foreign author to receive posts.
             if author_id != foreign_author_id and not follower_serializer.follower_exists(foreign_author_id, author_id):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
@@ -167,7 +172,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 "Authorization": f"{auth_header}"
             }
 
+            print("sending requset")
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+
+            print("\n\n GOT response\n\n", res.text, res.status_code)
+
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 # create new inbox entry referencing the post send to inbox.

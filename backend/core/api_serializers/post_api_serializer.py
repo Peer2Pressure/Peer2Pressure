@@ -51,6 +51,8 @@ class PostAPISerializer(serializers.ModelSerializer):
         return post_data
 
     def add_new_post(self, author_id, request_data, post_id=None):
+        print("\n\n ADDING", request_data, type(request_data), "\n\n")
+
         if not author_serializer.author_exists(author_id):
             return {"msg": "Author does not exist."}, 404
 
@@ -63,6 +65,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         errors = {}
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
+            print("\n\n ADDING", validated_post_data, type(validated_post_data), "\n\n")
 
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["contentType"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
@@ -80,7 +83,9 @@ class PostAPISerializer(serializers.ModelSerializer):
             if post_id:
                 validated_post_data["m_id"] = post_id
             post = serializer.create(validated_post_data)
+            print("ADD\n\n", validated_post_data)
             post.save()
+            print("SAVEEDDD\n\n")
             return PostSerializer(post).data, 201
 
         else:
@@ -132,6 +137,8 @@ class PostAPISerializer(serializers.ModelSerializer):
         except ValidationError as e:
             return {"msg": str(e)}, 404
         
+        print("\n\nUPDATING ", request_data, type(request_data), "\n\n")
+
         valid_content_types = ["text/markdown", "text/plain", "application/base64"]
         valid_image_content_types = ["image/png;base64", "image/jpeg;base64"]
 
@@ -157,7 +164,9 @@ class PostAPISerializer(serializers.ModelSerializer):
                 return errors, 400
 
             validated_post_data.pop("author")
+            print("UPDATE\n\n", validated_post_data)
             serializer.save()
+            print("SAving 1112 update \n\n",)
             post = post_serializer.get_author_post(author_id, post_id)
             return PostSerializer(post).data, 200
         else:

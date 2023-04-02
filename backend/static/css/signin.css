@@ -30,7 +30,7 @@ body {
 .signinLeft {
     width: 40%;
     justify-content: center;
-    background-color: rgb(48, 124, 136);
+    background-color: #2C4268;
     /* background-color: rgb(48, 124, 136); */
 
 }
@@ -113,7 +113,7 @@ body {
     width: 150px;
     border-radius: 50px;
     border: none;
-    background-color: rgb(48, 124, 136);
+    background-color: #324a73f0;
     color: white;
     font-size: 25px;
     font-weight: 300;
@@ -122,7 +122,7 @@ body {
 }
 
 .signinButton:hover {
-    background-color: rgba(48, 124, 136, 0.6);
+    background-color: #2C4268;
 }
 
 .joinBox{
@@ -148,12 +148,12 @@ body {
 .join-button-text {
     margin-left: 0.5em;
     font-family: 'Lato', sans-serif;
-    color: rgb(58, 145, 159);
+    color: #324a73f0;
     font-weight: 700;
     text-decoration: none;
 }
 
 .join-button-text:hover {
-    color: rgb(48, 124, 136);
+    color: #2C4268;
 }
 
