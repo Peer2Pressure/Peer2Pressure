@@ -258,3 +258,11 @@ img {
   margin-left: 0.5rem;
   margin-top: 1px;
 }
+
+.repostInfoArea {
+  padding-left: 1.5rem;
+}
+
+.repostInfo {
+  font-size: 0.8rem;
+}

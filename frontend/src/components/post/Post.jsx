@@ -199,7 +199,7 @@ const Post = forwardRef(
         setSourceAuthorHost(new URL(response.data.host).hostname);
       })
       .catch((error) => {
-      console.log("error that u may or may not be able to ignore lol");
+      console.log("probably a nothing error when getting source author bc ur not authorized even tho i send in authorization?");
       });
     }
     
@@ -358,7 +358,8 @@ const Post = forwardRef(
           {id !== source && (
               sourceAuthorDisplayName && (
                 <div className="repostInfo">
-                Reposted from {sourceAuthorDisplayName} @{sourceAuthorHost}
+                  <b>
+                <span>Reposted from {sourceAuthorDisplayName}@{sourceAuthorHost}</span></b>
                 </div>
               )
           )}
