@@ -45,14 +45,23 @@ const Post = forwardRef(
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
-    const postIdSplit = id.split("/")
-    const postAuthorID = postIdSplit[4];
-    const postID = postIdSplit[6];
+    const postIdSplit = id.replace(/\/$/, "").split("/");
+    const postID = id.replace(/\/$/, "").split("/").pop();
+    const postAuthorID = postIdSplit[postIdSplit.length - 3];
+    
     // console.log("postIDSplit: " + postIdSplit);
     // console.log("postAuthorID: " + postAuthorID);
-    // console.log("postID: " + postID);
+
 
     const open = Boolean(anchorEl);
+    // console.log("id:",id);
+    // console.log("displayName:",displayName);
+    // console.log("username:",username);
+    // console.log("text:",text);
+    // console.log("image:",image);
+    // console.log("likes:",likes);
+    // console.log("comments:",comments);
+    // console.log("contentType:",contentType);
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -152,10 +161,44 @@ const Post = forwardRef(
       setShowCommentArea(!showCommentArea);
     };
 
-    const handleCommentSubmit = (event) => {
+    const handleCommentSubmit = async (event) => {
       event.preventDefault();
-      console.log(commentText); // Need to replace this with a post request to the API
-      setCommentText("");
+      console.log("comment submitted;", id);
+      console.log("Hostname;",comments);
+      console.log("This is the m_id;", authorID);
+      console.log("This is the m_data;", authorData);
+      console.log("This is the KEY;", id);
+        try {
+          const data = {
+            type: 'comment',
+               author: {
+                    type: 'author',
+                    id: authorData.id,
+                    url: authorData.id,
+                    host: authorData.host,
+                    displayName: authorData.displayName,
+                    github: null,
+                    profileImage: null    
+            },
+            comment: commentText,
+            contentType: 'text/markdown',
+            object: id
+          };
+        const response = await axios.post(`${id}/inbox`, data, {
+        }, {
+          headers: {
+            'Authorization': tokens[new URL (comments).hostname],
+        },
+      });
+    
+        // Do something with the response, such as displaying the new comment
+        console.log("This is post",response.data);
+    
+        // Clear the comment text area
+        setCommentText('');
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     return (
