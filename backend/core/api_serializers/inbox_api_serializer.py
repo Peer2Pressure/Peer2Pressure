@@ -145,8 +145,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 follower_serializer = FollowerSerializer(data=request_data)
 
                 if follower_serializer.is_valid():
-                    to_author_id = urlparse(request_data["object"]["id"]).rstrip("/").split("/")[-1]
-                    from_author_id = urlparse(request_data["actor"]["id"]).rstrip("/").split("/")[-1]
+                    to_author_id = urlparse(request_data["object"]["id"]).path.rstrip("/").split("/")[-1]
+                    from_author_id = urlparse(request_data["actor"]["id"]).path.rstrip("/").split("/")[-1]
                     follow = follower_serializer.get_relation_by_ids(to_author_id, from_author_id)
                     object_id = follow.m_id
                 
@@ -154,8 +154,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 post_serializer = PostSerializer(data=request_data)
 
                 if post_serializer.is_valid():
-                    post_author_id = urlparse(request_data["author"]["id"]).rstrip("/").split("/")[-1]
-                    post_id = urlparse(request_data["id"]).rstrip("/").split("/")[-1]
+                    post_author_id = urlparse(request_data["author"]["id"]).path.rstrip("/").split("/")[-1]
+                    post_id = urlparse(request_data["id"]).path.rstrip("/").split("/")[-1]
                     post = post_serializer.get_author_post(post_author_id, post_id)
                     object_id = post.m_id
 
