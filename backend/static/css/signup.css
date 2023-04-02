@@ -26,11 +26,32 @@ body {
 .registerLeft{
     width: 40%;
     justify-content: center;
-    background-color: #2C4268;
+    /* background-color: #2C4268; */
     /* flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center; */
+    background-image: radial-gradient(circle at center, #2C4268 0%, #23233B);
+    backdrop-filter: blur(5px);
+}
+
+@keyframes animatedGradient {
+    from {
+      background-size: 100%;
+    }
+  
+    to {
+      background-size: 300%;
+    }
+  }
+
+.registerLeft > h1 {
+    background: radial-gradient(circle, #EBEBEB 0%, #BCE3FA 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: animatedGradient 2s infinite ease;
+    animation-direction: alternate;
 }
 
 .registerRight {

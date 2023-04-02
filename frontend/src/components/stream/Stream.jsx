@@ -63,6 +63,7 @@ function Stream(props) {
   const sortedInboxPosts = inboxPosts.sort((a, b) => {
     return new Date(b.published) - new Date(a.published);
   });
+
   return (
     <div className="stream">
         <Flipmove className="flippy">
@@ -80,6 +81,7 @@ function Stream(props) {
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
+                fullHost = {post.author.host}
                 // likes={post.like}
               />
             </div>
