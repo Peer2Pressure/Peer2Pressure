@@ -95,8 +95,14 @@ const Post = forwardRef(
                     >
                       {close => (
                         <>
-                          <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={postAuthorID}/>
-                          <button class="close" onClick={close}>x</button>
+                          <EditPost 
+                            postID={id} 
+                            postTitle={title} 
+                            postText={text} 
+                            postContentType={contentType} 
+                            postAuthorID={postAuthorID}
+                            onClose={close}/>
+                          <button class="closeButton" onClick={close}>x</button>
                         </>
                       )}
                   </Popup>

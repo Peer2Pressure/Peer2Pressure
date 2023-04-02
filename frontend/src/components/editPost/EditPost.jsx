@@ -16,7 +16,7 @@ import 'react-dropdown/style.css';
 
 
 const EditPost = forwardRef(
-    ({ postID, postTitle, postText, postContentType, postAuthorID}, ref) => {
+    ({ postID, postTitle, postText, postContentType, postAuthorID, onClose }, ref) => {
     // const {setPostsUpdated} = props;
     const [contentText, setContent] = useState(postText);
     const [titleText, setTitle] = useState(postTitle);
@@ -34,6 +34,12 @@ const EditPost = forwardRef(
        
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
+
+    const handleClose = () => {
+        if (onClose) {
+            onClose();
+        }
+    };
 
     // change contentType
     function handleContentTypeChange(option) {
@@ -159,6 +165,7 @@ const EditPost = forwardRef(
             setContent("");
             setTitle("");
             handleDeleteImage();
+            handleClose();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
                 
