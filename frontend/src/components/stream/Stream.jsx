@@ -69,6 +69,7 @@ function Stream(props) {
                 contentType={post.contentType}
                 title={post.title}
                 origin={post.origin}
+                visibility={post.visibility}
                 // likes={post.like}
               />
             </div>

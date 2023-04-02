@@ -33,7 +33,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin, visibility }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -46,6 +46,7 @@ const Post = forwardRef(
     const [authorLikedList, setAuthorLikedList] = useState([]);
     const [showShareOptions, setShowShareOptions] = useState(false);
     const [shareAnchorEl, setShareAnchorEl] = useState(null);
+    const [shareVisibility, setShareVisibility] = useState(null);
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
@@ -167,7 +168,14 @@ const Post = forwardRef(
       setShareAnchorEl(event.currentTarget);
     };
 
-    // get followers to send a public post
+    useEffect(() => {
+      if (shareVisibility !== null) {
+        sendPost();
+      }
+    }, [shareVisibility]);
+    
+
+    // get followers to send a post
     async function getFollowers() {
       const response = await axios.get(`/authors/${authorID}/followers/`, {
           headers:{
@@ -177,7 +185,8 @@ const Post = forwardRef(
       return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
     }
 
-    const sendPublicPost = async () => {
+    const sendPost = async () => {
+      console.log("vis", shareVisibility);
       const postUUID = uuidv4();
       const data = {
           "type": "post",
@@ -188,6 +197,7 @@ const Post = forwardRef(
           "contentType": contentType,
           "content": text,
           "author": authorData,
+          "visibility": shareVisibility
       }
 
       console.log("DATA!", data);
@@ -201,7 +211,8 @@ const Post = forwardRef(
           console.log(error)})
       
       const p2 = p1.then((response) => {
-          const p3 = getFollowers()
+          setShareVisibility(null);
+          const p3 = getFollowers();
           const p4 = p3.then((response2) => {
               
               //  Custom payload to post to Team 11 inbox
@@ -340,10 +351,20 @@ const Post = forwardRef(
                   <RepeatOutlinedIcon fontSize="small" />
                   <Menu
                     anchorEl={shareAnchorEl}
-                    open={showShareOptions}>
-                    <MenuItem onClick={sendPublicPost}>Share Publically</MenuItem>   
-                    {/* // TODO: hide option if friends only post */}
-                    <MenuItem>Share to Friends</MenuItem>
+                    open={showShareOptions}
+                  >
+                    {visibility === "PUBLIC" && (
+                      <MenuItem onClick={() => {
+                        setShareVisibility("PUBLIC");
+                      }}>
+                        Share Publicly
+                      </MenuItem>
+                    )}
+                    <MenuItem onClick={() => {
+                        setShareVisibility("FRIENDS");
+                      }}>
+                        Share to Friends
+                      </MenuItem>
                   </Menu>
                 </div>
               </div>
