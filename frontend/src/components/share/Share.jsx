@@ -264,6 +264,16 @@ function Share (props) {
                     </div>
                 </div>
 
+                <div className="dmInfo">
+                    <div className="dmInfoText">
+                        {selectedUser && (
+                            <div className="dmInfoTextContainer">
+                                <p>Direct Message to <i>{selectedUser.displayName}</i></p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="bottom">
                     <div className="postOptionsContainer">
                         {/* actual image choice */}
