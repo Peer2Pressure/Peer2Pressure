@@ -67,6 +67,7 @@ const Post = forwardRef(
     };
 
     // console.log("HOST: ", host);
+    // console.log(authorData.id)
 
     return (
       <div className="post" ref={ref}>
@@ -87,7 +88,7 @@ const Post = forwardRef(
               </div>
               <span className="post_headerMenu">
                 <div className="post__edit">
-                  {authorData.id == postAuthorID && (
+                  {authorData?.id === postAuthorID && (
                     <Popup 
                     trigger={<ModeEditIcon fontSize="small"/>}
                     modal={true}
@@ -102,7 +103,7 @@ const Post = forwardRef(
                             postContentType={contentType} 
                             postAuthorID={postAuthorID}
                             onClose={close}/>
-                          <button class="closeButton" onClick={close}>x</button>
+                          <button className="closeButton" onClick={close}>x</button>
                         </>
                       )}
                   </Popup>
