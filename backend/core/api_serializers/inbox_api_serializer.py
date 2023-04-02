@@ -102,8 +102,10 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
         # Serialize inbox items based on type.
         if data_type == "post":
+            print("asdsa", print(author.id))
             post_serializer = PostSerializer(inbox_items, many=True)
             serializer = InboxItemsSerializer(data={
+                        'author': author.id,
                         'page': page,
                         'size': size,
                         'items': post_serializer.data
@@ -116,6 +118,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         elif data_type == "request":
             a_serializer = AuthorSerializer(inbox_items, many=True)
             serializer = InboxFollowRequestSerializer(data={
+                        'author': author.id,
                         'page': page,
                         'size': size,
                         'items': a_serializer.data
@@ -169,7 +172,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 "Authorization": f"{auth_header}"
             }
 
+            print("sending requset")
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+
+            print("\n\n GOT response\n\n", res.text, res.status_code)
+
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 # create new inbox entry referencing the post send to inbox.

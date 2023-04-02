@@ -27,10 +27,10 @@ class PostImageAPI(GenericAPIView):
         operation_description="Get a list of all followers for an author"
     )
     def get(self, request, author_id, post_id):
-        image, code = image_handler.get_image_from_base64(author_id, post_id)
+        image, content_type, code = image_handler.get_image_from_base64(author_id, post_id)
         if code == 200:
-            return HttpResponse(image, status=status.HTTP_200_OK)
+            return HttpResponse(image, content_type=content_type,status=status.HTTP_200_OK)
         elif code == 400:
-            return Response(image, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(image, content_type=content_type, status=status.HTTP_400_BAD_REQUEST)
         elif code == 404:
-            return Response(image, status=status.HTTP_404_NOT_FOUND)
+            return HttpResponse(image, content_type=content_type, status=status.HTTP_404_NOT_FOUND)

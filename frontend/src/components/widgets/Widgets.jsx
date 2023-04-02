@@ -34,7 +34,8 @@ function Widgets() {
     setIsLoading(true);
     let combinedUsers = [];
     apiEndpoints.forEach((endpoint) => {
-      const hostname = new URL(endpoint).hostname
+      const hostname = new URL(endpoint).hostname;
+
       let url = `${endpoint}/authors/`;
       if (hostname === "www.distribution.social") {
         url = `${endpoint}/authors`;
@@ -140,14 +141,11 @@ function Widgets() {
         });
       }
       let url = `${user.id.replace(/\/$/, "")}/inbox/`;
-      
       if (new URL(user.id).hostname === "www.distribution.social") {
         url = `${user.id.replace(/\/$/, "")}/inbox`;
       }
 
-      return axios.post(url, 
-      data, 
-      {
+      return axios.post(url, data, {
         maxRedirects: 3,
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
