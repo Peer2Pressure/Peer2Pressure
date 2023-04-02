@@ -69,7 +69,7 @@ function Stream(props) {
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
-                authorID={post.author.id}
+                postAuthorID={post.author.id}
               />
             </div>
           ))}

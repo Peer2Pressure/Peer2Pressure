@@ -197,3 +197,8 @@ img {
   width: 100%;
   display: flex;
 }
+
+.post__edit {
+  cursor: pointer;
+  margin: 10px;
+}

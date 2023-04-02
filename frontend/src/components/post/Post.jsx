@@ -13,6 +13,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import EditPost from "../editPost/EditPost";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import useGetAuthorData from "../../useGetAuthorData";
 
 
 // menu source: https://mui.com/material-ui/react-menu/
@@ -31,12 +32,13 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, likes, comments, contentType, title, authorID }, ref) => {
+  ({ id, host, displayName, username, text, avatar, likes, comments, contentType, title, postAuthorID }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -84,18 +86,22 @@ const Post = forwardRef(
                 </h3>
               </div>
               <span className="post_headerMenu">
-                <Popup 
-                  trigger={<ModeEditIcon fontSize="small"/>}
-                  modal={true}
-                  closeOnDocumentClick={false}
-                  >
-                    {close => (
-                      <>
-                        <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={authorID}/>
-                        <button class="close" onClick={close}>x</button>
-                      </>
-                    )}
-                </Popup>
+                <div className="post__edit">
+                  {authorData.id == postAuthorID && (
+                    <Popup 
+                    trigger={<ModeEditIcon fontSize="small"/>}
+                    modal={true}
+                    closeOnDocumentClick={false}
+                    >
+                      {close => (
+                        <>
+                          <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={postAuthorID}/>
+                          <button class="close" onClick={close}>x</button>
+                        </>
+                      )}
+                  </Popup>
+                  )}
+                </div>
                     {/* <IconButton
                       aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
                       id="long-button"
