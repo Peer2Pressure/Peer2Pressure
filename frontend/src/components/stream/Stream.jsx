@@ -7,11 +7,13 @@ import Post from "../post/Post";
 import useGetTokens from "../../useGetTokens";
 
 function Stream(props) {
-  const { postsUpdated } = props;
+  const { filterParam } = props;
   const {tokens, tokenError} = useGetTokens();
   const [inboxPosts, setInboxPosts] = useState(null);
   const [error, setError] = useState(null);
+  console.log("filterParam: ", filterParam);
 
+  if (filterParam) {
   useEffect(() => {
     axios.defaults.maxRedirects = 5;
     const interval = setInterval(() => {
@@ -37,7 +39,40 @@ function Stream(props) {
       getPosts();
     }, 1500);
     return () => clearInterval(interval);
-  }, [postsUpdated, tokens]);
+  }, [tokens]);
+}
+
+if (!filterParam) {
+  useEffect(() => {
+    axios.defaults.maxRedirects = 5;
+    const interval = setInterval(() => {
+      async function getPosts() {
+        try {
+          // let's get the author ID 
+          const response1 = await axios.get("/get_author_id/");
+          const authorId = response1.data.author_id;
+          
+          // let's get all the posts under for current author ID
+          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+            headers:{
+                "Authorization": tokens[window.location.hostname]
+            }
+          });
+          // Filter the posts based on the visibility variable
+          const privatePosts = response2.data.items.filter(post => post.visibility === 'private');
+          setInboxPosts(privatePosts);
+
+        } catch(error) {
+          setError(error);
+        };
+      };
+  
+      getPosts();
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [tokens]);
+}
+
 
   if (error) {
     return <div>Error: {error}</div>;

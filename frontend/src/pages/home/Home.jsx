@@ -16,7 +16,7 @@ import Tabs from '@mui/material/Tabs';
 
 
 const Home = () => {
-  const [postsUpdated, setPostsUpdated] = useState(false);
+  const [postsUpdated, setPostsUpdated] = useState(true);
   const [tabValue, setTabValue] = useState('1');
 
   const handleChange = (event, newValue) => {
@@ -48,8 +48,8 @@ const Home = () => {
               <Tab label="Direct Message" value="2" />
             </Tabs>
           </Box>
-          {tabValue === "1" && <Stream postsUpdated={postsUpdated} />}
-          {tabValue === "2" && <Stream postsUpdated={postsUpdated} />}
+          {tabValue === "1" && <Stream filterParam={true}/>}
+          {tabValue === "2" && <Stream filterParam={false}/>}
           
         </div>
         <div className="widgetContainer">
