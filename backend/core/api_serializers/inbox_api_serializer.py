@@ -3,6 +3,7 @@ import json
 from urllib.parse import urlparse
 import uuid
 import pprint
+from functools import lru_cache
 
 # Third-party libraries
 from django.core.paginator import Paginator
@@ -129,6 +130,41 @@ class InboxAPISerializer(serializers.ModelSerializer):
             else:
                 return serializer.errors, 400
     
+    def delete_inbox_item(self, author_id, request_data):
+        if not author_serializer.author_exists(author_id):
+            return {"msg": f"Author {author_id} not found"}, 404
+        
+        author = author_serializer.get_author_by_id(author_id)
+
+        object_id = None
+    
+        try:
+            object_id = None
+            if request_data["type"].lower() in ["follow", "accept"]:
+                follower_serializer = FollowerSerializer(data=request_data)
+
+                if follower_serializer.is_valid():
+                    to_author_id = urlparse(request_data["object"].id).rstrip("/").split("/")[-1]
+                    from_author_id = urlparse(request_data["actor"].id).rstrip("/").split("/")[-1]
+                    follow = follower_serializer.get_relation_by_ids(to_author_id, from_author_id)
+                    object_id = follow.m_id
+                
+            elif request_data["type"].lower() in ["post"]:
+                post_serializer = PostSerializer(data=request_data)
+
+                if post_serializer.is_valid():
+                    post_author_id = urlparse(request_data["author"]["id"]).rstrip("/").split("/")[-1]
+                    post_id = urlparse(request_data["id"]).rstrip("/").split("/")[-1]
+                    post = post_serializer.get_author_post(post_author_id, post_id)
+                    object_id = post.m_id
+
+            inbox_item = Inbox.objects.get(object_id=object_id)
+            inbox_item.delete()
+        except ValidationError:
+            return {"msg": f"Could not delete inbox object does not exist"}, 404
+
+        return {"msg": "Inbox item deleted"}, 200
+
     def handle_post(self, author_id, request_data, auth_header):
         """
         Handle post request send to inbox.
@@ -191,6 +227,10 @@ class InboxAPISerializer(serializers.ModelSerializer):
         else: 
             return serializer.errors, 400
 
+    @lru_cache(maxsize=None)  # Use maxsize=None for an unbounded cache size
+    def create_or_update_post(method, url, headers, data):
+        res = requests.request(method=method, url=url, headers=headers, data=data)
+        return res
     
     def handle_follow_request(self, author_id, request_data, auth_header):
         follow_serializer = FollowerSerializer(data=request_data)
