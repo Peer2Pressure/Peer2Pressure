@@ -137,6 +137,7 @@ function Widgets() {
         });
       }
       return axios.post(`${user.id.replace(/\/$/, "")}/inbox/`, data, {
+        maxRedirects: 3,
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
