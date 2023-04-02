@@ -1,5 +1,7 @@
 import "./share.css";
 
+import Followers from "../followers/Followers";
+
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,6 +13,7 @@ import useGetTokens from "../../useGetTokens";
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch, Button } from "@mui/material";
 
+import Popup from "reactjs-popup";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
@@ -21,12 +24,14 @@ function Share (props) {
     const [contentText, setContent] = useState("");
     const [titleText, setTitle] = useState("");
     const [message, setMessage] = useState();
+    const [selectedUser, setSelectedUser] = useState(null);
     const visibilityOptions = [
         { value: 'PUBLIC', label: 'Public' },
-        { value: 'FRIENDS', label: 'Friends Only' },
+        { value: 'FRIENDS', label: 'Friends' },
         { value: 'DM', label: 'Select Friend' }
     ];
     const [visibility, setVisibility] = useState(visibilityOptions[0].value);
+    const [showPopup, setShowPopup] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
@@ -44,7 +49,21 @@ function Share (props) {
     // change visibility
     function handleVisibilityChange(option) {
         setVisibility(option.value);
+        if (option.value === "DM") {
+            setShowPopup(true);
+        } else {
+            setSelectedUser(null);
+            setShowPopup(false);
+        }
     }
+
+    // TODO: if selectedUser is null and visibility is DM, show error message
+
+    // change selected user
+    const handleSelectUser = (user) => {
+        setSelectedUser(user);
+        setShowPopup(false);
+    };
 
     // change contentType
     function handleContentTypeChange(option) {
@@ -79,14 +98,19 @@ function Share (props) {
         setImageID("");
     }
 
-    // get followers to send a public post
+    // get followers to send a post
     async function getFollowers() {
         const response = await axios.get(`/authors/${authorID}/followers/`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
+        if (selectedUser) {  
+            console.log("working")
+            return [[selectedUser.id.replace(/\/$/, "") +"/inbox/", new URL(selectedUser.host).hostname]];
+        } else {
+            return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
+        }
     }
 
     const sendImagePost = async() => {
@@ -116,29 +140,6 @@ function Share (props) {
         .then((res) => {
             sendPost();
         })
-        
-        // Might not need to send to followers' inboxes
-        
-        // .then((response) => {
-        //     const p3image = getFollowers()
-        //     const p4image = p3image.then((response2) => {
-        //         const requestPromises = response2.map(obj => {
-        //             axios.post(obj[0], response.data, {
-        //                 headers: {
-        //                     "Authorization": tokens[obj[1]]
-        //                 }
-        //             });
-        //         })
-        //         Promise
-        //         .all(requestPromises)
-        //         .then((responses) => {
-        //             console.log('All requests sent successfully:', responses);
-        //         })
-        //         .catch((error) => {
-        //             console.error('Error sending requests:', error);
-        //         })
-        //     })
-        // });
     }
 
     const sendPost = async () => {
@@ -170,10 +171,13 @@ function Share (props) {
             setPostsUpdated(response.data);
             setContent("");
             setTitle("");
+            setVisibility("PUBLIC");
+            setSelectedUser(null);
+            setShowPopup(false);
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
-                
+                console.log("p3", p3);
                 //  Custom payload to post to Team 11 inbox
                 const team11Data = {};
                 team11Data["@context"] = "";
@@ -277,7 +281,7 @@ function Share (props) {
                                         fontSize="small"     
                                         color="primary"
                                     />
-                                    <b> Upload a Photo</b>
+                                    <b> Upload Photo</b>
                                 </div>
                             </label>
                         </div>
@@ -288,6 +292,13 @@ function Share (props) {
                                 value={visibility}
                                 onChange={handleVisibilityChange}
                             />
+                            <Popup 
+                                open={showPopup} 
+                                modal={true}
+                                onClose={() => setShowPopup(false)}
+                                >
+                                <Followers onSelectUser={handleSelectUser} />
+                            </Popup>
                         </div>
                         {/* <div className="isPrivateSwitch">
                             <Switch
