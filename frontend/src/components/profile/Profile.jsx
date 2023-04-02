@@ -28,7 +28,16 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
+  const handleLogoutClick = async () => {
+    try {
+      await axios.get("/accounts/logout/");
+      // navigate("/accounts/login/");
+      navigate(0);
+      console.log("logged out");
+    } catch (err) {
+      console.log(err);
+    } 
+  };
   // const { authorData, loading, error, authorID } = useGetAuthorData();
   useEffect(() => {
     const getAuthorData = async () => {
@@ -66,17 +75,27 @@ export default function Profile() {
   return (
     <div>
         <div className="profileBox">
-          <div className="editButtonContainer">
-            <IconButton aria-label="edit" color="primary" onClick={()=> navigate('/profilepage')}>
-              <EditIcon/>
-            </IconButton>
+          <div className="topContainer">
+            <div className="editButtonContainer">
+              <IconButton aria-label="edit" color="primary" onClick={()=> navigate('/profilepage')}>
+                <EditIcon/>
+              </IconButton>
+            </div>
+            <div className="authorContainer">
+              <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
+              <h1 className="nameTitle">
+                  {authorData?.displayName}
+                  {/* {data?.displayName} <-- what we actually need to display*/} 
+              </h1>
+            </div>
           </div>
-            <Avatar src={authorData?.profileImage} sx={{width:100, height:100}}/>
-            <h1 className="nameTitle">
-                {authorData?.displayName}
-                {/* {data?.displayName} <-- what we actually need to display*/} 
-            </h1>
+          <div className="logoutContainer">    
+            <div className="logoutButton">
+              <Button variant="text" onClick={handleLogoutClick}>Logout</Button>
+            </div>
+          </div>
         </div>
+        
     </div>
   )
 }
