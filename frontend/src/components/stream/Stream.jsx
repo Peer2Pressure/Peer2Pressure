@@ -68,7 +68,6 @@ function Stream(props) {
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
-                object={post.id}
                 // likes={post.like}
               />
             </div>
