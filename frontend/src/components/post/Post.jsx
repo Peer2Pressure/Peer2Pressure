@@ -16,6 +16,7 @@ import useGetTokens from "../../useGetTokens";
 import axios from "axios";
 import { useEffect } from "react";
 import Comment from "../comment/Comment";
+import { v4 as uuidv4 } from 'uuid';
 
 // menu source: https://mui.com/material-ui/react-menu/
 
@@ -166,6 +167,89 @@ const Post = forwardRef(
       setShareAnchorEl(event.currentTarget);
     };
 
+    // get followers to send a public post
+    async function getFollowers() {
+      const response = await axios.get(`/authors/${authorID}/followers/`, {
+          headers:{
+              "Authorization": tokens[window.location.hostname]
+          }
+      });
+      return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
+    }
+
+    const sendPublicPost = async () => {
+      const postUUID = uuidv4();
+      const data = {
+          "type": "post",
+          "id": `${authorData.id}/posts/${postUUID}`,
+          // "source": `${authorData.id}/posts/${postUUID}`,
+          // "origin": `${authorData.id}/posts/${postUUID}`,
+          "title": title,
+          "contentType": contentType,
+          "content": text,
+          "author": authorData,
+      }
+
+      console.log("DATA!", data);
+      const p1 = axios
+      .post(`/authors/${authorID}/inbox/`, data, {
+          headers: {
+              "Authorization": tokens[window.location.hostname]
+          }
+      })
+      .catch((error) => {
+          console.log(error)})
+      
+      const p2 = p1.then((response) => {
+          const p3 = getFollowers()
+          const p4 = p3.then((response2) => {
+              
+              //  Custom payload to post to Team 11 inbox
+              const team11Data = {};
+              team11Data["@context"] = "";
+              team11Data["summary"] = "";
+              team11Data["type"] = "post";
+              team11Data["author"] = authorData;
+              team11Data["object"] = response.data;
+              
+              console.log(team11Data);
+              
+              const localRequests = response2.map(obj => {
+                  if (obj[1] === window.location.hostname) {
+                      axios.post(obj[0], response.data, {
+                          maxRedirects: 3,
+                          headers: {
+                              "Authorization": tokens[obj[1]]
+                          }
+                      })
+                      .then((r) => {
+                          console.log("Response", r)
+                      });
+                  }
+              }) 
+              
+              const requestPromises = response2.map(obj => {
+                  if (obj[1] !== window.location.hostname) {
+                      axios.post(obj[0], obj[1] !== "quickcomm-dev1.herokuapp.com" ? response.data : team11Data, {
+                          maxRedirects: 3,
+                          headers: {
+                              "Authorization": tokens[obj[1]]
+                          }
+                      });
+                  }
+              })
+              Promise
+              .all(requestPromises)
+              .then((responses) => {
+                  console.log('All requests sent successfully:', responses);
+              })
+              .catch((error) => {
+                  console.error('Error sending requests:', error);
+              })
+          })
+      })
+    }
+
     return (
       <div className="post" ref={ref}>
         <div className="placeHolder">
@@ -257,7 +341,7 @@ const Post = forwardRef(
                   <Menu
                     anchorEl={shareAnchorEl}
                     open={showShareOptions}>
-                    <MenuItem>Share Publically</MenuItem>   
+                    <MenuItem onClick={sendPublicPost}>Share Publically</MenuItem>   
                     {/* // TODO: hide option if friends only post */}
                     <MenuItem>Share to Friends</MenuItem>
                   </Menu>
