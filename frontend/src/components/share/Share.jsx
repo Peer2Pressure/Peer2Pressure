@@ -75,7 +75,7 @@ function Share (props) {
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
+        return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
     }
 
     const sendImagePost = async() => {
@@ -138,8 +138,8 @@ function Share (props) {
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
-            "image_url": imageID ? imageID+"/image" : ""
         }
+
         console.log("DATA!", data);
         const p1 = axios
         .post(`/authors/${authorID}/inbox/`, data, {
@@ -158,8 +158,19 @@ function Share (props) {
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
+                
+                //  Custom payload to post to Team 11 inbox
+                const team11Data = {};
+                team11Data["@context"] = "";
+                team11Data["summary"] = "";
+                team11Data["type"] = "post";
+                team11Data["author"] = authorData;
+                team11Data["object"] = response.data;
+                
+                console.log(team11Data);
+
                 const requestPromises = response2.map(obj => {
-                    axios.post(obj[0], response.data, {
+                    axios.post(obj[0], obj[1] !== "quickcomm-dev1.herokuapp.com" ? response.data : team11Data, {
                         maxRedirects: 3,
                         headers: {
                             "Authorization": tokens[obj[1]]

@@ -51,9 +51,18 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             if urlparse(author.host).hostname == urlparse(BASE_HOST).hostname:
                 authors.append(author)
 
+        print("AUTHORS:  ", len(authors))
+
         if page and size:
             paginator = Paginator(authors, size)
+            print(paginator.num_pages)
+            # print(type(paginator.num_pages))
+            if page > paginator.num_pages:
+                return {}, 0
             authors = paginator.get_page(page)
+        
+
+
         
         authors_serializer = AuthorSerializer(authors, many=True)
         
