@@ -4,7 +4,7 @@ from drf_yasg import openapi
 from django.urls import path, re_path, include
 from django.shortcuts import redirect, render
 
-from .views import account_views, author_views, follower_views, node_api, post_views, comment_views, like_views, inbox_views
+from .views import account_views, author_views, follower_views, node_api, post_views, comment_views, like_views, inbox_views, image_views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -31,7 +31,7 @@ urlpatterns = [
 
     # Author views
     path('get_author_id/', author_views.get_author_id, name="get_author_id"),
-    path('authors', author_views.AuthorListAPI.as_view(), name='author_list'),
+    path('authors/', author_views.AuthorListAPI.as_view(), name='author_list'),
     path('authors/<uuid:author_id>/', author_views.AuthorAPI.as_view(), name='author_api'),
 
     # Follower views
@@ -50,7 +50,7 @@ urlpatterns = [
     path('authors/<uuid:author_id>/posts/<uuid:post_id>/comments/<uuid:comment_id>/likes/', like_views.CommentLikeAPI.as_view(), name="comment_likes"),
 
    # Inbox views
-    path('authors/<uuid:author_id>/inbox', inbox_views.InboxAPI.as_view(), name="inbox"),
+    path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox"),
    #  path('authors/<uuid:author_id>/inbox/', inbox_views.InboxAPI.as_view(), name="inbox1"),
 
    # Liked Views
@@ -62,6 +62,9 @@ urlpatterns = [
    # Nodes
    path('nodes/tokens/', node_api.get_tokens, name="get_tokens"),
    path('nodes/hostnames/', node_api.get_hostnames, name="get_hostnames"),
-   path('nodes/api_endpoints/', node_api.get_api_endpoints, name="get_api_endpoints")
+   path('nodes/api_endpoints/', node_api.get_api_endpoints, name="get_api_endpoints"),
 
+   # Image
+   path('authors/<uuid:author_id>/posts/<uuid:post_id>/image', image_views.PostImageAPI.as_view(), name="post_image")
+   
 ]

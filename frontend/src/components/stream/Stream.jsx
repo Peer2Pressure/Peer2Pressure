@@ -13,6 +13,7 @@ function Stream(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    axios.defaults.maxRedirects = 5;
     const interval = setInterval(() => {
       async function getPosts() {
         try {
@@ -21,7 +22,7 @@ function Stream(props) {
           const authorId = response1.data.author_id;
           
           // let's get all the posts under for current author ID
-          const response2 = await axios.get("/authors/" + authorId + "/inbox", {
+          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
@@ -58,16 +59,17 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
-                id={post.author.id}
-                object={post.id}
+                postAuthorID={post.author.id}
+                id={post.id}
+                host={new URL(post.author.host).hostname}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
-                image={post.image}
                 avatar={post.author.profileImage}
-                likes={post.likes}
                 comments={post.comments}
                 contentType={post.contentType}
+                title={post.title}
+                // likes={post.like}
               />
             </div>
           ))}

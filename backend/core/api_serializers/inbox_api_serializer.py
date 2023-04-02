@@ -85,7 +85,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # Get all inbox posts.
         if data_type == "post":
             inbox = author.inbox.all().filter(type="post")    
-            inbox_items = [inbox_obj.content_object for inbox_obj in inbox]
+            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
         
         # Get all inbox follow requests.
         if data_type == "request":
@@ -96,6 +96,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # Paginate inbox items.
         if page and size:
             paginator = Paginator(inbox_items, size)
+            if page > paginator.num_pages:
+                return {}, 404
             inbox_items = paginator.get_page(page)
 
         # Serialize inbox items based on type.
@@ -146,7 +148,9 @@ class InboxAPISerializer(serializers.ModelSerializer):
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = post_id_url[-1]
-            
+            print("\n\n\nPOST ID: ", post_id, "firedign author:  ", foreign_author_id,  "\n\n\n")
+            # request_data["id"] = request_data["id"].rstrip("/")
+
             # Check if current author is followed by foreign author to receive posts.
             if author_id != foreign_author_id and not follower_serializer.follower_exists(foreign_author_id, author_id):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
@@ -234,8 +238,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
     def handle_like_request(self, author_id, request_data):
         try:
-            if not author_serializer.author_exists(author_id):
-                return {"msg": "Author does not exist."}, 404
+            # if not author_serializer.author_exists(author_id):
+            #     return {"msg": "Author does not exist."}, 404
         
             author = author_serializer.get_author_by_id(author_id)
 
@@ -244,15 +248,25 @@ class InboxAPISerializer(serializers.ModelSerializer):
             if post_like_serializer.is_valid():
                 validated_data = post_like_serializer.validated_data
 
-                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
-                foreign_author = author_serializer.get_author_by_id(foreign_author_id)
-
-                validated_data["author"] = foreign_author
-
                 post_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
                 post_id = post_id_url[-1]
                 post = post_serializer.get_author_post(author_id, post_id)
                 validated_data["post"] = post
+
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.rstrip('/').split('/')[-1]
+                try:
+                    foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+                except Exception as e:
+                    if str(e) == "Author does not exist":
+                        if post["visibility"] == "PUBLIC":
+                            foreign_author = AuthorSerializer(data=request_data["author"]).save()
+                        else:
+                            return "Author Needs to follow post author to like the post if the post visibility not PUBLIC", 400
+                    else:
+                        return str(e), 500
+
+                validated_data["author"] = foreign_author
+
                 post_like_object = post_like_serializer.save()
                 
                 inbox_post = Inbox.objects.create(content_object=post_like_object, author=author, type="like")
@@ -266,8 +280,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
     def handle_comment_like_request(self, author_id, request_data):
         try:
-            if not author_serializer.author_exists(author_id):
-                return {"msg": "Author does not exist."}, 404
+            # if not author_serializer.author_exists(author_id):
+            #     return {"msg": "Author does not exist."}, 404
         
             author = author_serializer.get_author_by_id(author_id)
 
@@ -280,9 +294,37 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 validated_data = comment_like_serializer.validated_data
                 print("Comment Like Validated Data: ", validated_data)
 
-                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.rstrip('/').split('/')[-1]
                 print("Comment Liked by author: ", foreign_author_id)
-                foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+
+                comment_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
+                comment_id = comment_id_url[-1]
+                print("comment_id", comment_id)
+
+
+
+                
+                post_id = urlparse(request_data["object"]).path.rstrip('/').split('/')[-3]
+                print("post_id", post_id)
+
+
+                post = post_comment_serializer.get_comment_post(comment_id)
+                # post = post_comment_serializer.get_comment_by_id(author_id, post_id, comment_id)
+                try:
+                    foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+                except Exception as e:
+                    if str(e) == "Author does not exist":
+                        if post.visibility == "PUBLIC":
+                            foreign_author = AuthorSerializer(data=request_data["author"]).save()
+                        else:
+                            return "Author Needs to follow post author to like the post if the post visibility not PUBLIC", 400
+                    else:
+                        return str(e), 500
+
+                    # if str(e) == "Author does not exist":
+                    #     foreign_author = AuthorSerializer(data=request_data["author"]).save()
+                    # else:
+                    #     return str(e), 500
 
                 validated_data["author"] = foreign_author
 
@@ -296,13 +338,13 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
                 # post_url = urlparse(request_data["object"]).path.rfind('/comments/')
 
-                post_id = urlparse(request_data["object"]).path.rstrip('/').split('/')[-3]
-                print("post_id", post_id)
+                # post_id = urlparse(request_data["object"]).path.rstrip('/').split('/')[-3]
+                # print("post_id", post_id)
 
-                comment_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
-                comment_id = comment_id_url[-1]
-                print("comment_id", comment_id)
-                comment = post_comment_serializer.get_comment_by_id(author_id, post_id, comment_id)
+                # comment_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
+                # comment_id = comment_id_url[-1]
+                # print("comment_id", comment_id)
+                comment = post_comment_serializer.get_comment_by_id(comment_id)
                 validated_data["comment"] = comment
                 print("validated_data", validated_data)
                 print("Comment Like Serializer: ", comment_like_serializer)
@@ -320,8 +362,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
     
     def handle_comment_request(self, author_id, request_data):
         try:
-            if not author_serializer.author_exists(author_id):
-                return {"msg": "Author does not exist."}, 404
+            # if not author_serializer.author_exists(author_id):
+            #     return {"msg": "Author does not exist."}, 404
         
             author = author_serializer.get_author_by_id(author_id)
 
@@ -330,14 +372,25 @@ class InboxAPISerializer(serializers.ModelSerializer):
             if post_comment_serializer.is_valid():
                 validated_data = post_comment_serializer.validated_data
 
-                foreign_author_id = urlparse(request_data["author"]["id"]).path.split('/')[-1]
-                foreign_author = author_serializer.get_author_by_id(foreign_author_id)
-                validated_data["author"] = foreign_author
+                foreign_author_id = urlparse(request_data["author"]["id"]).path.rstrip('/').split('/')[-1]
 
                 post_id_url = urlparse(request_data["object"]).path.rstrip('/').split('/')
                 post_id = post_id_url[-1]
                 post = post_serializer.get_author_post(author_id, post_id)
                 validated_data["post"] = post
+
+                try:
+                    foreign_author = author_serializer.get_author_by_id(foreign_author_id)
+                except Exception as e:
+                    if str(e) == "Author does not exist":
+                        if post["visibility"] == "PUBLIC":
+                            foreign_author = AuthorSerializer(data=request_data["author"]).save()
+                        else:
+                            return "Author Needs to follow post author to comment on the post if the post visibility not PUBLIC", 400
+                    else:
+                        return str(e), 500
+
+                validated_data["author"] = foreign_author
                 post_comment_object = post_comment_serializer.save()
                 
                 inbox_post = Inbox.objects.create(content_object=post_comment_object, author=author, type="comment")

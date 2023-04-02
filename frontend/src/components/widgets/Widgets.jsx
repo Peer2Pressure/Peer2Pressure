@@ -31,44 +31,47 @@ function Widgets() {
   }, [tokens, authorData, apiEndpoints]);
 
   const fetchAllUsers = async () => {
-    try {
-      setIsLoading(true);
-      const requestPromises = apiEndpoints.map(async (endpoint) => {
-        const hostname = new URL(endpoint).hostname
-        let url = `${endpoint}/authors`;
-        
-        // // Update host if host is localhost
-        // if (hostname === "localhost") {
-        //   url = `http://${window.location.host}/authors`;
-        //   console.log("this is a localhost", url)
-        // };
+    setIsLoading(true);
+    let combinedUsers = [];
+    apiEndpoints.forEach((endpoint) => {
+      const hostname = new URL(endpoint).hostname
+      const url = `${endpoint}/authors/`;
 
-        const response = await axios.get(url, {
+      try {
+        // axios({
+        //   method: "get",
+        //   url: url, 
+        //   maxRedirects: 3,
+        //   headers: {
+        //     'Authorization': tokens[hostname],
+        //   },
+        // })
+        axios.get(url, {
+          maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
           },
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            combinedUsers.push(...response.data.items)
+            setAllUsers(combinedUsers);
+          } 
+          else {
+            console.error(`Error fetching users from ${url}: response status is not 200 or response data is not an array`);
+          }
+        }).catch((error) => {
+          console.error(`Error fetching users from ${url}:`, error);
         });
-        return response.data;
-      });
-  
-      const results = await Promise.all(requestPromises);
-      const combinedUsers = results.flatMap((data) => {
-        if (Array.isArray(data.items)) {
-          console.log('Fetched users:', data.items);
-          return data.items;
-        } else {
-          console.error('Error fetching users: response data is not an array');
-          return [];
-        }
-      });
-      console.log('Combined users:', combinedUsers);
-      setAllUsers(combinedUsers);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      } 
+      catch (error) {
+        console.error(`Error fetching users from ${url}:`, error);
+      }
+    })
+    
+    setIsLoading(false);
+    return combinedUsers;
+  }
   
 
   const filterUsers = useCallback((query) => {
@@ -76,7 +79,6 @@ function Widgets() {
       const filteredUsers = allUsers.filter((user) => {
         return user.displayName !== authorData.displayName && user.displayName.toLowerCase().includes(query.toLowerCase());
       });
-      console.log('Filtered users:', filteredUsers);
       setDisplayedUsers(filteredUsers);
     }
   }, [allUsers, authorData]);
@@ -90,25 +92,29 @@ function Widgets() {
     filterUsers(searchTerm);
   };
 
-  const sendFollowRequest = async (user) => {
-    console.log('sendFollowRequest called');
-      
-    try {
-      // Check if already following
-      const response = await axios.get(`/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/`, {
-        headers: {
-          'Authorization': tokens[window.location.hostname],
-        },
-      });
+  const sendFollowRequest = (user) => {
+    // Check if already following
+    const followURL = `/authors/${user.id.replace(/\/$/, "").split("/").pop()}/followers/${authorID}/`;
+    axios.get(followURL, {
+      headers: {
+        'Authorization': tokens[window.location.hostname],
+      },
+    })
+    .then((response) => {
       console.log('Already following user', response.data.items);
-      const following = response.data.items.some((item) => item.id === authorData.id);
-      if (following) {
+      if (response.status === 200) {
         setFollowedUsers(true);
         setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
         return;
       }
+    })
+    .catch((error) => {
+      console.error('Author not following user', error);
+    })
+    .then(() => {
+      // Send follow request
       const data = {
-        type: "Follow",
+        type: "follow",
         summary: `${authorData.displayName} wants to follow ${user.displayName}`,
         actor: authorData,
         object: user,
@@ -119,16 +125,31 @@ function Widgets() {
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
       console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
-      await axios.post(`${user.id}/inbox`, data, {
+      if (new URL(user.host).hostname !== window.location.hostname) {
+        axios.put(followURL, data, {
+          headers: {
+            'Authorization': tokens[window.location.hostname],
+            },
+          }
+        )
+        .catch((error) => {
+          console.error('Error updating follow request on local server:', error);
+        });
+      }
+      return axios.post(`${user.id.replace(/\/$/, "")}/inbox/`, data, {
+        maxRedirects: 3,
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
       });
-      console.log('Follow request sent successfully.');
+    })
+    .then((response) => {
+      console.log('Follow request sent successfully.', response.data);
       setFollowedUsers((prev) => ({ ...prev, [user.id]: true }));
-    } catch (error) {
+    })
+    .catch((error) => {
       console.error('Error sending follow request:', error);
-    }
+    });
   };
 
   return (
@@ -167,5 +188,5 @@ function Widgets() {
         );
       }
       
-      export default Widgets;
+export default Widgets;
               

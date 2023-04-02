@@ -61,7 +61,7 @@ def get_hostnames(request):
     }
 
     for client in client_servers:
-        hostname = urlparse(client.host).hostname
+        hostname = urlparse(client.api_endpoint).hostname
         response["items"].append(hostname)
 
     return JsonResponse(response, status=status.HTTP_200_OK)

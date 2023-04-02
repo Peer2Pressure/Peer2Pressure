@@ -97,8 +97,6 @@ class Post(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.URLField(default="")
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
-    image = models.ImageField(upload_to='post_images', blank=True, null=True)
-    image_url = models.URLField(default="")
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     visibility = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="PUBLIC")
@@ -193,3 +191,10 @@ class Inbox(AbstractModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     created_at = models.DateTimeField(default=timezone.now)
     
+    def __str__(self):
+        return str(self.object_id)
+
+    # post = 1
+    # comment =1
+    # post_like = 2
+    # comment_like = 3
