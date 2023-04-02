@@ -167,7 +167,7 @@ const Post = forwardRef(
       console.log("Hostname;",comments);
       console.log("This is the m_id;", authorID);
       console.log("This is the m_data;", authorData);
-      console.log("This is the KEY;", object);
+      console.log("This is the KEY;", id);
         try {
           const data = {
             type: 'comment',
