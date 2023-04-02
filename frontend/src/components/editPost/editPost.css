@@ -1,0 +1,198 @@
+
+.share2 {
+    visibility: visible;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    /* position: relative; */
+    height: fit-content;
+    max-width: 600px;
+    /* border: 1px solid red; */
+    width: 100%;
+    margin-right: 20px;
+}
+
+.shareCard2 {
+    display: flex;
+    /* min-width: 600px; */
+    flex-direction: column;
+    height: fit-content;
+    /* background-color: white; */
+    /* border: 1px solid black; */
+    /* height: 250px; */
+    height: fit-content;
+    align-content: space-between;
+    /* background-color: rgba(255, 255, 255, 0.9); */
+    border-radius: 20px;  
+    /* box-shadow:  25px 25px 49px #dde3ede4, */
+                    /* -25px -25px 49px #ffffff; */
+}
+
+.top2 {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.titleBox2 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.imgPreviewBox2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom2 {
+    padding-top: 0.5rem;
+    margin-bottom: 0.5em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* border: 1px solid black; */
+}
+
+.postOptionsContainer2 {
+    margin-left: 2em;
+    display: flex;
+    flex-direction: row;
+}
+
+.postButton2{
+    height: max-content;
+    border-radius: 20px;
+    border: none;
+    /* background-color: #2977c9; */
+    color: white;
+    font-size: 1.4rem;
+    padding: 0rem 0.5rem;
+    /* font-weight: 800; */
+    cursor: pointer;
+    width: fit-content;
+}
+
+.textBox2, .titleField2 {
+    width: fit-content;
+    height: fit-content;
+}
+
+input[name="title"] {
+    min-width: 30rem;
+    width: fit-content;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    border: none;
+    background-color: rgba(222, 222, 222, 0.5);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+input[name="title"]:focus {
+    outline: 0;
+}
+
+textarea {
+    min-width: 30rem;
+    width: fit-content;
+    padding: 2rem;
+    border-radius: 20px;
+    border: none;
+    background-color: rgba(222, 222, 222, 0.5);
+    resize: none;
+}
+
+textarea:focus {
+    outline: 0;
+}
+
+.shareText2:hover, .shareImage2:hover, .uploadImg2:hover {
+    color: rgb(22, 67, 113);
+    cursor: pointer;
+    
+}
+
+.shareText2, .shareImage2, .isPrivateSwitch2, .uploadImg2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.uploadImg2 {
+    column-gap: 8px;
+}
+
+
+.postButtonBox2 {
+    height: auto;
+    display: flex;
+    justify-content: right;
+    /* padding-right: 1rem;
+    padding-bottom: 1rem; */
+    padding-right: 1.75em;
+    /* border: 1px solid red; */
+}
+
+.imgPreview2 {
+    /* border: 1px solid black; */
+    width: fit-content;
+    /* position: relative; */
+    /* padding-left: 3rem; */
+}
+
+img {
+    max-width: 10rem;
+    max-height: 10rem;
+}
+
+.imgContainer2 {
+    position: relative;
+    width: fit-content;
+    padding-left: 2rem;
+}
+
+.imgContainer2 button {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    background-color: red;
+    color: white;
+    font-size: 0.8rem;
+    padding-bottom: 0.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 100%;
+  }
+
+.chooseContentType2 {
+    margin-left: 1.5rem;
+}
+
+.Dropdown-root {
+    font-weight: bold;
+}
+
+.Dropdown-control {
+    border-radius: 10px !important;
+    /* padding: 8px 40px 8px 10px !important; */
+}
+
+.Dropdown-menu {
+    font-weight: bold;
+    border-radius: 10px !important;
+}
+
+.popup-content {
+    border-radius: 20px;
+    max-width: 600px;
+}

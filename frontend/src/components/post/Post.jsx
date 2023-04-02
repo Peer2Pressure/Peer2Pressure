@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import EditPost from "../editPost/EditPost";
 
 
 // menu source: https://mui.com/material-ui/react-menu/
@@ -29,12 +30,11 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, likes, comments, contentType, title }, ref) => {
+  ({ id, host, displayName, username, text, avatar, likes, comments, contentType, title, authorID }, ref) => {
     const [like, setLike] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
-    const [showEditPopup, setShowEditPopup] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -63,18 +63,22 @@ const Post = forwardRef(
       setCommentText("");
     };
 
-    const handleEditPost = () => {
-      setShowEditPopup(true);
-      console.log("Test");
-    }
-
     // console.log("HOST: ", host);
 
     return (
       <div className="post" ref={ref}>
-        <Popup trigger={<button className="button"> Open Modal </button>} modal>
-    <span> Modal content </span>
-  </Popup>
+        <Popup 
+          trigger={<MenuItem>{"Edit"}</MenuItem>}
+          modal={true}
+          closeOnDocumentClick={false}
+          >
+            {close => (
+              <>
+                <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={authorID}/>
+                <button class="close" onClick={close}>x</button>
+              </>
+            )}
+        </Popup>
         <div className="placeHolder">
           <div className="post__avatar">
             <Avatar src={avatar} />
@@ -116,10 +120,20 @@ const Post = forwardRef(
                         },
                       }}
                     >
-                      <MenuItem onClick={handleEditPost}>{"Edit Post"}</MenuItem>
-                      <Popup trigger={<MenuItem onClick={handleEditPost}>{"Edit Post"}</MenuItem>} modal>
-    <span> Modal content </span>
-  </Popup>
+                      
+                      
+                      <Popup 
+                        trigger={<MenuItem>{"Edit Post"}</MenuItem>}
+                        modal={true}
+                        closeOnDocumentClick={false}
+                        >
+                          {close => (
+                            <>
+                              <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={authorID}/>
+                              <button class="close" onClick={close}>x</button>
+                            </>
+                          )}
+                      </Popup>
                       {/* {options.map((option) => (
                         <MenuItem key={option}>
                           {option}
