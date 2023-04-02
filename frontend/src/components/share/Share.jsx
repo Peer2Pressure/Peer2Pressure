@@ -21,6 +21,12 @@ function Share (props) {
     const [contentText, setContent] = useState("");
     const [titleText, setTitle] = useState("");
     const [message, setMessage] = useState();
+    const visibilityOptions = [
+        { value: 'PUBLIC', label: 'Public' },
+        { value: 'FRIENDS', label: 'Friends Only' },
+        { value: 'DM', label: 'Select Friend' }
+    ];
+    const [visibility, setVisibility] = useState(visibilityOptions[0].value);
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
@@ -34,6 +40,11 @@ function Share (props) {
        
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
+
+    // change visibility
+    function handleVisibilityChange(option) {
+        setVisibility(option.value);
+    }
 
     // change contentType
     function handleContentTypeChange(option) {
@@ -92,7 +103,7 @@ function Share (props) {
             "content": imageBase64,
             "author": authorData,
             "unlisted": true,
-            "visibility": "PUBLIC"
+            "visibility": visibility
         },
         {
             headers: {
@@ -140,8 +151,8 @@ function Share (props) {
             "title": titleText,
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
-            // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
+            "visibility": visibility
         }
 
         console.log("DATA!", data);
@@ -271,14 +282,21 @@ function Share (props) {
                             </label>
                         </div>
 
-                        <div className="isPrivateSwitch">
+                        <div className="chooseVisibility">
+                            <Dropdown 
+                                options={visibilityOptions}
+                                value={visibility}
+                                onChange={handleVisibilityChange}
+                            />
+                        </div>
+                        {/* <div className="isPrivateSwitch">
                             <Switch
                                 private={isPrivate}
                                 onChange={(event) => setIsPrivate(event.target.checked)}
                                 color="primary"
                             />
                             <b>Private</b>  
-                        </div>
+                        </div> */}
                         <div className="chooseContentType">
                             <Dropdown 
                                 options={contentOptions}

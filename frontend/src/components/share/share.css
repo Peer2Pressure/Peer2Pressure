@@ -122,7 +122,7 @@ textarea:focus {
     
 }
 
-.shareText, .shareImage, .isPrivateSwitch, .uploadImg {
+.shareText, .shareImage, .isPrivateSwitch, .uploadImg, .chooseVisibility {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -175,6 +175,10 @@ img {
   }
 
 .chooseContentType {
+    margin-left: 1.5rem;
+}
+
+.chooseVisibility {
     margin-left: 1.5rem;
 }
 
