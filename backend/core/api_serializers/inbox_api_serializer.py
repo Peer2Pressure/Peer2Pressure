@@ -161,7 +161,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             inbox_item = Inbox.objects.get(object_id=object_id)
             inbox_item.delete()
-        except ValidationError:
+        except Exception:
             return {"msg": f"Could not delete inbox object does not exist"}, 404
 
         return {"msg": "Inbox item deleted"}, 200
@@ -276,10 +276,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
                     follow = follow_serializer.get_relation_by_ids(foreign_author_id, author_id)
                 else: 
                     follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
-                inbox_post = Inbox.objects.create(content_object=follow, author=author, type="follow")
-                inbox_post.save()
                 if approved:
                     return {"msg": f"Approved. {author_id} is following {foreign_author_id}."}, 200
+                
+                inbox_post = Inbox.objects.create(content_object=follow, author=author, type="follow")
+                inbox_post.save()
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
             else:
                 return json.loads(res.text), res.status_code
