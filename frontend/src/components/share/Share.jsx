@@ -75,7 +75,7 @@ function Share (props) {
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
+        return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
     }
 
     const sendImagePost = async() => {
