@@ -107,7 +107,7 @@ const Post = forwardRef(
     }, [tokens, postAuthorID, postID]);
 
     // console.log("inboxLikes: ", inboxLikes);
-    // console.log("inboxComments: ", inboxComments);
+    console.log("inboxComments: ", inboxComments);
     // console.log(inboxLikes);
     // console.log("authorLikedList: ", authorLikedList);
     // upon like click execute this

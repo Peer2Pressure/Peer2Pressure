@@ -1,4 +1,4 @@
-import Share from "../share/Share";
+
 import Flipmove from "react-flip-move";
 import { useEffect, useState } from 'react';
 import axios from "axios";
@@ -13,7 +13,8 @@ function Stream(props) {
   const [error, setError] = useState(null);
   console.log("filterParam: ", filterParam);
 
-  if (filterParam) {
+
+
   useEffect(() => {
     axios.defaults.maxRedirects = 5;
     const interval = setInterval(() => {
@@ -29,39 +30,15 @@ function Stream(props) {
                 "Authorization": tokens[window.location.hostname]
             }
           });
-          setInboxPosts(response2.data.items);
-
-        } catch(error) {
-          setError(error);
-        };
-      };
-  
-      getPosts();
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [tokens]);
-}
-
-if (!filterParam) {
-  useEffect(() => {
-    axios.defaults.maxRedirects = 5;
-    const interval = setInterval(() => {
-      async function getPosts() {
-        try {
-          // let's get the author ID 
-          const response1 = await axios.get("/get_author_id/");
-          const authorId = response1.data.author_id;
-          
-          // let's get all the posts under for current author ID
-          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
-            headers:{
-                "Authorization": tokens[window.location.hostname]
-            }
-          });
+          if (!filterParam) {
           // Filter the posts based on the visibility variable
-          const privatePosts = response2.data.items.filter(post => post.visibility === 'private');
+          const privatePosts = response2.data.items.filter(post => post.visibility === 'PRIVATE');
           setInboxPosts(privatePosts);
-
+          }
+          else {
+            const publicPosts = response2.data.items.filter(post => post.visibility === 'PUBLIC' || post.visibility === 'FRIENDS');
+            setInboxPosts(publicPosts);
+          }
         } catch(error) {
           setError(error);
         };
@@ -71,7 +48,7 @@ if (!filterParam) {
     }, 1500);
     return () => clearInterval(interval);
   }, [tokens]);
-}
+
 
 
   if (error) {
