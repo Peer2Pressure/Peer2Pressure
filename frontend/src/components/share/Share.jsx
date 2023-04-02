@@ -80,7 +80,7 @@ function Share (props) {
 
     const sendImagePost = async() => {
         // const postUUID = uuidv4();
-        sendPost();
+        
         axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
@@ -98,9 +98,13 @@ function Share (props) {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
-        }).catch((error) => {
+        })
+        .catch((error) => {
             console.log("Error sending image post to current author's inbox: ", error)
-        });
+        })
+        .then((res) => {
+            sendPost();
+        })
         
         // Might not need to send to followers' inboxes
         
