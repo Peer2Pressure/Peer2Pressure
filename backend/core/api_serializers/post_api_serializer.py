@@ -80,7 +80,9 @@ class PostAPISerializer(serializers.ModelSerializer):
             if post_id:
                 validated_post_data["m_id"] = post_id
             post = serializer.create(validated_post_data)
+            print("ADD\n\n", validated_post_data)
             post.save()
+            print("SAVEEDDD\n\n")
             return PostSerializer(post).data, 201
 
         else:
@@ -156,7 +158,9 @@ class PostAPISerializer(serializers.ModelSerializer):
                 return errors, 400
 
             validated_post_data.pop("author")
+            print("UPDATE\n\n", validated_post_data)
             serializer.save()
+            print("SAving 1112 update \n\n",)
             post = post_serializer.get_author_post(author_id, post_id)
             return PostSerializer(post).data, 200
         else:

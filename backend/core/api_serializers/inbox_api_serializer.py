@@ -172,6 +172,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 "Authorization": f"{auth_header}"
             }
 
+            print("sending requset")
             res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
             print("\n\n GOT response\n\n", res.text, res.status_code)
