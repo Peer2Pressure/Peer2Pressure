@@ -33,18 +33,26 @@ function Widgets() {
   const fetchAllUsers = async () => {
     setIsLoading(true);
     let combinedUsers = [];
-
     apiEndpoints.forEach((endpoint) => {
       const hostname = new URL(endpoint).hostname
       const url = `${endpoint}/authors/`;
 
       try {
+        // axios({
+        //   method: "get",
+        //   url: url, 
+        //   maxRedirects: 3,
+        //   headers: {
+        //     'Authorization': tokens[hostname],
+        //   },
+        // })
         axios.get(url, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
           },
-        }).then((response) => {
+        })
+        .then((response) => {
           if (response.status === 200) {
             combinedUsers.push(...response.data.items)
             setAllUsers(combinedUsers);
@@ -128,7 +136,8 @@ function Widgets() {
           console.error('Error updating follow request on local server:', error);
         });
       }
-      return axios.post(`${user.id}/inbox/`, data, {
+      return axios.post(`${user.id.replace(/\/$/, "")}/inbox/`, data, {
+        maxRedirects: 3,
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },

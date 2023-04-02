@@ -31,9 +31,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, image_url, avatar, comments, contentType, title, object}, ref) => {
-
-
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -132,7 +130,7 @@ const Post = forwardRef(
           type: "Like",
           summary: `${authorData.displayName} likes your post`,
           author: authorData,
-          object: object
+          object: id
         };
         // send axios post 
         await axios.post(
@@ -258,7 +256,7 @@ const Post = forwardRef(
                             commentID={comment.id}
                             commenntAvatar={comment.author.profileImage}
                             commentDisplayName={comment.author.displayName}
-                            commentAuthorHost={new URL(comment.author.id).hostname}
+                            commentAuthorHost={new URL (comment.author.id).hostname}
                             comment={comment.comment}
                             commentPublished={comment.published}
                             postAuthorID={postAuthorID}

@@ -39,7 +39,7 @@ class CommentLikeAPI(GenericAPIView):
     serializer_class = PostLikeAPISerializer
     @swagger_auto_schema(tags=['Likes'])
     def get(self, request, author_id, post_id, comment_id):
-        comment_likes = comment_like_api_serializer.get_all_comment_likes(author_id, post_id, comment_id)
+        comment_likes = comment_like_api_serializer.get_all_comment_likes(comment_id)
         if comment_likes:
             return Response(comment_likes)
         return Response(data={"msg": "Unable to get post likes"}, status=status.HTTP_404_NOT_FOUND)

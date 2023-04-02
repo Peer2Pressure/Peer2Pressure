@@ -19,17 +19,22 @@ const Comment = forwardRef(({
 
     const[isLiked, setIsLiked] = useState(false);
     const[likeCounter, setLikeCounter] = useState(null);
+    
     // const[commentAuthorData, setCommentAuthorData] = useState(null);  
     const {authorData, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
+
+    const commentPostID = commentID.split("/")[8];
 
     useEffect(() => {
         const interval = setInterval(() => {
             async function getLikes() {
                 try {
-                    const responseLikes = await axios.get(`authors/${postAuthorID}/posts/${postID}/
-                    comments/${commentID}/likes/`);
-                    setLikeCounter(responseLikes);
+                    const responseLikes = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/${commentPostID}/likes/`);
+
+                    // const responseLikes = await axios.get(`/authors/6a8f4948-0ac5-412f-9289-fb3c891c76de/posts/13369d36-86e8-4a8c-8abf-47d44d1822f6/
+                    // comments/3eac07ec-035e-43a9-bc38-34b432e3cfd9/likes/`);
+                    setLikeCounter(responseLikes.data.items.length);
 
                     // const responseCommentAuthorData = await axios.get(`authors/${commentAuthorID}/`);
                     // setCommentAuthorData(responseCommentAuthorData.data);
@@ -38,6 +43,7 @@ const Comment = forwardRef(({
                     console.log(error);
                 }
             }
+            getLikes();
         }, 5000);
         return () => clearInterval(interval);
     }, [tokens]);
@@ -52,7 +58,7 @@ const Comment = forwardRef(({
         try {
             const data = {
                 type: "Like",
-                summary: `{commentDisplayName} liked your comment`,
+                summary: `${commentDisplayName} liked your comment`,
                 author: authorData,
                 object: commentID,
             };
@@ -72,22 +78,23 @@ const Comment = forwardRef(({
             console.log(error);
         }
     };
+    console.log("commentId: ", commentID);
     console.log("likeCounter: ", likeCounter)
     return (
         <div className="commentContainer">
             <div className="commentHeader">
                 <div className="avatarContainer">
-                    <Avatar sx={{width: 24, height: 24}} src={commentAvatar}/>
+                    <Avatar sx={{width: 32, height: 32}} src={commentAvatar}/>
                     {/* <Avatar sx={{width: 24, height: 24}}/> */}
                 </div>
                 <div className="authorAndCommentContainer">
                     <div className="authorContainer">
                         {/* <h5>John Doe</h5> */}
-                        <h3>{commentDisplayName}{" "}
+                        <h4 id='authorNAme'>{commentDisplayName}{" "}
                         <span className={commentAuthorHost !== window.location.hostname ? "post__headerSpecial--different" : "post__headerSpecial"}>
                         @{commentAuthorHost}
                         </span>
-                        </h3>
+                        </h4>
                     </div>
                     <div className="commentBody">
                         {/* <p>To be or not to be, that is the question.</p> */}
