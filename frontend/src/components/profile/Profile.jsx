@@ -31,7 +31,16 @@ export default function Profile() {
   const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
   const [connections, setConnections] = useState([]);
   
-  
+    const handleLogoutClick = async () => {
+    try {
+      await axios.get("/accounts/logout/");
+      navigate("/accounts/login/");
+      // navigate(0);
+      console.log("logged out");
+    } catch (err) {
+      console.log(err);
+    } 
+  };
   const handleConnectionsModalOpen = async () => {
     setConnectionsModalOpen(true);
     try {
@@ -145,6 +154,11 @@ export default function Profile() {
           <h4 className="ConnectionCountText">{connectionCount}</h4>
           <text className="ConnectionCountTitle">Connections</text>
         </div>
+        <div className="logoutContainer">    
+            <div className="logoutButton">
+              <Button variant="text" onClick={handleLogoutClick}>Logout</Button>
+            </div>
+          </div>
       </div>
       <Modal
       open={connectionsModalOpen}
@@ -197,6 +211,7 @@ export default function Profile() {
         </ul>
       </Box>
     </Modal>
+          
   </div>
 );
           }  
