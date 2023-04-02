@@ -59,6 +59,11 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
+        let url = `${request.id.replace(/\/$/, "")}/inbox/`;
+      
+        if (new URL(request.id).hostname === "www.distribution.social") {
+          url = `${request.id.replace(/\/$/, "")}/inbox`;
+        }
         // console.log('author Data:', authorData);
         let url = `${request.id.replace(/\/$/, "")}/inbox/`;
 

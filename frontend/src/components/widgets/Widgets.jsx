@@ -35,7 +35,7 @@ function Widgets() {
     let combinedUsers = [];
     apiEndpoints.forEach((endpoint) => {
       const hostname = new URL(endpoint).hostname;
-      
+
       let url = `${endpoint}/authors/`;
       if (hostname === "www.distribution.social") {
         url = `${endpoint}/authors`;
@@ -141,7 +141,6 @@ function Widgets() {
         });
       }
       let url = `${user.id.replace(/\/$/, "")}/inbox/`;
-
       if (new URL(user.id).hostname === "www.distribution.social") {
         url = `${user.id.replace(/\/$/, "")}/inbox`;
       }
