@@ -9,6 +9,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 
 // menu source: https://mui.com/material-ui/react-menu/
@@ -16,6 +18,7 @@ import ReactMarkdown from 'react-markdown'
 // optios users can choose from upon clicking ellipsis
 const options = [
   'Delete post',
+  'Edit post'
 ];
 
 
@@ -31,7 +34,7 @@ const Post = forwardRef(
     const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
-
+    const [showEditPopup, setShowEditPopup] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -60,10 +63,18 @@ const Post = forwardRef(
       setCommentText("");
     };
 
-    console.log("HOST: ", host);
+    const handleEditPost = () => {
+      setShowEditPopup(true);
+      console.log("Test");
+    }
+
+    // console.log("HOST: ", host);
 
     return (
       <div className="post" ref={ref}>
+        <Popup trigger={<button className="button"> Open Modal </button>} modal>
+    <span> Modal content </span>
+  </Popup>
         <div className="placeHolder">
           <div className="post__avatar">
             <Avatar src={avatar} />
@@ -105,11 +116,15 @@ const Post = forwardRef(
                         },
                       }}
                     >
-                      {options.map((option) => (
+                      <MenuItem onClick={handleEditPost}>{"Edit Post"}</MenuItem>
+                      <Popup trigger={<MenuItem onClick={handleEditPost}>{"Edit Post"}</MenuItem>} modal>
+    <span> Modal content </span>
+  </Popup>
+                      {/* {options.map((option) => (
                         <MenuItem key={option}>
                           {option}
                         </MenuItem>
-                      ))}
+                      ))} */}
                     </Menu>
               </span>
             </div>
