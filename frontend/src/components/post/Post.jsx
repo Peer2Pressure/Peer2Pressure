@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import EditPost from "../editPost/EditPost";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 
 // menu source: https://mui.com/material-ui/react-menu/
@@ -67,18 +68,6 @@ const Post = forwardRef(
 
     return (
       <div className="post" ref={ref}>
-        <Popup 
-          trigger={<MenuItem>{"Edit"}</MenuItem>}
-          modal={true}
-          closeOnDocumentClick={false}
-          >
-            {close => (
-              <>
-                <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={authorID}/>
-                <button class="close" onClick={close}>x</button>
-              </>
-            )}
-        </Popup>
         <div className="placeHolder">
           <div className="post__avatar">
             <Avatar src={avatar} />
@@ -95,7 +84,19 @@ const Post = forwardRef(
                 </h3>
               </div>
               <span className="post_headerMenu">
-                    <IconButton
+                <Popup 
+                  trigger={<ModeEditIcon fontSize="small"/>}
+                  modal={true}
+                  closeOnDocumentClick={false}
+                  >
+                    {close => (
+                      <>
+                        <EditPost postID={id} postTitle={title} postText={text} postContentType={contentType} postAuthorID={authorID}/>
+                        <button class="close" onClick={close}>x</button>
+                      </>
+                    )}
+                </Popup>
+                    {/* <IconButton
                       aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
                       id="long-button"
                       aria-controls={open ? 'long-menu' : undefined}
@@ -134,12 +135,12 @@ const Post = forwardRef(
                             </>
                           )}
                       </Popup>
-                      {/* {options.map((option) => (
+                      {options.map((option) => (
                         <MenuItem key={option}>
                           {option}
                         </MenuItem>
-                      ))} */}
-                    </Menu>
+                      ))}
+                    </Menu> */}
               </span>
             </div>
             <div className="post__headerTitle">
@@ -155,7 +156,6 @@ const Post = forwardRef(
               
             </div>
           </div>
-          {/* <img src={image_url} alt=""/> */}
           </div>
         </div>
         <div className="post__footer">

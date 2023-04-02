@@ -144,7 +144,7 @@ const EditPost = forwardRef(
         console.log("DATA!", postID);
         const p1 = axios
         // .post(`/authors/${authorID}/inbox/`, data, {
-        .post(postID, data, {
+        .post(postID+"/", data, {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }

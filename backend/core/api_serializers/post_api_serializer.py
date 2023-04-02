@@ -141,6 +141,7 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
+            print("validated", validated_post_data)
             
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
