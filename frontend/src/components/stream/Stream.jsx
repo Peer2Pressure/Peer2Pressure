@@ -60,16 +60,14 @@ function Stream(props) {
                 className="post"
                 postAuthorID={post.author.id}
                 id={post.id}
-                host={new URL(post.origin).hostname}
+                host={new URL(post.author.host).hostname}
                 displayName={post.author.displayName}
                 username={post.author.displayName}
                 text={post.content}
-                image_url={post.image_url}
                 avatar={post.author.profileImage}
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
-                object={post.id}
                 // likes={post.like}
               />
             </div>
