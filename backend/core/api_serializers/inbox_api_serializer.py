@@ -219,6 +219,9 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             print("\n\n GOT response\n\n", res.text, res.status_code)
 
+            print("RESPONE from :", method )
+            print(res.status_code, res.text)
+            
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 # create new inbox entry referencing the post send to inbox.
@@ -229,7 +232,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             elif res.status_code == 500:
                 return {"msg": "Internal Server Error"}, 500
             else:
-                return json.loads(res.text), 404
+                return res.text, 404
         else: 
             return serializer.errors, 400
 
@@ -294,7 +297,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 inbox_post.save()
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
             else:
-                return json.loads(res.text), res.status_code
+                return res.text, res.status_code
         else:
             return follow_serializer.errors, 400
         
