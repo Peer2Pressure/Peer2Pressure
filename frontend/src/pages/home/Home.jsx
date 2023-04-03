@@ -13,6 +13,9 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Notification from "../../components/notification/notification";
+import GitHubActivityFeed from "../../components/github/Github";
+import useGetAuthorData from "../../useGetAuthorData";
+
 
 
 const Home = () => {
@@ -22,6 +25,10 @@ const Home = () => {
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const {authorData, authorID} = useGetAuthorData();
+  const authorGitHubUsername = authorData ? authorData.github.replace(/\/$/, "").split("/").pop(): '';
+  console.log("okay", authorGitHubUsername);
 
   return (
     <div className="homeContainer">
@@ -47,11 +54,16 @@ const Home = () => {
             <Tabs value={tabValue} onChange={handleChange}>
               <Tab label="Regular Stream" value="1" />
               <Tab label="Direct Message" value="2" />
+              <Tab label="GitHub Activity" value="3" />
             </Tabs>
           </Box>
           {tabValue === "1" && <Stream filterParam={true}/>}
           {tabValue === "2" && <Stream filterParam={false}/>}
-          
+          {tabValue === "3" && <GitHubActivityFeed
+            username={authorGitHubUsername ? authorGitHubUsername : ''}
+            // username={usea}
+            limit={20}
+          />}
         </div>
         <div className="widgetContainer">
            <Widgets/>
