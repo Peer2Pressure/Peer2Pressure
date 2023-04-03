@@ -87,13 +87,20 @@ class InboxAPISerializer(serializers.ModelSerializer):
         # Get all inbox posts.
         if data_type == "post":
             inbox = author.inbox.all().filter(type="post")    
-            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
+            if inbox.exists():
+                inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
         
         # Get all inbox follow requests.
         if data_type == "request":
             inbox = author.inbox.all().filter(type="follow")
-            if inbox != []:
+            if inbox.exists():
                 inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.content_object and inbox_obj.content_object.approved == False]
+
+        if data_type == "like_comment":
+            inbox = author.inbox.all().filter(type__in=["like", "comment"])
+            if inbox.exists():
+                inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox]
+
 
         # Paginate inbox items.
         if page and size:
