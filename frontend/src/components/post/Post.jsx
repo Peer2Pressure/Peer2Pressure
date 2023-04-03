@@ -458,13 +458,23 @@ const Post = forwardRef(
             </div>
             <div className="post__headerDescription">
               
-              {contentType === "text/markdown" ?
+            {contentType === "text/markdown" ?
+              <p><ReactMarkdown>{text}</ReactMarkdown></p>
+              :
+              contentType === "image/png;base64" || contentType === "image/jpeg;base64" ?
+              <img src={text} alt="" />
+              :
+              <p>{text}</p>
+            }
+
+              {/* {contentType === "text/markdown" ?
                   <p><ReactMarkdown>{text}</ReactMarkdown></p>
                   :
-                    <p>{text}</p>
+                  <p>{text}</p>
               }
+              <img src={text} alt="" /> */}
               
-                {/* <img src={image} alt="" /> */}
+                
             </div>
             <div className="commentsContainer">
               {/* were going go put comment component here */}
