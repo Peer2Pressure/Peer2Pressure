@@ -189,7 +189,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             print("Validated data: ", validated_data)
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
-            post_id = post_id_url[-1]
+            post_id = uuid.UUID(post_id_url[-1])
             print("\n\n\nPOST ID: ", post_id, "firedign author:  ", foreign_author_id,  "\n\n\n")
             # request_data["id"] = request_data["id"].rstrip("/")
 
