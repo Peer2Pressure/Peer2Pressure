@@ -185,6 +185,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if serializer.is_valid():
             # TODO: Validate post_id is a UUID
             # Get post author id.
+            validated_data = serializer.validated_data
+            print("Validated data: ", validated_data)
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = post_id_url[-1]
@@ -221,7 +223,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
             print("RESPONE from :", method )
             print(res.status_code, res.text)
-            
+
             if res.status_code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 # create new inbox entry referencing the post send to inbox.
