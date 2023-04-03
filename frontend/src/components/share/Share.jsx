@@ -171,6 +171,12 @@ function Share (props) {
                 team11Data["author"] = authorData;
                 team11Data["object"] = response.data;
                 
+                const team12Data = {};
+                team12Data["type"] = "post";
+                team12Data["post"] = response.data;
+                team12Data["sender"] = authorData;
+
+                console.log(team12Data);
                 console.log(team11Data);
                 
                 const localRequests = response2.map(obj => {
@@ -189,7 +195,13 @@ function Share (props) {
                 
                 const requestPromises = response2.map(obj => {
                     if (obj[1] !== window.location.hostname) {
-                        axios.post(obj[0], obj[1] !== "quickcomm-dev1.herokuapp.com" ? response.data : team11Data, {
+                        let payload = response.data;
+                        if (obj[1] !== "quickcomm-dev1.herokuapp.com") {
+                            payload = team11Data;
+                        } else if (obj[1] === "cmput404-project-data.herokuapp.com") {
+                            payload = team12Data;
+                        }
+                        axios.post(obj[0], payload, {
                             maxRedirects: 3,
                             headers: {
                                 "Authorization": tokens[obj[1]]
