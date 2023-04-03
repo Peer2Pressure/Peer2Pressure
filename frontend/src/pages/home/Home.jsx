@@ -12,6 +12,7 @@ import FollowRequest from "../../components/followRequests/followRequest";
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import Notification from "../../components/notification/notification";
 import GitHubActivityFeed from "../../components/github/Github";
 import useGetAuthorData from "../../useGetAuthorData";
 
@@ -37,6 +38,7 @@ const Home = () => {
       <div className="bodyContainer">
         <div className="profileContainer">
           <Profile/>
+          
         </div>
         <div className="streamContainer">
           <Share postsUpdated={postsUpdated} setPostsUpdated={setPostsUpdated}/>
@@ -66,6 +68,7 @@ const Home = () => {
         <div className="widgetContainer">
            <Widgets/>
            <FollowRequest/>
+           <Notification/>
         </div>
       </div>
     </div>

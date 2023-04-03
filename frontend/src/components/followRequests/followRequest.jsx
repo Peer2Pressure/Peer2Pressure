@@ -126,7 +126,18 @@ function FollowRequest() {
             .filter((request) => !removedRequests[request.id])
             .map((request) => (
               <div key={request.id} className="request">
-                <span>{request.displayName}</span>
+                <h3 className="hostnameText">
+                  {request.displayName}{" "}
+                  <span
+                    className={
+                      new URL(request.host).hostname !== window.location.hostname
+                        ? "post__headerSpecial--different"
+                        : "post__headerSpecial"
+                    }
+                  >
+                    @{new URL(request.host).hostname}
+                  </span>
+                </h3>
                 <div>
                   <button
                     className={`acceptButton ${acceptedRequests[request.id] ? "accepted" : ""}`}
@@ -141,6 +152,6 @@ function FollowRequest() {
       )}
     </div>
   );
-  
 }
+
 export default FollowRequest
