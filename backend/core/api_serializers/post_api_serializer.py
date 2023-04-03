@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+
 # Local libraries
 from .. import utils
 from ..models import *
@@ -50,6 +51,7 @@ class PostAPISerializer(serializers.ModelSerializer):
         
         return post_data
 
+
     def add_new_post(self, author_id, request_data, post_id=None):
         print("\n\n ADDING", request_data, type(request_data), "\n\n")
 
@@ -90,7 +92,6 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         else:
             return post_serializer.errors, 400
-
     
     def get_single_post(self, author_id, post_id):
         # Get post by author_id and post_id
@@ -117,7 +118,10 @@ class PostAPISerializer(serializers.ModelSerializer):
                 return {}, 404
             posts = paginator.get_page(page)
 
-        post_serializer = PostSerializer(posts, many=True)
+        filtered_posts = [post for post in posts if post.visibility == "PUBLIC" and post.unlisted == False]
+
+        post_serializer = PostSerializer(filtered_posts, many=True)
+
 
         serializer = AllPostSerializer(data={
                         'type': 'posts',
