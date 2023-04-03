@@ -33,18 +33,30 @@ function Widgets() {
   const fetchAllUsers = async () => {
     setIsLoading(true);
     let combinedUsers = [];
-
     apiEndpoints.forEach((endpoint) => {
-      const hostname = new URL(endpoint).hostname
-      const url = `${endpoint}/authors/`;
+      const hostname = new URL(endpoint).hostname;
+
+      let url = `${endpoint}/authors/`;
+      if (hostname === "www.distribution.social") {
+        url = `${endpoint}/authors`;
+      }
 
       try {
+        // axios({
+        //   method: "get",
+        //   url: url, 
+        //   maxRedirects: 3,
+        //   headers: {
+        //     'Authorization': tokens[hostname],
+        //   },
+        // })
         axios.get(url, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[hostname],
           },
-        }).then((response) => {
+        })
+        .then((response) => {
           if (response.status === 200) {
             combinedUsers.push(...response.data.items)
             setAllUsers(combinedUsers);
@@ -117,22 +129,34 @@ function Widgets() {
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
       console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
-      if (new URL(user.host).hostname !== window.location.hostname) {
-        axios.put(followURL, data, {
-          headers: {
-            'Authorization': tokens[window.location.hostname],
-            },
-          }
-        )
-        .catch((error) => {
-          console.error('Error updating follow request on local server:', error);
-        });
+      
+      let url = `${user.id.replace(/\/$/, "")}/inbox/`;
+      if (new URL(user.id).hostname === "www.distribution.social") {
+        url = `${user.id.replace(/\/$/, "")}/inbox`;
       }
-      return axios.post(`${user.id}/inbox/`, data, {
+
+      return axios.post(url, data, {
+        maxRedirects: 3,
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
+      })
+      .then((response) => {
+        if (response.status === 200 || response.status === 201 ) {
+          if (new URL(user.host).hostname !== window.location.hostname) {
+            axios.put(followURL, data, {
+              headers: {
+                'Authorization': tokens[window.location.hostname],
+                },
+              }
+            )
+            .catch((error) => {
+              console.error('Error updating follow request on local server:', error);
+            });
+          }
+        }
       });
+      ;
     })
     .then((response) => {
       console.log('Follow request sent successfully.', response.data);

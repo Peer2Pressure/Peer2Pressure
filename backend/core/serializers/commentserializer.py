@@ -21,6 +21,14 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["type", "author", "comment", "contentType", "object"]
 
+    def get_comment_post(self, comment_id):
+        try:
+            comment = Comment.objects.get(pk=comment_id)
+        except Comment.DoesNotExist:
+            raise ValueError("Comment does not exist.")
+        
+        return comment.post
+
     # TODO: Need to modify this to include all the fields in the comment model    
     def create_comment(self, author_id, post_id, comment):
 
@@ -44,20 +52,20 @@ class CommentSerializer(serializers.ModelSerializer):
 
         return comment_obj.id
 
-    def get_comment_by_id(self, author_id, post_id, comment_id):
-        try:
-            print("Author id in serialzier: ", author_id)
-            author = author_serializer.get_author_by_id(author_id)
-            print("Author: ", author)
-        except ValueError:
-            raise ValueError("Author does not exist.")
+    def get_comment_by_id(self, comment_id):
+        # try:
+        #     print("Author id in serialzier: ", author_id)
+        #     author = author_serializer.get_author_by_id(author_id)
+        #     print("Author: ", author)
+        # except ValueError:
+        #     raise ValueError("Author does not exist.")
         
-        try:
-            print("Post id: ", post_id)
-            post = Post.objects.get(pk=post_id, author=author)
-            print("Post: ", post)
-        except Post.DoesNotExist:
-            raise ValueError("Post does not exist.")
+        # try:
+        #     print("Post id: ", post_id)
+        #     post = Post.objects.get(pk=post_id, author=author)
+        #     print("Post: ", post)
+        # except Post.DoesNotExist:
+        #     raise ValueError("Post does not exist.")
         
         try:
             print("Comment id: ", comment_id)

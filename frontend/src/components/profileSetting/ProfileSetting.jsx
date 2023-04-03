@@ -72,7 +72,7 @@ export default function ProfileSetting() {
             console.log("Error Response: ", error.response);
             console.log("Error Data: ", error.response.data)
         }).finally(() => {
-            {navigate('/profilepage')};
+            navigate("/");
         });
     };
 
@@ -117,7 +117,7 @@ export default function ProfileSetting() {
                     </div> */}
                 </div>  
                 <div className="buttonBox">
-                    <Button variant="outlined" onClick={()=>{navigate(-1)}}>Back</Button>
+                    <Button variant="outlined" onClick={()=>{navigate("/")}}>Back</Button>
                     <Button type='submit' variant="contained" onClick={handleSubmit}>Save</Button>
                     {/* onClick={() => setButtonClicked(!buttonClicked)} */}
                     {/* disabled={authorID === null && authorIDD === null} */}

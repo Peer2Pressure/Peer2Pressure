@@ -89,7 +89,7 @@ class Follower(AbstractModel):
         return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
     
     def __str__(self):
-        return str(self.from_author.name)+" -> "+str(self.to_author.name)
+        return str(self.from_author.name)+" -> "+str(self.to_author.name) + " " + str(self.m_id)
 
 
 class Post(AbstractModel):
@@ -97,7 +97,6 @@ class Post(AbstractModel):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="post")
     url = models.URLField(default="")
     title = models.CharField(max_length=MAX_CHARFIELD_LENGTH, blank=True, default="")
-    image_url = models.URLField(default="")
     content = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now)
     visibility = models.CharField(max_length=MAX_CHARFIELD_LENGTH, default="PUBLIC")
@@ -192,6 +191,9 @@ class Inbox(AbstractModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     created_at = models.DateTimeField(default=timezone.now)
     
+    def __str__(self):
+        return self.type + " " +str(self.object_id)
+
     # post = 1
     # comment =1
     # post_like = 2

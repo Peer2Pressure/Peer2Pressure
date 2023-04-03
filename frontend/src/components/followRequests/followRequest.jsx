@@ -59,9 +59,21 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
+
+        if (new URL(request.id).hostname === "cmput404-project-data.herokuapp.com") {
+          data["actor"] = authorData;
+          data["object"] = request;
+        }
+
+        let url = `${request.id.replace(/\/$/, "")}/inbox/`;
+      
+        if (new URL(request.id).hostname === "www.distribution.social") {
+          url = `${request.id.replace(/\/$/, "")}/inbox`;
+        }
         // console.log('author Data:', authorData);
+
         console.log('Sending accept request:', data);
-        await axios.post(`${request.id}/inbox/`, data, {
+        await axios.post(url, data, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
@@ -70,7 +82,7 @@ function FollowRequest() {
         console.log('Follow request accepted successfully.');
         if (new URL(request.host).hostname !== window.location.hostname) {
           // Make a PUT request to the followers API
-          await axios.put(`${authorData.id}/followers/${request.id}/`, data,  {
+          await axios.put(`${authorData.id}/followers/${request.id.replace(/\/$/, "").split("/").pop()}/`, data,  {
             headers: {
               'Authorization': tokens[window.location.hostname],
             },

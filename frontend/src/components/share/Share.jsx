@@ -75,12 +75,12 @@ function Share (props) {
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id+"/inbox/", new URL(obj.host).hostname]);
+        return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
     }
 
     const sendImagePost = async() => {
         // const postUUID = uuidv4();
-        sendPost();
+        
         axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
@@ -98,9 +98,13 @@ function Share (props) {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }
-        }).catch((error) => {
+        })
+        .catch((error) => {
             console.log("Error sending image post to current author's inbox: ", error)
-        });
+        })
+        .then((res) => {
+            sendPost();
+        })
         
         // Might not need to send to followers' inboxes
         
@@ -138,8 +142,8 @@ function Share (props) {
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
-            "image_url": imageID ? imageID+"/image" : ""
         }
+
         console.log("DATA!", data);
         const p1 = axios
         .post(`/authors/${authorID}/inbox/`, data, {
@@ -158,13 +162,52 @@ function Share (props) {
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
+                
+                //  Custom payload to post to Team 11 inbox
+                const team11Data = {};
+                team11Data["@context"] = "";
+                team11Data["summary"] = "";
+                team11Data["type"] = "post";
+                team11Data["author"] = authorData;
+                team11Data["object"] = response.data;
+                
+                const team12Data = {};
+                team12Data["type"] = "post";
+                team12Data["post"] = response.data;
+                team12Data["sender"] = authorData;
+
+                console.log(team12Data);
+                console.log(team11Data);
+                
+                const localRequests = response2.map(obj => {
+                    if (obj[1] === window.location.hostname) {
+                        axios.post(obj[0], response.data, {
+                            maxRedirects: 3,
+                            headers: {
+                                "Authorization": tokens[obj[1]]
+                            }
+                        })
+                        .then((r) => {
+                            console.log("Response", r)
+                        });
+                    }
+                }) 
+                
                 const requestPromises = response2.map(obj => {
-                    axios.post(obj[0], response.data, {
-                        maxRedirects: 3,
-                        headers: {
-                            "Authorization": tokens[obj[1]]
+                    if (obj[1] !== window.location.hostname) {
+                        let payload = response.data;
+                        if (obj[1] === "quickcomm-dev1.herokuapp.com") {
+                            payload = team11Data;
+                        } else if (obj[1] === "cmput404-project-data.herokuapp.com") {
+                            payload = team12Data;
                         }
-                    });
+                        axios.post(obj[0], payload, {
+                            maxRedirects: 3,
+                            headers: {
+                                "Authorization": tokens[obj[1]]
+                            }
+                        });
+                    }
                 })
                 Promise
                 .all(requestPromises)

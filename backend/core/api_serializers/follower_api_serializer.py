@@ -56,8 +56,8 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         if not follower_serializer.follower_exists(author_id, foreign_author_id):
             return {"msg": "Follow relation does not exist"}, 404
         
-        follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id).filter(approved=True)
-
+        follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
+        
         if not follow:
             return {"msg": "Pending Approval"}, 404
         
@@ -68,6 +68,10 @@ class FollowerAPISerializer(serializers.ModelSerializer):
     def create_follow_request(self, author_id, foreign_author_id, request_data):
         # if not author_serializer.author_exists(author_id):
         #     return {"msg": "Author does not exist"}, 404
+        print(request_data)
+        print("\n\nTYPE")
+        print(type(request_data))
+        
         follow_serializer= FollowerSerializer(data=request_data)
         if follow_serializer.is_valid():
             validated_follower_data = follow_serializer.validated_data
@@ -117,6 +121,7 @@ class FollowerAPISerializer(serializers.ModelSerializer):
                 validated_follower_data["m_id"] = uuid.uuid4()
                 follow_serializer.save()
             else:
+                print("updatign follw: \n\n")
                 follow = follow_serializer.get_relation_by_ids(author_id, foreign_author_id)
                 follow = follow_serializer.update(follow, validated_follower_data)
                 if validated_follower_data["approved"]:
