@@ -212,7 +212,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
 
             # send request or get cached result
-            res = self.create_or_update_post(method, url, headers, json.dumps(request_data))
+            res = self.create_or_update_post(method, url, json.dumps(headers), json.dumps(request_data))
             
             # res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
@@ -234,8 +234,9 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
     @lru_cache(maxsize=50)  # Use maxsize=None for an unbounded cache size
     def create_or_update_post(method, url, headers, data):
+        j_headers = json.loads(headers)
         print("\n\nsending requset", type(data), type(json.dumps(data)))
-        res = requests.request(method=method, url=url, headers=headers, data=data)
+        res = requests.request(method=method, url=url, headers=j_headers, data=data)
         return res
     
 
