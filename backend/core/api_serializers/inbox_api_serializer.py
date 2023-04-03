@@ -213,11 +213,11 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 method = "POST"
                 print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
 
-                res, code = post_api_serializer.update_author_post(foreign_author_id, request_data, post_id)
+                res, code = post_api_serializer.update_author_post(author_id=foreign_author_id, request_data=request_data, post_id=post_id)
             else:
                 method = "PUT"
                 print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
-                res, code = post_api_serializer.add_new_post(foreign_author_id, post_id, request_data)
+                res, code = post_api_serializer.add_new_post(author_id=foreign_author_id, request_data=request_data, post_id=post_id)
 
 
             # print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
