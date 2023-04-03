@@ -192,7 +192,7 @@ class Inbox(AbstractModel):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.type +" " +str(self.content_object.m_id)
+        return self.type + " " +str(self.object_id)
 
     # post = 1
     # comment =1
