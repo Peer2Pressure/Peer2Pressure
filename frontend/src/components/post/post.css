@@ -252,6 +252,20 @@ img {
   width: 100%;
 }
 
+.post__share {
+  cursor: pointer;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-top: 1px;
+}
+
+.repostInfoArea {
+  padding-left: 1.5rem;
+}
+
+.repostInfo {
+  font-size: 0.8rem;
+}
 .post__edit {
   cursor: pointer;
   margin: 1rem;

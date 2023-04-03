@@ -81,6 +81,9 @@ function Stream(props) {
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
+                origin={post.origin}
+                visibility={post.visibility}
+                source={post.source}
                 postAuthorID2={post.author.id}
                 // likes={post.like}
               />
