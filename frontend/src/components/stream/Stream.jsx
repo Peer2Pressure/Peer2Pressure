@@ -46,6 +46,7 @@ function Stream(props) {
   
       getPosts();
     }, 1500);
+
     return () => clearInterval(interval);
   }, [tokens]);
 
@@ -62,8 +63,6 @@ function Stream(props) {
   const sortedInboxPosts = inboxPosts.sort((a, b) => {
     return new Date(b.published) - new Date(a.published);
   });
-
-  console.log("inboxPosts: ", inboxPosts);
   return (
     <div className="stream">
         <Flipmove className="flippy">
@@ -72,7 +71,6 @@ function Stream(props) {
               <Post
                 className="post"
                 postAuthorID={post.author.id}
-          
                 id={post.id}
                 host={new URL(post.author.host).hostname}
                 displayName={post.author.displayName}
