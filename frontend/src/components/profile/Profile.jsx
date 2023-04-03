@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Avatar, Button, IconButton } from "@mui/material";
+import { Avatar, Button, IconButton, RadioGroup } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { Navigate, useNavigate } from "react-router-dom";
 import useGetTokens from "../../useGetTokens";
@@ -23,11 +23,11 @@ export default function Profile() {
 
   const navigate = useNavigate();
   const {tokens, tokenError} = useGetTokens();
-
   const [authorData, setAuthorData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const { authorID } = useGetAuthorData();
+  const [connectionCount, setConnectionCount] = useState(0);
 
   // const { authorData, loading, error, authorID } = useGetAuthorData();
   useEffect(() => {
@@ -56,6 +56,33 @@ export default function Profile() {
     };
   }, [tokens]);
 
+ 
+    const followerCount = async () => {
+      try {
+        const response = await axios.get("/authors/" + authorID + "/followers/", {
+          headers: {
+            "Authorization": tokens[window.location.hostname],
+          },
+        });
+        console.log("FOLLOWERS",response.data);
+        console.log("CONNN", response.data.items);
+        setConnectionCount(response.data.items.length);
+        console.log("CONNECTION COUNT", connectionCount);
+        
+      } catch (err) {
+        // Handle the error here
+      }
+    };
+    // Call the followerCount function
+    followerCount();
+  
+    useEffect(() => {
+      if (authorID) {
+        followerCount();
+      }
+    }, [authorID]);
+    
+
     
   // check if loading 
   if (loading) return; // placeholder for now 
@@ -76,6 +103,20 @@ export default function Profile() {
                 {authorData?.displayName}
                 {/* {data?.displayName} <-- what we actually need to display*/} 
             </h1>
+            <div className="githubContainer">
+              <IconButton 
+              aria-label="github" 
+              color="primary" 
+              onClick={()=> window.open(authorData?.github, "_blank")}
+              >
+                <GitHubIcon/>
+              </IconButton>
+              <text className="githubText">@{authorData?.github.split("https://github.com/")}</text>
+              </div>
+              <div className="ConnectionCount">
+                <h4 className="ConnectionCountText">{connectionCount}</h4>
+                <text className="ConnectionCountTitle">Connections</text> 
+              </div>
         </div>
     </div>
   )

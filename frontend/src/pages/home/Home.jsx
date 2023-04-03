@@ -57,7 +57,6 @@ const Home = () => {
            <Widgets/>
            <FollowRequest/>
            <Notification/>
-
         </div>
       </div>
     </div>
