@@ -235,6 +235,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
     @lru_cache(maxsize=50)  # Use maxsize=None for an unbounded cache size
     def create_or_update_post(self, method, url, headers, data):
         j_headers = json.loads(headers)
+        print("\n\n**************NOT CACHED*************\n\n")
         print("\n\nsending requset", type(data), type(json.dumps(data)))
         res = requests.request(method=method, url=url, headers=j_headers, data=data)
         return res
