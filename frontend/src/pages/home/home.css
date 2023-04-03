@@ -59,6 +59,8 @@
     right: 6em;
     position: fixed;
     flex-direction: column;
+    align-content: space-evenly;
+    row-gap: 1em;
     justify-content: space-between;
     height: 50%; /* set a fixed height to the container */
   }
