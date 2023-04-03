@@ -138,6 +138,12 @@ class FollowerAPISerializer(serializers.ModelSerializer):
         
         follow = follower_serializer.get_relation_by_ids(author_id, foreign_author_id)
 
+        try:
+            inbox = Inbox.objects.get(object_id=follow.m_id)
+            inbox.delete()
+        except Inbox.DoesNotExist:
+            print("Inbox item does not exist")
+
         follow.delete()
 
         return {"msg": f"{foreign_author_id} has unfollwed {author_id}"}, 200

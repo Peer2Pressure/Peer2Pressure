@@ -178,6 +178,12 @@ class PostAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):
-        deleted_post = post_serializer.delete_post(author_id, post_id)
+        deleted_post_m_id = post_serializer.delete_post(author_id, post_id)
 
-        return deleted_post
+        if deleted_post_m_id:
+            try:
+                inbox = Inbox.objects.get(object_id=deleted_post_m_id)
+                inbox.delete()
+            except Inbox.DoesNotExist:
+                print("Inbox object does not exist.")
+        return deleted_post_m_id
