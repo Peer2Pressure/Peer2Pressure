@@ -174,7 +174,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             post = post_serializer.get_author_post(author_id, post_id)
             return PostSerializer(post).data, 200
         else:
-            return post_serializer.errors, 400
+            return serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):
         deleted_post = post_serializer.delete_post(author_id, post_id)
