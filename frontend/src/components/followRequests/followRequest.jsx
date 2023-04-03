@@ -8,7 +8,7 @@ import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 import './followRequest.css';
 
 function FollowRequest(props) {
-  const { authorData, authorID, tokens } = props;
+  const { authorData, authorID, tokens} = props;
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [followedUsers, setFollowedUsers] = useState({});
   // const { tokens } = useGetTokens();
@@ -16,7 +16,7 @@ function FollowRequest(props) {
   // const { authorData } = useGetAuthorData();
   const [acceptedRequests, setAcceptedRequests] = useState({});
   const [removedRequests, setRemovedRequests] = useState({});
-
+  
   useEffect(() => {
     if (tokens && authorData && apiEndpoints) {
       const interval = setInterval(() => {
@@ -88,10 +88,12 @@ function FollowRequest(props) {
               'Authorization': tokens[window.location.hostname],
             },
           });
-       }
+        }
+        
         console.log('Follower added to the local database.');
         setAcceptedRequests((prev) => ({ ...prev, [request.id]: true }));
         setFollowedUsers((prev) => ({ ...prev, [request.id]: true }));
+        
         setTimeout(() => {
           setRemovedRequests((prev) => ({ ...prev, [request.id]: true }));
           setIncomingRequests((prev) => prev.filter((r) => r.id !== request.id));

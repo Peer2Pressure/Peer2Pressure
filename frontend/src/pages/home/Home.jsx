@@ -19,7 +19,7 @@ import useGetTokens from "../../useGetTokens";
 
 
 const Home = () => {
-  const [postsUpdated, setPostsUpdated] = useState(true);
+  const [followAccept, setFollowAccept] = useState(false);
   const [tabValue, setTabValue] = useState('1');
 
   const handleChange = (event, newValue) => {
@@ -42,7 +42,8 @@ const Home = () => {
       </div> */}
       <div className="bodyContainer">
         <div className="profileContainer">
-          <Profile authorData={authorData} authorID={authorID} tokens={tokens}/>
+          <Profile authorData={authorData} authorID={authorID} tokens={tokens} 
+          followAccept={followAccept} setFollowAccept={setFollowAccept}/>
           
         </div>
         <div className="streamContainer">
@@ -72,7 +73,8 @@ const Home = () => {
         </div>
         <div className="widgetContainer">
            <Widgets authorData={authorData} authorID={authorID} tokens={tokens}/>
-           <FollowRequest authorData={authorData} authorID={authorID} tokens={tokens}/>
+           <FollowRequest authorData={authorData} authorID={authorID} tokens={tokens}
+           setFollowAccept={setFollowAccept}/>
            <Notification authorData={authorData} authorID={authorID} tokens={tokens}/>
         </div>
       </div>
