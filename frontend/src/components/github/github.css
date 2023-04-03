@@ -1,0 +1,31 @@
+.GitHubContainer {
+    margin-top: 1.5em;
+    max-width: 39%;
+    display: flex;
+    /* border: 1px solid black; */
+    justify-content: center;
+}   
+
+.noUsernameContainer {
+    width: auto;
+    max-width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /* border: 1px solid green; */
+
+}
+
+.puppyContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden
+  }
+  
+.puppyContainer img {
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100% /* Add this to ensure the image scales proportionally */
+}
