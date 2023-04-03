@@ -90,7 +90,7 @@ text{
     padding-left: 4px;
     padding-right: 4px;
     font-weight: 600;
-    font-size: 6px;
+    font-size: 12px !important;
     color: rgb(91, 91, 91);
     border-radius: 20px;
   }
@@ -99,7 +99,7 @@ text{
     margin-bottom: 1px;
     background-color: rgb(247, 211, 165);
     font-weight: 600;
-    font-size: 6px;
+    font-size: 12px !important;
     color: rgb(91, 91, 91);
     border-radius: 20px;
     border: 2px solid rgb(247, 211, 165);

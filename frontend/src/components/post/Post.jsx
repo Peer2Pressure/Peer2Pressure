@@ -42,7 +42,7 @@ const Post = forwardRef(
     const [inboxComments, setInboxComments] = useState([]);
     const [likeCounter, setLikeCounter] = useState(0);
     const [authorLikedList, setAuthorLikedList] = useState([]);
-
+    
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
     const postIdSplit = id.replace(/\/$/, "").split("/");
@@ -183,7 +183,7 @@ const Post = forwardRef(
             contentType: 'text/markdown',
             object: id
           };
-        const response = await axios.post(`${id}/inbox`, data, {
+        const response = await axios.post(`authors/${postAuthorID}/inbox/`, data, {
         }, {
           headers: {
             'Authorization': tokens[new URL (comments).hostname],
