@@ -91,7 +91,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             return PostSerializer(post).data, 201
 
         else:
-            return post_serializer.errors, 400
+            return serializer.errors, 400
     
     def get_single_post(self, author_id, post_id):
         # Get post by author_id and post_id
