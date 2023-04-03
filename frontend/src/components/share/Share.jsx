@@ -196,7 +196,7 @@ function Share (props) {
                 const requestPromises = response2.map(obj => {
                     if (obj[1] !== window.location.hostname) {
                         let payload = response.data;
-                        if (obj[1] !== "quickcomm-dev1.herokuapp.com") {
+                        if (obj[1] === "quickcomm-dev1.herokuapp.com") {
                             payload = team11Data;
                         } else if (obj[1] === "cmput404-project-data.herokuapp.com") {
                             payload = team12Data;
