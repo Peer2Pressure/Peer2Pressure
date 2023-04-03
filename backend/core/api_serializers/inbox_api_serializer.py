@@ -93,7 +93,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if data_type == "request":
             inbox = author.inbox.all().filter(type="follow")
             if inbox != []:
-                inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.content_object.approved == False]
+                inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox.content_object and inbox_obj.content_object.approved == False]
 
         # Paginate inbox items.
         if page and size:
