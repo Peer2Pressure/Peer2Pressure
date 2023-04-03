@@ -11,15 +11,15 @@ import useGetTokens from "../../useGetTokens";
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
 
-function Followers({ onSelectUser }) {
+function Followers({ onSelectUser, authorData, authorID, tokens }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [allUsers, setAllUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [followedUsers, setFollowedUsers] = useState(false);
     const [displayedUsers, setDisplayedUsers] = useState([]);
 
-    const {authorData, loading, authorError, authorID} = useGetAuthorData();
-    const {tokens, tokenError} = useGetTokens();
+    // const {authorData, loading, authorError, authorID} = useGetAuthorData();
+    // const {tokens, tokenError} = useGetTokens();
     const apiEndpoints  = useGetNodeAPIEndpoints();
 
 

@@ -318,7 +318,7 @@ function Share (props) {
                                 modal={true}
                                 onClose={() => setShowPopup(false)}
                                 >
-                                <Followers onSelectUser={handleSelectUser} />
+                                <Followers onSelectUser={handleSelectUser} authorData={authorData} authorID={authorID}/>
                             </Popup>
                         </div>
                         {/* <div className="isPrivateSwitch">
