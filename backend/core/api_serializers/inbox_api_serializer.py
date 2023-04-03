@@ -101,8 +101,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
         elif data_type == "like_comment":
             inbox = author.inbox.all().filter(type__in=["like", "comment"])
             if inbox.exists():
-                inbox_likes = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.type == "like"]
-                inbox_comments = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.type == "comment"]
+                inbox_likes = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.type == "like"]
+                inbox_comments = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.type == "comment"]
 
 
         # Paginate inbox items.

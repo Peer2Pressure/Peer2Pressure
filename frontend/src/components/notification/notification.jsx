@@ -16,21 +16,23 @@ function Notification(props) {
   // const { authorData } = useGetAuthorData();
   // const { tokens } = useGetTokens();
   useEffect(() => {
-    const interval = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * mockData.length);
-        const notificationData = mockData[randomIndex];
-        setIncomingNotifications(prevNotifications => {
-          // Check if the incoming notification ID already exists in the state
-          if (prevNotifications.some(notification => notification.id === notificationData.id)) {
-            return prevNotifications;
-          }
-          // Add the incoming notification to the state if it doesn't already exist
-          return [notificationData, ...prevNotifications];
-        });
+    const interval = setInterval(async () => {
+        try{
+            const response = await axios.get(`${authorData.id}/inbox/?type=like_comment`, {
+                headers: {
+                    'Authorization': tokens[window.location.hostname],
+                },
+            });
+            const notificationData =  response.data.items;
+            setIncomingNotifications(notificationData);
+        } catch (error) {
+            console.error(error);
+        }
     }, 1500);
 
     return () => clearInterval(interval);
-  }, []);
+}, []);
+
 
   const handleNotificationClick = async (postId) => {
     console.log('Notification clicked:', postId);
@@ -50,21 +52,33 @@ function Notification(props) {
   const handleModalClose = () => {
     setSelectedPost(null);
   };
+  
 
   return (
     <div className="notification">
       <div className="notification__title">Notifications</div>
       <div className="notification__list">
-        {incomingNotifications.map(notification => (
-          <div
-            key={notification.id}
-            className="notification__item"
-            onClick={() => handleNotificationClick(notification.postId)}
-          >
-            <div className="notification__summary">{notification.summary}</div>
-            <div className="notification__post">{notification.postTitle}</div>
-          </div>
-        ))}
+      {incomingNotifications.map((notification) => {
+        // Create a shallow copy of the notification object
+        let updatedNotification = { ...notification };
+
+        // If the notification type is 'comment', add a summary property
+        if (notification.type === 'comment') {
+          updatedNotification.summary = `${notification.author.displayName} commented on your post`;
+        }
+        return (
+          updatedNotification.summary && (
+            <div
+              key={updatedNotification.id}
+              className="notification__item"
+              onClick={() => handleNotificationClick(updatedNotification.object.split('/').pop())}
+            >
+              <div className="notification__summary">{updatedNotification.summary}</div>
+              <div className="notification__post">{updatedNotification.postTitle}</div>
+            </div>
+          )
+        );
+      })}
       </div>
       <Modal
         open={selectedPost !== null}
@@ -98,7 +112,14 @@ function Notification(props) {
                 avatar={selectedPost.author.profileImage}
                 comments={selectedPost.comments}
                 contentType={selectedPost.contentType}
-                title={selectedPost.title} />
+                title={selectedPost.title} 
+                origin = {selectedPost.origin}
+                visibility = {selectedPost.visibility}
+                source = {selectedPost.source}
+                postAuthorID2 = {selectedPost.author.id}
+                authorData = {authorData}
+                tokens = {tokens}
+                />
             </div>
           )}
         </Box>
