@@ -11,7 +11,7 @@ import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Switch, Button } from "@mui/material";
+import { Switch, Button, Modal, Box } from "@mui/material";
 
 import Popup from "reactjs-popup";
 import Dropdown from 'react-dropdown';
@@ -42,6 +42,9 @@ function Share (props) {
     const [imageFile, setImageFile] = useState(null);
     const [imageBase64, setImageBase64] = useState(null);
     const [imageID, setImageID] = useState(null);
+
+    const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
+    const [connections, setConnections] = useState([]);
        
     // const {authorData, loading, authorError, authorID} = useGetAuthorData();
     // const {tokens, tokenError} = useGetTokens();
@@ -51,11 +54,34 @@ function Share (props) {
         setVisibility(option.value);
         if (option.value === "PRIVATE") {
             setShowPopup(true);
+            handleConnectionsModalOpen();
         } else {
             setSelectedUser(null);
             setShowPopup(false);
+            handleConnectionsModalClose();
         }
     }
+
+    const handleConnectionsModalOpen = async () => {
+        setConnectionsModalOpen(true);
+        try {
+            if (authorID) {
+                const response = await axios.get("/authors/" + authorID + "/followers/", {
+                    headers: {
+                        "Authorization": tokens[window.location.hostname],
+                    },
+                });
+                setConnections(response.data.items)
+                console.log("CONNECTIONS", response.data.items);
+            }   
+        } catch (err) {
+            // Handle the error here
+        }
+    };
+
+    const handleConnectionsModalClose = () => {
+        setConnectionsModalOpen(false);
+    };
 
     // TODO: if selectedUser is null and visibility is PRIVATE, show error message
 
@@ -63,6 +89,7 @@ function Share (props) {
     const handleSelectUser = (user) => {
         setSelectedUser(user);
         setShowPopup(false);
+        handleConnectionsModalClose();
     };
 
     // change contentType
@@ -313,13 +340,13 @@ function Share (props) {
                                 value={visibility}
                                 onChange={handleVisibilityChange}
                             />
-                            <Popup 
+                            {/* <Popup 
                                 open={showPopup} 
                                 modal={true}
                                 onClose={() => setShowPopup(false)}
                                 >
                                 <Followers onSelectUser={handleSelectUser} authorData={authorData} authorID={authorID}/>
-                            </Popup>
+                            </Popup> */}
                         </div>
                         {/* <div className="isPrivateSwitch">
                             <Switch
@@ -352,6 +379,57 @@ function Share (props) {
                     </div>
                 </div>
             </div>
+            <Modal
+      open={connectionsModalOpen}
+      onClose={handleConnectionsModalClose}
+      aria-labelledby="connections-modal-title"
+      aria-describedby="connections-modal-description"
+    >
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%',
+        maxHeight: '80%',
+        overflowY: 'auto',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: '20px',
+      }}>
+        <h2 id="connections-modal-title" style={{ color: '#0058A2' }}>Select Friend</h2>
+        <ul id="connections-modal-description" className="connectionsList">
+          {connections.map((connection, index) => (
+            <li key={index} className="connectionItem">
+             <div className="avatarAndNameContainer">
+        <div className="post__headerText">
+          <h3>
+            {connection.displayName}{" "}
+            <span
+              className={
+                new URL(connection.host).hostname !== window.location.hostname
+                  ? "post__headerSpecial--different"
+                  : "post__headerSpecial"
+              }
+            >
+              @{new URL(connection.host).hostname}
+            </span>
+          </h3>
+        </div>
+      </div>
+              <button
+                className="deleteConnectionButton"
+                onClick={() => handleSelectUser(connection)}
+              >
+                Select
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Box>
+    </Modal>
         </div>
     );
 };
