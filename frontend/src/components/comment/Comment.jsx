@@ -26,8 +26,8 @@ const Comment = forwardRef(({
     
 
     const commentPostID = commentID.split("/")[8];
-    console.log("commentID: ", `${commentID}/likes/`);
-    console.log("commentAuthorHost: ", commentAuthorHost);
+    // console.log("commentID: ", `${commentID}/likes/`);
+    // console.log("commentAuthorHost: ", commentAuthorHost);
     useEffect(() => {
         const interval = setInterval(() => {
             async function getLikes() {
@@ -86,8 +86,8 @@ const Comment = forwardRef(({
             console.log(error);
         }
     };
-    console.log("commentId: ", commentID);
-    console.log("likeCounter: ", likeCounter)
+    // console.log("commentId: ", commentID);
+    // console.log("likeCounter: ", likeCounter)
     return (
         <div className="commentContainer">
             <div className="commentHeader">
