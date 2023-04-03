@@ -251,3 +251,22 @@ img {
   /* border-bottom: 1px  black; */
   width: 100%;
 }
+
+.post__edit {
+  cursor: pointer;
+  margin: 1rem;
+}
+
+.closeButton {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  border-radius: 50%;
+  border: none;
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

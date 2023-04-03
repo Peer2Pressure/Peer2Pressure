@@ -9,7 +9,10 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
-
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import EditPost from "../editPost/EditPost";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 import axios from "axios";
@@ -21,6 +24,7 @@ import Comment from "../comment/Comment";
 // optios users can choose from upon clicking ellipsis
 const options = [
   'Delete post',
+  'Edit post'
 ];
 
 
@@ -31,12 +35,13 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title, fullHost }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, postAuthorID2 }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+
     const [error, setError] = useState(null);
     const [inboxLikes, setInboxLikes] = useState([]);
     const [inboxComments, setInboxComments] = useState([]);
@@ -279,7 +284,7 @@ const Post = forwardRef(
                     </h3>
                   </div>
                   <span className="post_headerMenu">
-                        <IconButton
+                        {/* <IconButton
                           aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
                           id="long-button"
                           aria-controls={open ? 'long-menu' : undefined}
@@ -309,11 +314,35 @@ const Post = forwardRef(
                               {option}
                             </MenuItem>
                           ))}
-                        </Menu>
+                        </Menu> */}
                   </span>
                 </div>
               </div>
-            </div> 
+              <span className="post_headerMenu">
+                <div className="post__edit">
+                  {authorData?.id === postAuthorID2 && (
+                    <Popup 
+                    trigger={<ModeEditIcon fontSize="small"/>}
+                    modal={true}
+                    closeOnDocumentClick={false}
+                    >
+                      {close => (
+                        <>
+                          <EditPost 
+                            postID={id} 
+                            postTitle={title} 
+                            postText={text} 
+                            postContentType={contentType} 
+                            postAuthorID={postAuthorID2}
+                            onClose={close}/>
+                          <button className="closeButton" onClick={close}>x</button>
+                        </>
+                      )}
+                  </Popup>
+                  )}
+                </div>
+              </span>
+            </div>
             <div className="post__headerTitle">
               <b>{title}</b>
             </div>

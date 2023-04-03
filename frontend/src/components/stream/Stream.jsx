@@ -71,7 +71,7 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
-                postAuthorID={post.author.id}
+                // postAuthorID={post.author.id}
                 id={post.id}
                 host={new URL(post.author.host).hostname}
                 displayName={post.author.displayName}
@@ -81,7 +81,7 @@ function Stream(props) {
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
-                fullHost = {post.author.host}
+                postAuthorID2={post.author.id}
                 // likes={post.like}
               />
             </div>
