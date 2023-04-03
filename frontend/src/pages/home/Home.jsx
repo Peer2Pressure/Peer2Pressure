@@ -9,6 +9,7 @@ import Widgets from "../../components/widgets/Widgets";
 import Post from "../../components/post/Post";
 import NavBar from "../../components/navBar/NavBar";
 import FollowRequest from "../../components/followRequests/followRequest";
+import GitHubActivity from "../../components/github/Github";
 
 const Home = () => {
   const [postsUpdated, setPostsUpdated] = useState(false);
@@ -22,8 +23,9 @@ const Home = () => {
           <Profile/>
         </div>
         <div className="streamContainer">
-          <Share postsUpdated={postsUpdated} setPostsUpdated={setPostsUpdated}/>
-          <Stream postsUpdated={postsUpdated}/>
+          {/* <Share postsUpdated={postsUpdated} setPostsUpdated={setPostsUpdated}/>
+          <Stream postsUpdated={postsUpdated}/> */}
+          <GitHubActivity/>
         </div>
         <div className="widgetContainer">
            <Widgets/>
