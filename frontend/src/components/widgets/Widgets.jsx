@@ -34,8 +34,12 @@ function Widgets() {
     setIsLoading(true);
     let combinedUsers = [];
     apiEndpoints.forEach((endpoint) => {
-      const hostname = new URL(endpoint).hostname
-      const url = `${endpoint}/authors/`;
+      const hostname = new URL(endpoint).hostname;
+
+      let url = `${endpoint}/authors/`;
+      if (hostname === "www.distribution.social") {
+        url = `${endpoint}/authors`;
+      }
 
       try {
         // axios({
@@ -136,7 +140,12 @@ function Widgets() {
           console.error('Error updating follow request on local server:', error);
         });
       }
-      return axios.post(`${user.id.replace(/\/$/, "")}/inbox/`, data, {
+      let url = `${user.id.replace(/\/$/, "")}/inbox/`;
+      if (new URL(user.id).hostname === "www.distribution.social") {
+        url = `${user.id.replace(/\/$/, "")}/inbox`;
+      }
+
+      return axios.post(url, data, {
         maxRedirects: 3,
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
@@ -163,29 +172,44 @@ function Widgets() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </form>
-
+  
       {!isLoading && (
         <div className="searchResults">
           {searchTerm === '' ? (
-                <div></div>
-                ) : displayedUsers.length === 0 ? (
-                  <div>No results found.</div>
-                ) : (
-                  displayedUsers.map((user) => (
-                    <div key={user.id} className="userResult">
-                      <span>{user.displayName}</span>
-                      {user.id !== authorID && (
-                        <button className={`followButton ${followedUsers[user.id] ? 'sent' : ''}`} onClick={() => sendFollowRequest(user)}>
-                        <PersonAddIcon/>
-                        </button>
-                      )}
-                    </div>
-                  ))
+            <div></div>
+          ) : displayedUsers.length === 0 ? (
+            <div>No results found.</div>
+          ) : (
+            displayedUsers.map((user) => (
+              <div key={user.id} className="userResult">
+                <h3 className="hostnameText">
+                  {user.displayName}{" "}
+                  <span
+                    className={
+                      new URL(user.host).hostname !== window.location.hostname
+                        ? "post__headerSpecial--different"
+                        : "post__headerSpecial"
+                    }
+                  >
+                    @{new URL(user.host).hostname}
+                  </span>
+                </h3>
+                {user.id !== authorID && (
+                  <button
+                    className={`followButton ${followedUsers[user.id] ? "sent" : ""}`}
+                    onClick={() => sendFollowRequest(user)}
+                  >
+                    <PersonAddIcon />
+                  </button>
                 )}
               </div>
-            )}
-          </div>
-        );
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+  
       }
       
 export default Widgets;

@@ -32,6 +32,8 @@
 .searchResults {
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  max-height: 200px;
 }
 
 .userResult {

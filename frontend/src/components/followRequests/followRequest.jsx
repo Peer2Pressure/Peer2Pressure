@@ -59,9 +59,15 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
+        let url = `${request.id.replace(/\/$/, "")}/inbox/`;
+      
+        if (new URL(request.id).hostname === "www.distribution.social") {
+          url = `${request.id.replace(/\/$/, "")}/inbox`;
+        }
         // console.log('author Data:', authorData);
+
         console.log('Sending accept request:', data);
-        await axios.post(`${request.id.replace(/\/$/, "")}/inbox/`, data, {
+        await axios.post(url, data, {
           maxRedirects: 3,
           headers: {
             'Authorization': tokens[new URL(request.host).hostname],
@@ -120,7 +126,18 @@ function FollowRequest() {
             .filter((request) => !removedRequests[request.id])
             .map((request) => (
               <div key={request.id} className="request">
-                <span>{request.displayName}</span>
+                <h3 className="hostnameText">
+                  {request.displayName}{" "}
+                  <span
+                    className={
+                      new URL(request.host).hostname !== window.location.hostname
+                        ? "post__headerSpecial--different"
+                        : "post__headerSpecial"
+                    }
+                  >
+                    @{new URL(request.host).hostname}
+                  </span>
+                </h3>
                 <div>
                   <button
                     className={`acceptButton ${acceptedRequests[request.id] ? "accepted" : ""}`}
@@ -135,6 +152,6 @@ function FollowRequest() {
       )}
     </div>
   );
-  
 }
+
 export default FollowRequest

@@ -31,7 +31,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, fullHost }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -42,17 +42,28 @@ const Post = forwardRef(
     const [inboxComments, setInboxComments] = useState([]);
     const [likeCounter, setLikeCounter] = useState(0);
     const [authorLikedList, setAuthorLikedList] = useState([]);
+    const [postLikeString, setPostLikeString] = useState("");
+    const [postCommentString, setPostCommentString] = useState("");
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
-    const postIdSplit = id.split("/")
-    const postAuthorID = postIdSplit[4];
-    const postID = postIdSplit[6];
+    const postIdSplit = id.replace(/\/$/, "").split("/");
+    const postID = id.replace(/\/$/, "").split("/").pop();
+    const postAuthorID = postIdSplit[postIdSplit.length - 3];
+    
     // console.log("postIDSplit: " + postIdSplit);
     // console.log("postAuthorID: " + postAuthorID);
-    // console.log("postID: " + postID);
+    console.log("ID: ", `${id}/likes/`);
 
     const open = Boolean(anchorEl);
+    // console.log("id:",id);
+    // console.log("displayName:",displayName);
+    // console.log("username:",username);
+    // console.log("text:",text);
+    // console.log("image:",image);
+    // console.log("likes:",likes);
+    // console.log("comments:",comments);
+    // console.log("contentType:",contentType);
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -60,6 +71,7 @@ const Post = forwardRef(
       setAnchorEl(null);
     };
 
+    console.log("host: ", fullHost);
     // calls the inbox api to get all data in items
     useEffect(() => {
       const interval = setInterval(() => {
@@ -78,7 +90,10 @@ const Post = forwardRef(
             // get all elements inside items of type "Like" and check if there exist a like in the specified object
             // const response3 = response2.data.items.filter((item) => item.type === "like" && item.id === object);
             // setInboxLikesID(response3);
-            const response_likes = await axios.get(`/authors/${postAuthorID}/posts/${postID}/likes/`)
+
+            // getting likes 
+            // post id
+            const response_likes = await axios.get(`${id}/likes/`);
             setInboxLikes(response_likes.data.items); 
             setLikeCounter(response_likes.data.items.length);
             const responseLikesAuthors = response_likes.data.items.map((item) => item.author.id);
@@ -86,7 +101,9 @@ const Post = forwardRef(
             const responseLikesAuthorsSplit2 = responseLikesAuthorsSplit.map((item) => item[4]);
             setAuthorLikedList(responseLikesAuthorsSplit2);
 
-            const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
+            // getting comments
+            const response_comments = await axios.get(`${id}/comments/`)
+            // const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
             setInboxComments(response_comments.data.comments);
 
             if (responseLikesAuthorsSplit2.includes(authorId)) {
@@ -107,12 +124,11 @@ const Post = forwardRef(
     }, [tokens, postAuthorID, postID]);
 
     // console.log("inboxLikes: ", inboxLikes);
-    // console.log("inboxComments: ", inboxComments);
     // console.log(inboxLikes);
     // console.log("authorLikedList: ", authorLikedList);
+
     // upon like click execute this
     const handleLikeClick = async () => {
-
       if (like) {
         return;
       }
@@ -133,8 +149,14 @@ const Post = forwardRef(
           object: id
         };
         // send axios post 
+        if (host === "https://distribution.social/api/") {
+          setPostLikeString(`/authors/${postAuthorID}/posts/${postID}/likes`);
+        } else {
+          setPostLikeString(`/authors/${postAuthorID}/posts/${postID}/likes/`);
+        }
+
         await axios.post(
-          "/authors/" + postAuthorID + "/inbox/",
+          postLikeString,
           data,
           {
             headers: {
@@ -152,10 +174,50 @@ const Post = forwardRef(
       setShowCommentArea(!showCommentArea);
     };
 
-    const handleCommentSubmit = (event) => {
+    const handleCommentSubmit = async (event) => {
       event.preventDefault();
-      console.log(commentText); // Need to replace this with a post request to the API
-      setCommentText("");
+      console.log("comment submitted;", id);
+      console.log("Hostname;",comments);
+      console.log("This is the m_id;", authorID);
+      console.log("This is the m_data;", authorData);
+      console.log("This is the KEY;", id);
+        try {
+          const data = {
+            type: 'comment',
+               author: {
+                    type: 'author',
+                    id: authorData.id,
+                    url: authorData.id,
+                    host: authorData.host,
+                    displayName: authorData.displayName,
+                    github: null,
+                    profileImage: null    
+            },
+            comment: commentText,
+            contentType: 'text/markdown',
+            object: id
+          };
+        
+          if (host === "https://distribution.social/api/") {
+          setPostCommentString(`/authors/${postAuthorID}/inbox`);
+        } else {
+          setPostCommentString(`/authors/${postAuthorID}/inbox/`);
+        }
+        const response = await axios.post(postCommentString, data, {
+        }, {
+          headers: {
+            'Authorization': tokens[new URL (comments).hostname],
+        },
+      });
+    
+        // Do something with the response, such as displaying the new comment
+        console.log("This is post",response.data);
+    
+        // Clear the comment text area
+        setCommentText('');
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     return (

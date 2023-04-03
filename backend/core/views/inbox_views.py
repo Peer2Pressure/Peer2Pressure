@@ -74,7 +74,7 @@ class InboxAPI(GenericAPIView):
         if "type" in list(request.data.keys()):
             if request.data["type"].lower() == "post":
                 response, code = inbox_api_serializer.handle_post(author_id, request.data, auth_header)
-            elif request.data["type"].lower() == "follow":
+            elif request.data["type"].lower() in ["follow", "accept"]:
                 response, code = inbox_api_serializer.handle_follow_request(author_id, request.data, auth_header)
             elif request.data["type"].lower() == "like":
                 post_or_comment = urlparse(request.data["object"]).path.split('/')[-2]
@@ -93,3 +93,16 @@ class InboxAPI(GenericAPIView):
             return Response(response, status=status.HTTP_404_NOT_FOUND)
         elif code == 500:
             return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @permission_classes([IsAuthenticated])
+    def delete(self, request, author_id):
+        response, code = inbox_api_serializer.delete_inbox_item(author_id, request.data)
+        if code == 200:
+            return Response(response, status=status.HTTP_200_OK)
+        elif code == 400:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        elif code == 404:
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
+        elif code == 500:
+            return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
