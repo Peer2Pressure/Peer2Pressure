@@ -7,8 +7,9 @@ import Post from "../post/Post";
 import useGetTokens from "../../useGetTokens";
 
 function Stream(props) {
-  const { filterParam } = props;
-  const {tokens, tokenError} = useGetTokens();
+  const { authorData, authorID, tokens, filterParam } = props;
+  // const { filterParam } = props;
+  // const {tokens, tokenError} = useGetTokens();
   const [inboxPosts, setInboxPosts] = useState(null);
   const [error, setError] = useState(null);
   console.log("filterParam: ", filterParam);
@@ -20,12 +21,12 @@ function Stream(props) {
     const interval = setInterval(() => {
       async function getPosts() {
         try {
-          // let's get the author ID 
-          const response1 = await axios.get("/get_author_id/");
-          const authorId = response1.data.author_id;
+          // // let's get the author ID 
+          // const response1 = await axios.get("/get_author_id/");
+          // const authorId = response1.data.author_id;
           
           // let's get all the posts under for current author ID
-          const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+          const response2 = await axios.get("/authors/" + authorID + "/inbox/", {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
@@ -71,7 +72,7 @@ function Stream(props) {
             <div className="stream__posts" key={post.id}>
               <Post
                 className="post"
-                postAuthorID={post.author.id}
+                // postAuthorID={post.author.id}
                 id={post.id}
                 host={new URL(post.author.host).hostname}
                 displayName={post.author.displayName}
@@ -81,7 +82,13 @@ function Stream(props) {
                 comments={post.comments}
                 contentType={post.contentType}
                 title={post.title}
-                fullHost = {post.author.host}
+                origin={post.origin}
+                visibility={post.visibility}
+                source={post.source}
+                postAuthorID2={post.author.id}
+                authorData={authorData}
+                authorID={authorID}
+                tokens={tokens}
                 // likes={post.like}
               />
             </div>

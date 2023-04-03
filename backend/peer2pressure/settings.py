@@ -29,8 +29,7 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = ["https://p2psd.herokuapp.com", 
-                 "https://nevil-p2p.herokuapp.com", 
-                 "https://peer2test.herokuapp.com",
+                 "https://p2psd-dev.herokuapp.com", 
                  "https://www.distribution.social",
                  "https://sociallydistributed.herokuapp.com",
                  "http://cmput404-project-data.herokuapp.com"

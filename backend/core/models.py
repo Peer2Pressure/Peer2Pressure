@@ -89,7 +89,7 @@ class Follower(AbstractModel):
         return [nameof(cls.from_author), nameof(cls.to_author), nameof(cls.from_author_request), nameof(cls.to_author_request)]
     
     def __str__(self):
-        return str(self.from_author.name)+" -> "+str(self.to_author.name)
+        return str(self.from_author.name)+" -> "+str(self.to_author.name) + " " + str(self.m_id)
 
 
 class Post(AbstractModel):
@@ -192,7 +192,7 @@ class Inbox(AbstractModel):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return str(self.object_id)
+        return self.type + " " +str(self.object_id)
 
     # post = 1
     # comment =1

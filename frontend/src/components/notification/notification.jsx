@@ -9,11 +9,12 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import useGetAuthorData from '../../useGetAuthorData';
 import useGetTokens from '../../useGetTokens';
-function Notification() {
+function Notification(props) {
+  const { authorData, authorID, tokens } = props;
   const [incomingNotifications, setIncomingNotifications] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
-  const { authorData } = useGetAuthorData();
-  const { tokens } = useGetTokens();
+  // const { authorData } = useGetAuthorData();
+  // const { tokens } = useGetTokens();
   useEffect(() => {
     const interval = setInterval(() => {
         const randomIndex = Math.floor(Math.random() * mockData.length);

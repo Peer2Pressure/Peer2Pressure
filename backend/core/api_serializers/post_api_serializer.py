@@ -91,7 +91,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             return PostSerializer(post).data, 201
 
         else:
-            return post_serializer.errors, 400
+            return serializer.errors, 400
     
     def get_single_post(self, author_id, post_id):
         # Get post by author_id and post_id
@@ -136,6 +136,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     def update_author_post(self, author_id, post_id, request_data):
+        # print(pos)
         try:
             post = post_serializer.get_author_post(author_id, post_id)
         except ValidationError as e:
@@ -152,6 +153,7 @@ class PostAPISerializer(serializers.ModelSerializer):
 
         if serializer.is_valid():
             validated_post_data = serializer.validated_data
+            print("validated", validated_post_data)
             
             if validated_post_data["content_type"] not in valid_content_types+valid_image_content_types :
                 errors["content_type"] = f"Inavlid contentType. Valid values: {valid_content_types+valid_image_content_types}"
@@ -173,9 +175,15 @@ class PostAPISerializer(serializers.ModelSerializer):
             post = post_serializer.get_author_post(author_id, post_id)
             return PostSerializer(post).data, 200
         else:
-            return post_serializer.errors, 400
+            return serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):
-        deleted_post = post_serializer.delete_post(author_id, post_id)
+        deleted_post_m_id = post_serializer.delete_post(author_id, post_id)
 
-        return deleted_post
+        if deleted_post_m_id:
+            try:
+                inbox = Inbox.objects.get(object_id=deleted_post_m_id)
+                inbox.delete()
+            except Inbox.DoesNotExist:
+                print("Inbox object does not exist.")
+        return deleted_post_m_id

@@ -126,7 +126,7 @@ class PostSerializer(serializers.ModelSerializer):
 
         post.delete()
 
-        return post
+        return post.m_id
 
     def delete_post(self, author_id, post_id):
         try:

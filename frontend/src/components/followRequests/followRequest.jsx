@@ -7,12 +7,13 @@ import useGetAuthorData from '../../useGetAuthorData';
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 import './followRequest.css';
 
-function FollowRequest() {
+function FollowRequest(props) {
+  const { authorData, authorID, tokens } = props;
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [followedUsers, setFollowedUsers] = useState({});
-  const { tokens } = useGetTokens();
+  // const { tokens } = useGetTokens();
   const apiEndpoints = useGetNodeAPIEndpoints();
-  const { authorData } = useGetAuthorData();
+  // const { authorData } = useGetAuthorData();
   const [acceptedRequests, setAcceptedRequests] = useState({});
   const [removedRequests, setRemovedRequests] = useState({});
 
@@ -59,6 +60,12 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
+
+        if (new URL(request.id).hostname === "cmput404-project-data.herokuapp.com") {
+          data["actor"] = authorData;
+          data["object"] = request;
+        }
+
         let url = `${request.id.replace(/\/$/, "")}/inbox/`;
       
         if (new URL(request.id).hostname === "www.distribution.social") {

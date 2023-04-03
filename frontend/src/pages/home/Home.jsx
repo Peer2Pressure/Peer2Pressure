@@ -15,7 +15,7 @@ import Tabs from '@mui/material/Tabs';
 import Notification from "../../components/notification/notification";
 import GitHubActivityFeed from "../../components/github/Github";
 import useGetAuthorData from "../../useGetAuthorData";
-
+import useGetTokens from "../../useGetTokens";
 
 
 const Home = () => {
@@ -26,9 +26,14 @@ const Home = () => {
     setTabValue(newValue);
   };
 
+  const {tokens, tokenError} = useGetTokens();
   const {authorData, authorID} = useGetAuthorData();
   const authorGitHubUsername = authorData ? authorData.github.replace(/\/$/, "").split("/").pop(): '';
   console.log("okay", authorGitHubUsername);
+
+  if (!authorData || !authorID || !tokens) {
+    return <div></div>;
+  }
 
   return (
     <div className="homeContainer">
@@ -37,11 +42,11 @@ const Home = () => {
       </div> */}
       <div className="bodyContainer">
         <div className="profileContainer">
-          <Profile/>
+          <Profile authorData={authorData} authorID={authorID} tokens={tokens}/>
           
         </div>
         <div className="streamContainer">
-          <Share postsUpdated={postsUpdated} setPostsUpdated={setPostsUpdated}/>
+          <Share authorData={authorData} authorID={authorID} tokens={tokens}/>
           <br></br>
           <Box sx={{ "& .MuiTab-root": {borderBottom: 1, 
             borderColor: 'divider',
@@ -57,8 +62,8 @@ const Home = () => {
               <Tab label="GitHub Activity" value="3" />
             </Tabs>
           </Box>
-          {tabValue === "1" && <Stream filterParam={true}/>}
-          {tabValue === "2" && <Stream filterParam={false}/>}
+          {tabValue === "1" && <Stream authorData={authorData} authorID={authorID} tokens={tokens} filterParam={true}/>}
+          {tabValue === "2" && <Stream authorData={authorData} authorID={authorID} tokens={tokens} filterParam={false}/>}
           {tabValue === "3" && <GitHubActivityFeed
             username={authorGitHubUsername ? authorGitHubUsername : ''}
             // username={usea}
@@ -66,9 +71,9 @@ const Home = () => {
           />}
         </div>
         <div className="widgetContainer">
-           <Widgets/>
-           <FollowRequest/>
-           <Notification/>
+           <Widgets authorData={authorData} authorID={authorID} tokens={tokens}/>
+           <FollowRequest authorData={authorData} authorID={authorID} tokens={tokens}/>
+           <Notification authorData={authorData} authorID={authorID} tokens={tokens}/>
         </div>
       </div>
     </div>
