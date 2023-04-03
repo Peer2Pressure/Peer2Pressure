@@ -210,6 +210,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 method = "PUT"
 
             print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
+            print("\n\nvalues:    ", method, url, json.dumps(headers), json.dumps(request_data))
 
             # send request or get cached result
             res = self.create_or_update_post(method, url, json.dumps(headers), json.dumps(request_data))
@@ -236,6 +237,8 @@ class InboxAPISerializer(serializers.ModelSerializer):
     def create_or_update_post(self, method, url, headers, data):
         j_headers = json.loads(headers)
         print("\n\n**************NOT CACHED*************\n\n")
+        print("\n\nvalues CACHEDDDD ****:    ", method, url, json.dumps(headers), json.dumps(data))
+            
         print("\n\nsending requset", type(data), type(json.dumps(data)))
         res = requests.request(method=method, url=url, headers=j_headers, data=data)
         return res
