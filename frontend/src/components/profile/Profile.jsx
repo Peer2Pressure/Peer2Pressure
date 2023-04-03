@@ -131,7 +131,15 @@ export default function Profile() {
           >
             <GitHubIcon />
           </IconButton>
-          <text className="githubText">@{authorData?.github.split("https://github.com/")[1]}</text>
+          <div className="textContainer">
+            <text className="githubText">
+              {authorData?.github && authorData.github !== ""
+                ? `@${authorData.github.split("https://github.com/")[1]}`
+                : ""}
+            </text>
+          </div>
+          
+
         </div>
         <div className="ConnectionCount" onClick={handleConnectionsModalOpen}>
           <h4 className="ConnectionCountText">{connectionCount}</h4>
