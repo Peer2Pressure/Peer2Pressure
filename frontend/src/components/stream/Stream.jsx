@@ -1,4 +1,4 @@
-import Share from "../share/Share";
+
 import Flipmove from "react-flip-move";
 import { useEffect, useState } from 'react';
 import axios from "axios";
@@ -7,10 +7,13 @@ import Post from "../post/Post";
 import useGetTokens from "../../useGetTokens";
 
 function Stream(props) {
-  const { postsUpdated } = props;
+  const { filterParam } = props;
   const {tokens, tokenError} = useGetTokens();
   const [inboxPosts, setInboxPosts] = useState(null);
   const [error, setError] = useState(null);
+  console.log("filterParam: ", filterParam);
+
+
 
   useEffect(() => {
     axios.defaults.maxRedirects = 5;
@@ -27,8 +30,15 @@ function Stream(props) {
                 "Authorization": tokens[window.location.hostname]
             }
           });
-          setInboxPosts(response2.data.items);
-
+          if (!filterParam) {
+          // Filter the posts based on the visibility variable
+          const privatePosts = response2.data.items.filter(post => post.visibility === 'PRIVATE');
+          setInboxPosts(privatePosts);
+          }
+          else {
+            const publicPosts = response2.data.items.filter(post => post.visibility === 'PUBLIC' || post.visibility === 'FRIENDS');
+            setInboxPosts(publicPosts);
+          }
         } catch(error) {
           setError(error);
         };
@@ -36,8 +46,11 @@ function Stream(props) {
   
       getPosts();
     }, 1500);
+
     return () => clearInterval(interval);
-  }, [postsUpdated, tokens]);
+  }, [tokens]);
+
+
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -50,7 +63,6 @@ function Stream(props) {
   const sortedInboxPosts = inboxPosts.sort((a, b) => {
     return new Date(b.published) - new Date(a.published);
   });
-
   return (
     <div className="stream">
         <Flipmove className="flippy">
