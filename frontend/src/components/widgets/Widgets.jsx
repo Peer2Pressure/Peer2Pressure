@@ -142,7 +142,7 @@ function Widgets() {
         },
       })
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 201 ) {
           if (new URL(user.host).hostname !== window.location.hostname) {
             axios.put(followURL, data, {
               headers: {
