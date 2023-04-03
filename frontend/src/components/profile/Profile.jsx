@@ -35,7 +35,7 @@ export default function Profile(props) {
     const handleLogoutClick = async () => {
     try {
       await axios.get("/accounts/logout/");
-      navigate("/accounts/login/");
+      navigate(0);
       // navigate(0);
       console.log("logged out");
     } catch (err) {
