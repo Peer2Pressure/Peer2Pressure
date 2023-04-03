@@ -93,7 +93,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if data_type == "request":
             inbox = author.inbox.all().filter(type="follow")
             if inbox != []:
-                inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.content_object.approved == False]
+                inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.content_object and inbox_obj.content_object.approved == False]
 
         # Paginate inbox items.
         if page and size:
@@ -185,10 +185,14 @@ class InboxAPISerializer(serializers.ModelSerializer):
         if serializer.is_valid():
             # TODO: Validate post_id is a UUID
             # Get post author id.
+            validated_data = serializer.validated_data
+            print("Validated data: ", validated_data)
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
-            post_id = post_id_url[-1]
-            print("\n\n\nPOST ID: ", post_id, "firedign author:  ", foreign_author_id,  "\n\n\n")
+            post_id = uuid.UUID(post_id_url[-1])
+
+
+            print("\n\n\nPOST ID: ", post_id, type(post_id), "firedign author:  ", foreign_author_id,  "\n\n\n")
             # request_data["id"] = request_data["id"].rstrip("/")
 
             # Check if current author is followed by foreign author to receive posts.
@@ -196,43 +200,77 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
 
             method = ""
-            # Check if post exists to send POST or PUT request.
-            if post_serializer.post_exists(foreign_author_id, post_id):
-                method = "POST"
-            else:
-                method = "PUT"
-
             # Create or update post.
             url = f"{BASE_HOST}/authors/{foreign_author_id}/posts/{post_id}/"
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"{auth_header}"
             }
+            res = None
+            code = None
+            # Check if post exists to send POST or PUT request.
+            if post_serializer.post_exists(foreign_author_id, post_id):
+                method = "POST"
+                print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
 
-            print("sending requset")
-            res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+                res, code = post_api_serializer.update_author_post(author_id=foreign_author_id, request_data=request_data, post_id=post_id)
+            else:
+                method = "PUT"
+                print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
+                res, code = post_api_serializer.add_new_post(author_id=foreign_author_id, request_data=request_data, post_id=post_id)
 
-            print("\n\n GOT response\n\n", res.text, res.status_code)
 
-            if res.status_code in [200, 201]:
+            # print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
+            print("\n\nvalues:    ", method, url, json.dumps(headers), json.dumps(request_data))
+
+            # # send request or get cached result
+            # res = self.create_or_update_post(method, url, json.dumps(headers), json.dumps(request_data))
+            
+            # res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+
+            print("\n\n GOT response\n\n", res, code)
+
+            print("RESPONE from :", method )
+            # print(res.status_code, res.text)
+            if code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
                 # create new inbox entry referencing the post send to inbox.
                 inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
                 inbox_post.save()
                 # return {"msg": f"Post has been send to {author_id} inbox"}, 200
                 return PostSerializer(post).data, 200
-            elif res.status_code == 500:
+            elif code == 500:
                 return {"msg": "Internal Server Error"}, 500
             else:
-                return json.loads(res.text), 404
+                return res, 404
         else: 
             return serializer.errors, 400
 
-    @lru_cache(maxsize=None)  # Use maxsize=None for an unbounded cache size
-    def create_or_update_post(method, url, headers, data):
-        res = requests.request(method=method, url=url, headers=headers, data=data)
+        #     if res.status_code in [200, 201]:
+        #         post = post_serializer.get_author_post(foreign_author_id, post_id)
+        #         # create new inbox entry referencing the post send to inbox.
+        #         inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+        #         inbox_post.save()
+        #         # return {"msg": f"Post has been send to {author_id} inbox"}, 200
+        #         return PostSerializer(post).data, 200
+        #     elif res.status_code == 500:
+        #         return {"msg": "Internal Server Error"}, 500
+        #     else:
+        #         return res.text, 404
+        # else: 
+        #     return serializer.errors, 400
+
+    @lru_cache(maxsize=50)  # Use maxsize=None for an unbounded cache size
+    def create_or_update_post(self, method, url, headers, data):
+        j_headers = json.loads(headers)
+        print("\n\n**************NOT CACHED*************\n\n")
+        print("\n\nvalues CACHEDDDD ****:    ", method, url, json.dumps(headers), json.dumps(data))
+            
+        print("\n\nsending requset", type(data), type(json.dumps(data)))
+        res = requests.request(method=method, url=url, headers=j_headers, data=data)
         return res
     
+
     def handle_follow_request(self, author_id, request_data, auth_header):
         follow_serializer = FollowerSerializer(data=request_data)
         
@@ -283,7 +321,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 inbox_post.save()
                 return {"msg": f"Follow request has been send to {author_id} inbox"}, 200
             else:
-                return json.loads(res.text), res.status_code
+                return res.text, res.status_code
         else:
             return follow_serializer.errors, 400
         

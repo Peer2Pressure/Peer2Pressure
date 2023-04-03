@@ -91,7 +91,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             return PostSerializer(post).data, 201
 
         else:
-            return post_serializer.errors, 400
+            return serializer.errors, 400
     
     def get_single_post(self, author_id, post_id):
         # Get post by author_id and post_id
@@ -136,6 +136,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     def update_author_post(self, author_id, post_id, request_data):
+        # print(pos)
         try:
             post = post_serializer.get_author_post(author_id, post_id)
         except ValidationError as e:
@@ -174,7 +175,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             post = post_serializer.get_author_post(author_id, post_id)
             return PostSerializer(post).data, 200
         else:
-            return post_serializer.errors, 400
+            return serializer.errors, 400
 
     def delete_author_post(self, author_id, post_id):
         deleted_post = post_serializer.delete_post(author_id, post_id)

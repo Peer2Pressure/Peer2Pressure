@@ -129,17 +129,7 @@ function Widgets() {
       console.log('Author host:', authorData.host);
       console.log('Token:', tokens);
       console.log('Token TO SEND :', tokens[new URL(user.host).hostname]);
-      if (new URL(user.host).hostname !== window.location.hostname) {
-        axios.put(followURL, data, {
-          headers: {
-            'Authorization': tokens[window.location.hostname],
-            },
-          }
-        )
-        .catch((error) => {
-          console.error('Error updating follow request on local server:', error);
-        });
-      }
+      
       let url = `${user.id.replace(/\/$/, "")}/inbox/`;
       if (new URL(user.id).hostname === "www.distribution.social") {
         url = `${user.id.replace(/\/$/, "")}/inbox`;
@@ -150,7 +140,23 @@ function Widgets() {
         headers: {
           'Authorization': tokens[new URL(user.host).hostname],
         },
+      })
+      .then((response) => {
+        if (response.status === 200 || response.status === 201 ) {
+          if (new URL(user.host).hostname !== window.location.hostname) {
+            axios.put(followURL, data, {
+              headers: {
+                'Authorization': tokens[window.location.hostname],
+                },
+              }
+            )
+            .catch((error) => {
+              console.error('Error updating follow request on local server:', error);
+            });
+          }
+        }
       });
+      ;
     })
     .then((response) => {
       console.log('Follow request sent successfully.', response.data);
