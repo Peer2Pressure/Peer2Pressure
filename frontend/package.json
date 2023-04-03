@@ -30,6 +30,7 @@
     "react-markdown": "^8.0.6",
     "react-router-dom": "^6.8.2",
     "react-scripts": "5.0.1",
+    "reactjs-popup": "^2.0.5",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
     "web-vitals": "^2.1.4"
