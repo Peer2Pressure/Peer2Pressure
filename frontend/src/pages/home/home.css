@@ -34,10 +34,14 @@
 }
 
 .profileContainer {
+    display: flex;
     top: 2em;
     left: 6em;
     position: fixed;
-}
+    flex-direction: column;
+    justify-content: space-between;
+    height: 50%; /* set a fixed height to the container */
+  }
 
 .bodyContainer {
     padding-top: 2em;

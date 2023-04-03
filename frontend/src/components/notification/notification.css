@@ -1,0 +1,51 @@
+.notification {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;    
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 25px 25px 49px #e2dff0,
+                -25px -25px 49px #ffffffe8;
+  }
+  
+  .notification__title {
+    color: #0058A2;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .notification__list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 100px; /* set a maximum height to limit the list's height */
+  }
+  
+  
+  .notification__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .notification__item:hover {
+    background-color: #e6e6e6;
+  }
+  
+  .notification__summary {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .notification__post {
+    font-size: 14px;
+    margin-left: 16px;
+    color: #8c8c8c;
+  }
+  
