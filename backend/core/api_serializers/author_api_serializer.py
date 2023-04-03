@@ -85,10 +85,13 @@ class AuthorAPISerializer(serializers.ModelSerializer):
             # TODO : If author does not exist create new author. Will need to create new User object too !!!
             # author = author_serializer.create_author()
             return None, None
-        serializer = AuthorSerializer(author, request_data)
-        if serializer.is_valid():
-            serializer.save()
+        # serializer = AuthorSerializer(request_data)
+        updated_serializer = AuthorSerializer(author, request_data)
+        if updated_serializer.is_valid():
+            validated_data = updated_serializer.validated_data
+            # print(serializer.validated_data)
+            updated_serializer.save()
             # serializer.update(author, serializer.validated_data)
-            return serializer.data, 1
+            return updated_serializer.data, 1
         else:
-            return serializer.errors, 0
+            return updated_serializer.errors, 0
