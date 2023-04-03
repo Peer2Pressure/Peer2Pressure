@@ -43,6 +43,7 @@ const Post = forwardRef(
     const [likeCounter, setLikeCounter] = useState(0);
     const [authorLikedList, setAuthorLikedList] = useState([]);
     const [postLikeString, setPostLikeString] = useState("");
+    const [postCommentString, setPostCommentString] = useState("");
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
@@ -196,7 +197,13 @@ const Post = forwardRef(
             contentType: 'text/markdown',
             object: id
           };
-        const response = await axios.post(`${id}/inbox`, data, {
+        
+          if (host === "https://distribution.social/api/") {
+          setPostCommentString(`/authors/${postAuthorID}/inbox`);
+        } else {
+          setPostCommentString(`/authors/${postAuthorID}/inbox/`);
+        }
+        const response = await axios.post(postCommentString, data, {
         }, {
           headers: {
             'Authorization': tokens[new URL (comments).hostname],
