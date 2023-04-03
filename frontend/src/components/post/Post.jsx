@@ -31,7 +31,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, fullHost }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -42,6 +42,7 @@ const Post = forwardRef(
     const [inboxComments, setInboxComments] = useState([]);
     const [likeCounter, setLikeCounter] = useState(0);
     const [authorLikedList, setAuthorLikedList] = useState([]);
+    const [postLikeString, setPostLikeString] = useState("");
 
     const {authorData, authorID} = useGetAuthorData();
     const {tokens} = useGetTokens();
@@ -51,7 +52,7 @@ const Post = forwardRef(
     
     // console.log("postIDSplit: " + postIdSplit);
     // console.log("postAuthorID: " + postAuthorID);
-
+    console.log("ID: ", `${id}/likes/`);
 
     const open = Boolean(anchorEl);
     // console.log("id:",id);
@@ -69,6 +70,7 @@ const Post = forwardRef(
       setAnchorEl(null);
     };
 
+    console.log("host: ", fullHost);
     // calls the inbox api to get all data in items
     useEffect(() => {
       const interval = setInterval(() => {
@@ -87,7 +89,10 @@ const Post = forwardRef(
             // get all elements inside items of type "Like" and check if there exist a like in the specified object
             // const response3 = response2.data.items.filter((item) => item.type === "like" && item.id === object);
             // setInboxLikesID(response3);
-            const response_likes = await axios.get(`/authors/${postAuthorID}/posts/${postID}/likes/`)
+
+            // getting likes 
+            // post id
+            const response_likes = await axios.get(`${id}/likes/`);
             setInboxLikes(response_likes.data.items); 
             setLikeCounter(response_likes.data.items.length);
             const responseLikesAuthors = response_likes.data.items.map((item) => item.author.id);
@@ -95,7 +100,9 @@ const Post = forwardRef(
             const responseLikesAuthorsSplit2 = responseLikesAuthorsSplit.map((item) => item[4]);
             setAuthorLikedList(responseLikesAuthorsSplit2);
 
-            const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
+            // getting comments
+            const response_comments = await axios.get(`${id}/comments/`)
+            // const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
             setInboxComments(response_comments.data.comments);
 
             if (responseLikesAuthorsSplit2.includes(authorId)) {
@@ -118,9 +125,9 @@ const Post = forwardRef(
     // console.log("inboxLikes: ", inboxLikes);
     // console.log(inboxLikes);
     // console.log("authorLikedList: ", authorLikedList);
+
     // upon like click execute this
     const handleLikeClick = async () => {
-
       if (like) {
         return;
       }
@@ -141,8 +148,14 @@ const Post = forwardRef(
           object: id
         };
         // send axios post 
+        if (host === "https://distribution.social/api/") {
+          setPostLikeString(`/authors/${postAuthorID}/posts/${postID}/likes`);
+        } else {
+          setPostLikeString(`/authors/${postAuthorID}/posts/${postID}/likes/`);
+        }
+
         await axios.post(
-          "/authors/" + postAuthorID + "/inbox/",
+          postLikeString,
           data,
           {
             headers: {
