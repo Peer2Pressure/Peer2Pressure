@@ -196,12 +196,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 return {"msg": f"{author_id} is not following author: {foreign_author_id}"}, 400
 
             method = ""
-            # Check if post exists to send POST or PUT request.
-            if post_serializer.post_exists(foreign_author_id, post_id):
-                method = "POST"
-            else:
-                method = "PUT"
-
             # Create or update post.
             url = f"{BASE_HOST}/authors/{foreign_author_id}/posts/{post_id}/"
             headers = {
@@ -209,8 +203,18 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 "Authorization": f"{auth_header}"
             }
 
+            # Check if post exists to send POST or PUT request.
+            if post_serializer.post_exists(foreign_author_id, post_id):
+                method = "POST"
+            else:
+                method = "PUT"
+
             print("sending requset")
-            res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
+
+            # send request or get cached result
+            res = self.create_or_update_post(method, url, headers, json.dumps(request_data))
+            
+            # res = requests.request(method=method, url=url, headers=headers, data=json.dumps(request_data))
 
             print("\n\n GOT response\n\n", res.text, res.status_code)
 
@@ -228,11 +232,12 @@ class InboxAPISerializer(serializers.ModelSerializer):
         else: 
             return serializer.errors, 400
 
-    @lru_cache(maxsize=None)  # Use maxsize=None for an unbounded cache size
+    @lru_cache(maxsize=50)  # Use maxsize=None for an unbounded cache size
     def create_or_update_post(method, url, headers, data):
         res = requests.request(method=method, url=url, headers=headers, data=data)
         return res
     
+
     def handle_follow_request(self, author_id, request_data, auth_header):
         follow_serializer = FollowerSerializer(data=request_data)
         
