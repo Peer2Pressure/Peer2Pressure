@@ -533,6 +533,7 @@ const Post = forwardRef(
                             postAuthorID={postAuthorID}
                             postID={postID}
                             commentAuthorData={comment.author}
+                            fullHost={host}
                           />
                         </div>
                       ))}

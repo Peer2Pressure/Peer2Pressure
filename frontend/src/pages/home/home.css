@@ -5,7 +5,7 @@
     align-items: flex-start;
     margin:0;
     padding: 0;
-    width: 100%;
+    /* width: 100%; */
     /* background: white; */
     /* background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)), url("https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGdyYWRpZW50fGVufDB8fDB8fA%3D%3D&w=1000&q=80"); */
 
@@ -38,9 +38,9 @@
     top: 2em;
     left: 6em;
     position: fixed;
-    flex-direction: column;
+    /* flex-direction: column; */
     /* justify-content: space-between; */
-    height: 50%;
+    /* height: 50%; */
   }
 
 .bodyContainer {

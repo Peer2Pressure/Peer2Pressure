@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: rgba(255, 255, 255, 0.9);
-    row-gap: 25px;
+    /* row-gap: 25px; */
     padding: 25px;
     border-radius: 20px;    
     box-shadow:  25px 25px 49px #dde3ede4,
@@ -45,7 +45,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    row-gap: 5px;
+    /* row-gap: 5px; */
     align-content: center;
     /* border: 1px solid black; */
    
@@ -57,7 +57,7 @@ text{
     padding-bottom: 7px;
 }
 .ConnectionCountText{
-    padding-top: 7px;
+    /* padding-top: 7px; */
 }
 .ConnectionCount {
     display: flex;
@@ -77,7 +77,7 @@ text{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
+    /* padding: 12px; */
     border-radius: 16px;
     margin-bottom: 8px;
     background-color: #f1f1f1;
