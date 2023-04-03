@@ -59,6 +59,12 @@ function FollowRequest() {
           object: authorData,
           approved: true,
         };
+
+        if (new URL(request.id).hostname === "cmput404-project-data.herokuapp.com") {
+          data["actor"] = authorData;
+          data["object"] = request;
+        }
+
         let url = `${request.id.replace(/\/$/, "")}/inbox/`;
       
         if (new URL(request.id).hostname === "www.distribution.social") {
