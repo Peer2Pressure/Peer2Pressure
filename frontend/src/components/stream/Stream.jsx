@@ -88,6 +88,7 @@ function Stream(props) {
                 postAuthorID2={post.author.id}
                 authorData={authorData}
                 authorID={authorID}
+                tokens={tokens}
                 // likes={post.like}
               />
             </div>
