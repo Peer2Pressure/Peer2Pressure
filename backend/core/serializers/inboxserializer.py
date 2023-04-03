@@ -16,6 +16,7 @@ from ..serializers.authorserializer import AuthorSerializer
 
 class InboxItemsSerializer(serializers.Serializer):
     type = serializers.CharField(default="inbox" , max_length=10, read_only=True, required=False)
+    author = serializers.URLField(allow_null=True, required=False)
     page = serializers.IntegerField(allow_null=True, required=False)
     size = serializers.IntegerField(allow_null=True, required=False)
     items = PostSerializer(many=True)
@@ -30,6 +31,7 @@ class InboxItemsSerializer(serializers.Serializer):
 
 class InboxFollowRequestSerializer(serializers.Serializer):
     type = serializers.CharField(default="requests" , max_length=10, read_only=True, required=False)
+    author = serializers.URLField(allow_null=True, required=False)
     page = serializers.IntegerField(allow_null=True, required=False)
     size = serializers.IntegerField(allow_null=True, required=False)
     items = AuthorSerializer(many=True)
