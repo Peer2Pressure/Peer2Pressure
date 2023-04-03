@@ -34,7 +34,7 @@ function Followers({ onSelectUser }) {
         setIsLoading(true);
         let combinedUsers = [];
         apiEndpoints.forEach((endpoint) => {
-    
+            console.log("hsadasd: ", authorID)
             let url = `/authors/${authorID}/followers/`;
     
             try {

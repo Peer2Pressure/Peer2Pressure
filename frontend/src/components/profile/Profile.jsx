@@ -19,14 +19,15 @@ function getCsrfToken() {
 }
 
 
-export default function Profile() {
-
+export default function Profile(props) {
+  const { authorData, authorID, tokens } = props;
   const navigate = useNavigate();
-  const {tokens, tokenError} = useGetTokens();
-  const [authorData, setAuthorData] = useState(null);
+  console.log("profile etsing:, ", authorData)
+  // const {tokens, tokenError} = useGetTokens();
+  const [aData, setAuthorData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { authorID } = useGetAuthorData();
+  // const { authorID } = useGetAuthorData();
   const [connectionCount, setConnectionCount] = useState(0);
   const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
   const [connections, setConnections] = useState([]);
@@ -44,13 +45,16 @@ export default function Profile() {
   const handleConnectionsModalOpen = async () => {
     setConnectionsModalOpen(true);
     try {
-      const response = await axios.get("/authors/" + authorID + "/followers/", {
-        headers: {
-          "Authorization": tokens[window.location.hostname],
-        },
-      });
-      setConnections(response.data.items)
-      console.log("CONNECTIONS", response.data.items);
+      if (authorID) {
+        const response = await axios.get("/authors/" + authorID + "/followers/", {
+          headers: {
+            "Authorization": tokens[window.location.hostname],
+          },
+        });
+        setConnections(response.data.items)
+        console.log("CONNECTIONS", response.data.items);
+      }
+
     } catch (err) {
       // Handle the error here
     }
@@ -63,13 +67,13 @@ export default function Profile() {
   useEffect(() => {
     const getAuthorData = async () => {
       try {
-        const csrftoken = getCsrfToken();
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        axios.defaults.xsrfCookieName = 'csrftoken';        
+        // const csrftoken = getCsrfToken();
+        // axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        // axios.defaults.xsrfCookieName = 'csrftoken';        
         
-        const response1 = await axios.get("/get_author_id/");
-        const authorId = response1.data.author_id;
-        const response2 = await axios.get("/authors/"+authorId+"/", {
+        // const response1 = await axios.get("/get_author_id/");
+        // const authorId = response1.data.author_id;
+        const response2 = await axios.get("/authors/"+authorID+"/", {
           headers:{
               "Authorization": tokens[window.location.hostname]
           }
@@ -89,18 +93,19 @@ export default function Profile() {
  
     const followerCount = async () => {
       try {
-        const response = await axios.get("/authors/" + authorID + "/followers/", {
-          headers: {
-            "Authorization": tokens[window.location.hostname],
-          },
-        });
-        setConnectionCount(response.data.items.length);
+        if (authorID) {
+          const response = await axios.get("/authors/" + authorID + "/followers/", {
+            headers: {
+              "Authorization": tokens[window.location.hostname],
+            },
+          });
+          setConnectionCount(response.data.items.length);
+        }
+        
       } catch (err) {
         // Handle the error here
       }
     };
-    // Call the followerCount function
-    followerCount();
   
     useEffect(() => {
       if (authorID) {
@@ -127,23 +132,23 @@ export default function Profile() {
             <EditIcon />
           </IconButton>
         </div>
-        <Avatar src={authorData?.profileImage} sx={{ width: 100, height: 100 }} />
+        <Avatar src={aData?.profileImage} sx={{ width: 100, height: 100 }} />
         <h1 className="nameTitle">
-          {authorData?.displayName}
+          {aData?.displayName}
           {/* {data?.displayName} <-- what we actually need to display*/}
         </h1>
         <div className="githubContainer">
           <IconButton
             aria-label="github"
             color="primary"
-            onClick={() => window.open(authorData?.github, "_blank")}
+            onClick={() => window.open(aData?.github, "_blank")}
           >
             <GitHubIcon />
           </IconButton>
           <div className="textContainer">
             <text className="githubText">
-              {authorData?.github && authorData.github !== ""
-                ? `@${authorData.github.split("https://github.com/")[1]}`
+              {aData?.github && aData.github !== ""
+                ? `@${aData.github.split("https://github.com/")[1]}`
                 : ""}
             </text>
           </div>

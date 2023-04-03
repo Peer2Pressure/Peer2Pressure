@@ -8,16 +8,17 @@ import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
-function Widgets() {
+function Widgets(props) {
+  const { authorData, authorID, tokens } = props;
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [followedUsers, setFollowedUsers] = useState(false);
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
-  const { tokens } = useGetTokens();
+  // const { tokens } = useGetTokens();
   const apiEndpoints  = useGetNodeAPIEndpoints();
-  const { authorData, authorID } = useGetAuthorData();
+  // const { authorData, authorID } = useGetAuthorData();
   
   
   useEffect(() => {

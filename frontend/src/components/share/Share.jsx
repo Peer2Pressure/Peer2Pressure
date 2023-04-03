@@ -19,7 +19,7 @@ import 'react-dropdown/style.css';
 
 
 function Share (props) {
-    const {setPostsUpdated} = props;
+    const { authorData, authorID, tokens } = props;
     const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
     const [titleText, setTitle] = useState("");
@@ -43,8 +43,8 @@ function Share (props) {
     const [imageBase64, setImageBase64] = useState(null);
     const [imageID, setImageID] = useState(null);
        
-    const {authorData, loading, authorError, authorID} = useGetAuthorData();
-    const {tokens, tokenError} = useGetTokens();
+    // const {authorData, loading, authorError, authorID} = useGetAuthorData();
+    // const {tokens, tokenError} = useGetTokens();
 
     // change visibility
     function handleVisibilityChange(option) {
@@ -168,7 +168,6 @@ function Share (props) {
         
         const p2 = p1.then((response) => {
             handleDeleteImage();
-            setPostsUpdated(response.data);
             setContent("");
             setTitle("");
             setVisibility("PUBLIC");

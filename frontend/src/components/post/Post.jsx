@@ -38,7 +38,7 @@ const options = [
 // TODO: include logic clicking delete post
 
 const Post = forwardRef(
-  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin, visibility, source, postAuthorID2 }, ref) => {
+  ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin, visibility, source, postAuthorID2, authorData, authorID, tokens }, ref) => {
     const [like, setLike] = useState(false);
     // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
@@ -56,8 +56,8 @@ const Post = forwardRef(
     const [sourceAuthorDisplayName, setSourceAuthorDisplayName] = useState(null);
     const [sourceAuthorHost, setSourceAuthorHost] = useState(null);
 
-    const {authorData, authorID} = useGetAuthorData();
-    const {tokens} = useGetTokens();
+    // const {authorData, authorID} = useGetAuthorData();
+    // const {tokens} = useGetTokens();
     const sourceAuthor = source.replace(/\/posts\/.*$/, "/");
     const [postLikeString, setPostLikeString] = useState("");
     const [postCommentString, setPostCommentString] = useState("");
@@ -78,18 +78,18 @@ const Post = forwardRef(
     // calls the inbox api to get all data in items
     useEffect(() => {
       const interval = setInterval(() => {
-        async function getPosts() {
+        async function getPostComments() {
           try {
-            // let's get the author ID 
-            const response1 = await axios.get("/get_author_id/");
-            const authorId = response1.data.author_id;
+            // // let's get the author ID 
+            // const response1 = await axios.get("/get_author_id/");
+            // const authorId = response1.data.author_id;
             
-            // let's get all the posts under for current author ID
-            const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
-              headers:{
-                  "Authorization": tokens[window.location.hostname]
-              }
-            });
+            // // let's get all the posts under for current author ID
+            // const response2 = await axios.get("/authors/" + authorId + "/inbox/", {
+            //   headers:{
+            //       "Authorization": tokens[window.location.hostname]
+            //   }
+            // });
             // get all elements inside items of type "Like" and check if there exist a like in the specified object
             // const response3 = response2.data.items.filter((item) => item.type === "like" && item.id === object);
             // setInboxLikesID(response3);
@@ -108,7 +108,7 @@ const Post = forwardRef(
             // const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
             setInboxComments(response_comments.data.comments);
 
-            if (responseLikesAuthorsSplit2.includes(authorId)) {
+            if (responseLikesAuthorsSplit2.includes(authorID)) {
               // console.log("author is here!")
               setLike(true);
             } else {
@@ -120,14 +120,11 @@ const Post = forwardRef(
           };
         };
     
-        getPosts();
-      }, 1000);
+        getPostComments();
+      }, 3000);
       return () => clearInterval(interval);
     }, [tokens, postAuthorID, postID]);
 
-    console.log("inboxLikes: ", inboxLikes);
-    // console.log(inboxLikes);
-    // console.log("authorLikedList: ", authorLikedList);
 
     // // upon like click execute this
     // useEffect(() => {
