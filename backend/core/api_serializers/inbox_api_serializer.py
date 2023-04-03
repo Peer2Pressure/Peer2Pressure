@@ -190,7 +190,9 @@ class InboxAPISerializer(serializers.ModelSerializer):
             post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = uuid.UUID(post_id_url[-1])
-            print("\n\n\nPOST ID: ", post_id, "firedign author:  ", foreign_author_id,  "\n\n\n")
+
+
+            print("\n\n\nPOST ID: ", post_id, type(post_id), "firedign author:  ", foreign_author_id,  "\n\n\n")
             # request_data["id"] = request_data["id"].rstrip("/")
 
             # Check if current author is followed by foreign author to receive posts.
@@ -215,7 +217,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             else:
                 method = "PUT"
                 print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))
-                res, code = post_api_serializer.add_new_post(foreign_author_id, request_data, post_id)
+                res, code = post_api_serializer.add_new_post(foreign_author_id, post_id, request_data)
 
 
             # print("\n\nsending requset", type(request_data), type(json.dumps(request_data)))

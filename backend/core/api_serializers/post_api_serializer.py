@@ -136,6 +136,7 @@ class PostAPISerializer(serializers.ModelSerializer):
             return serializer.errors, 400
 
     def update_author_post(self, author_id, post_id, request_data):
+        # print(pos)
         try:
             post = post_serializer.get_author_post(author_id, post_id)
         except ValidationError as e:
