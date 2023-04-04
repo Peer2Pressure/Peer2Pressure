@@ -64,18 +64,19 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "https://p2psd-dev.herokuapp.com",
-    "https://p2psd.herokuapp.com",
-    "https://cmput404-project-app.herokuapp.com",
-    "https://cmput404-project-data.herokuapp.com",
-    "https://socialdistcmput404.herokuapp.com",
-    "https://www.distribution.social",
-    "https://sociallydistributed.herokuapp.com",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:8000"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://p2psd-dev.herokuapp.com",
+#     "https://p2psd.herokuapp.com",
+#     "https://cmput404-project-app.herokuapp.com",
+#     "https://cmput404-project-data.herokuapp.com",
+#     "https://socialdistcmput404.herokuapp.com",
+#     "https://www.distribution.social",
+#     "https://sociallydistributed.herokuapp.com",
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1:8000",
+#     "http://localhost:8000"
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -152,9 +153,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn")
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "build/static"), os.path.join(BASE_DIR, "build/github-activity-feed"), 
-                    os.path.join(BASE_DIR, "build/mustache"), os.path.join(BASE_DIR, "static"),
-                    os.path.join(BASE_DIR, "build/octicons"), )
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "build/static"), 
+                    os.path.join(BASE_DIR, "static"),
+                )
 
 
 # Default primary key field type
