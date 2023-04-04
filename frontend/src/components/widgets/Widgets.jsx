@@ -8,16 +8,17 @@ import useGetTokens from '../../useGetTokens';
 import useGetAuthorData from '../../useGetAuthorData';
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 
-function Widgets() {
+function Widgets(props) {
+  const { authorData, authorID, tokens } = props;
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [followedUsers, setFollowedUsers] = useState(false);
   const [displayedUsers, setDisplayedUsers] = useState([]);
 
-  const { tokens } = useGetTokens();
+  // const { tokens } = useGetTokens();
   const apiEndpoints  = useGetNodeAPIEndpoints();
-  const { authorData, authorID } = useGetAuthorData();
+  // const { authorData, authorID } = useGetAuthorData();
   
   
   useEffect(() => {
@@ -178,29 +179,44 @@ function Widgets() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </form>
-
+  
       {!isLoading && (
         <div className="searchResults">
           {searchTerm === '' ? (
-                <div></div>
-                ) : displayedUsers.length === 0 ? (
-                  <div>No results found.</div>
-                ) : (
-                  displayedUsers.map((user) => (
-                    <div key={user.id} className="userResult">
-                      <span>{user.displayName}</span>
-                      {user.id !== authorID && (
-                        <button className={`followButton ${followedUsers[user.id] ? 'sent' : ''}`} onClick={() => sendFollowRequest(user)}>
-                        <PersonAddIcon/>
-                        </button>
-                      )}
-                    </div>
-                  ))
+            <div></div>
+          ) : displayedUsers.length === 0 ? (
+            <div>No results found.</div>
+          ) : (
+            displayedUsers.map((user) => (
+              <div key={user.id} className="userResult">
+                <h3 className="hostnameText">
+                  {user.displayName}{" "}
+                  <span
+                    className={
+                      new URL(user.host).hostname !== window.location.hostname
+                        ? "post__headerSpecial--different"
+                        : "post__headerSpecial"
+                    }
+                  >
+                    @{new URL(user.host).hostname}
+                  </span>
+                </h3>
+                {user.id !== authorID && (
+                  <button
+                    className={`followButton ${followedUsers[user.id] ? "sent" : ""}`}
+                    onClick={() => sendFollowRequest(user)}
+                  >
+                    <PersonAddIcon />
+                  </button>
                 )}
               </div>
-            )}
-          </div>
-        );
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+  
       }
       
 export default Widgets;

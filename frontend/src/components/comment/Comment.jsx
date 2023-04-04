@@ -14,23 +14,31 @@ import useGetAuthorData from '../../useGetAuthorData';
 const Comment = forwardRef(({
     commentAuthorID, commentID, commentAvatar, commentDisplayName, 
     commentAuthorHost, comment, commentPublished, postAuthorID, postID,
-    commentAuthorData,
+    commentAuthorData, fullHost
 }, ref) => {
 
     const[isLiked, setIsLiked] = useState(false);
     const[likeCounter, setLikeCounter] = useState(null);
-    
+    const[commentGetString, setCommentGetString] = useState(null);
     // const[commentAuthorData, setCommentAuthorData] = useState(null);  
     const {authorData, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
+    
 
     const commentPostID = commentID.split("/")[8];
-
+    // console.log("commentID: ", `${commentID}/likes/`);
+    // console.log("commentAuthorHost: ", commentAuthorHost);
     useEffect(() => {
         const interval = setInterval(() => {
             async function getLikes() {
                 try {
-                    const responseLikes = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/${commentPostID}/likes/`);
+                    // const responseLikes = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/${commentPostID}/likes/`);
+                    if (commentAuthorHost === "https://distribution.social/api/") {
+                        setCommentGetString(`${commentID}/likes`)
+                    } else {
+                        setCommentGetString(`${commentID}/likes/`)
+                    }
+                    const responseLikes = await axios.get(commentGetString);
 
                     // const responseLikes = await axios.get(`/authors/6a8f4948-0ac5-412f-9289-fb3c891c76de/posts/13369d36-86e8-4a8c-8abf-47d44d1822f6/
                     // comments/3eac07ec-035e-43a9-bc38-34b432e3cfd9/likes/`);
@@ -78,8 +86,8 @@ const Comment = forwardRef(({
             console.log(error);
         }
     };
-    console.log("commentId: ", commentID);
-    console.log("likeCounter: ", likeCounter)
+    // console.log("commentId: ", commentID);
+    // console.log("likeCounter: ", likeCounter)
     return (
         <div className="commentContainer">
             <div className="commentHeader">

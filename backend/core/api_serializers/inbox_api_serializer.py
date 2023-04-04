@@ -83,17 +83,27 @@ class InboxAPISerializer(serializers.ModelSerializer):
         
         author = author_serializer.get_author_by_id(author_id)
         inbox_items = []
+        inbox_likes = []
+        inbox_comments = []
 
         # Get all inbox posts.
         if data_type == "post":
             inbox = author.inbox.all().filter(type="post")    
-            inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
+            if inbox.exists():
+                inbox_items = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
         
         # Get all inbox follow requests.
-        if data_type == "request":
+        elif data_type == "request":
             inbox = author.inbox.all().filter(type="follow")
-            if inbox != []:
+            if inbox.exists():
                 inbox_items = [inbox_obj.content_object.from_author for inbox_obj in inbox if inbox_obj.content_object and inbox_obj.content_object.approved == False]
+
+        elif data_type == "like_comment":
+            inbox = author.inbox.all().filter(type__in=["like", "comment"])
+            if inbox.exists():
+                inbox_likes = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.type == "like"]
+                inbox_comments = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.type == "comment"]
+
 
         # Paginate inbox items.
         if page and size:
@@ -104,7 +114,6 @@ class InboxAPISerializer(serializers.ModelSerializer):
 
         # Serialize inbox items based on type.
         if data_type == "post":
-            print("asdsa", print(author.id))
             post_serializer = PostSerializer(inbox_items, many=True)
             serializer = InboxItemsSerializer(data={
                         'author': author.id,
@@ -130,7 +139,18 @@ class InboxAPISerializer(serializers.ModelSerializer):
                 return serializer.data, 200
             else:
                 return serializer.errors, 400
-    
+        elif data_type == "like_comment":
+            post_serializer = PostLikeSerializer(inbox_likes, many=True)
+            comment_serializer = CommentSerializer(inbox_comments, many=True)
+            inbox_items = post_serializer.data + comment_serializer.data
+
+            return {
+                "type": "like_comment",
+                "author": author.id,
+                "items": inbox_items
+            }, 200
+            
+
     def delete_inbox_item(self, author_id, request_data):
         if not author_serializer.author_exists(author_id):
             return {"msg": f"Author {author_id} not found"}, 404

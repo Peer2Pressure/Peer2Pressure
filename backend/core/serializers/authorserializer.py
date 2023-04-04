@@ -32,9 +32,12 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
-        # instance.username = validated_data.get("username", instance.username)
-        instance.username = validated_data.get("github", instance.github)
+        instance.github = validated_data.get("github", instance.github)
         instance.avatar = validated_data.get("avatar", instance.avatar)
+        # instance.name = validated_data.get("name", instance.name)
+        # instance.username = validated_data.get("username", instance.username)
+        # instance.username = validated_data.get("github", instance.github)
+        # instance.avatar = validated_data.get("avatar", instance.avatar)
         instance.save()
         return instance
     

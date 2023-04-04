@@ -7,15 +7,16 @@ import useGetAuthorData from '../../useGetAuthorData';
 import useGetNodeAPIEndpoints from '../../useGetNodeAPIEndpoints';
 import './followRequest.css';
 
-function FollowRequest() {
+function FollowRequest(props) {
+  const { authorData, authorID, tokens} = props;
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [followedUsers, setFollowedUsers] = useState({});
-  const { tokens } = useGetTokens();
+  // const { tokens } = useGetTokens();
   const apiEndpoints = useGetNodeAPIEndpoints();
-  const { authorData } = useGetAuthorData();
+  // const { authorData } = useGetAuthorData();
   const [acceptedRequests, setAcceptedRequests] = useState({});
   const [removedRequests, setRemovedRequests] = useState({});
-
+  
   useEffect(() => {
     if (tokens && authorData && apiEndpoints) {
       const interval = setInterval(() => {
@@ -87,10 +88,12 @@ function FollowRequest() {
               'Authorization': tokens[window.location.hostname],
             },
           });
-       }
+        }
+        
         console.log('Follower added to the local database.');
         setAcceptedRequests((prev) => ({ ...prev, [request.id]: true }));
         setFollowedUsers((prev) => ({ ...prev, [request.id]: true }));
+        
         setTimeout(() => {
           setRemovedRequests((prev) => ({ ...prev, [request.id]: true }));
           setIncomingRequests((prev) => prev.filter((r) => r.id !== request.id));
@@ -132,7 +135,18 @@ function FollowRequest() {
             .filter((request) => !removedRequests[request.id])
             .map((request) => (
               <div key={request.id} className="request">
-                <span>{request.displayName}</span>
+                <h3 className="hostnameText">
+                  {request.displayName}{" "}
+                  <span
+                    className={
+                      new URL(request.host).hostname !== window.location.hostname
+                        ? "post__headerSpecial--different"
+                        : "post__headerSpecial"
+                    }
+                  >
+                    @{new URL(request.host).hostname}
+                  </span>
+                </h3>
                 <div>
                   <button
                     className={`acceptButton ${acceptedRequests[request.id] ? "accepted" : ""}`}
@@ -147,6 +161,6 @@ function FollowRequest() {
       )}
     </div>
   );
-  
 }
+
 export default FollowRequest

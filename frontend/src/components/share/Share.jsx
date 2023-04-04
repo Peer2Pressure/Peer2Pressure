@@ -1,5 +1,7 @@
 import "./share.css";
 
+import Followers from "../followers/Followers";
+
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,18 +11,27 @@ import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Switch, Button } from "@mui/material";
+import { Switch, Button, Modal, Box } from "@mui/material";
 
+import Popup from "reactjs-popup";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 
 function Share (props) {
-    const {setPostsUpdated} = props;
+    const { authorData, authorID, tokens } = props;
     const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
     const [titleText, setTitle] = useState("");
     const [message, setMessage] = useState();
+    const [selectedUser, setSelectedUser] = useState(null);
+    const visibilityOptions = [
+        { value: 'PUBLIC', label: 'Public' },
+        { value: 'FRIENDS', label: 'Friends' },
+        { value: 'PRIVATE', label: 'Select Friend' }
+    ];
+    const [visibility, setVisibility] = useState(visibilityOptions[0].value);
+    const [showPopup, setShowPopup] = useState(false);
     const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
@@ -31,9 +42,55 @@ function Share (props) {
     const [imageFile, setImageFile] = useState(null);
     const [imageBase64, setImageBase64] = useState(null);
     const [imageID, setImageID] = useState(null);
+
+    const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
+    const [connections, setConnections] = useState([]);
        
-    const {authorData, loading, authorError, authorID} = useGetAuthorData();
-    const {tokens, tokenError} = useGetTokens();
+    // const {authorData, loading, authorError, authorID} = useGetAuthorData();
+    // const {tokens, tokenError} = useGetTokens();
+
+    // change visibility
+    function handleVisibilityChange(option) {
+        setVisibility(option.value);
+        if (option.value === "PRIVATE") {
+            setShowPopup(true);
+            handleConnectionsModalOpen();
+        } else {
+            setSelectedUser(null);
+            setShowPopup(false);
+            handleConnectionsModalClose();
+        }
+    }
+
+    const handleConnectionsModalOpen = async () => {
+        setConnectionsModalOpen(true);
+        try {
+            if (authorID) {
+                const response = await axios.get("/authors/" + authorID + "/followers/", {
+                    headers: {
+                        "Authorization": tokens[window.location.hostname],
+                    },
+                });
+                setConnections(response.data.items)
+                console.log("CONNECTIONS", response.data.items);
+            }   
+        } catch (err) {
+            // Handle the error here
+        }
+    };
+
+    const handleConnectionsModalClose = () => {
+        setConnectionsModalOpen(false);
+    };
+
+    // TODO: if selectedUser is null and visibility is PRIVATE, show error message
+
+    // change selected user
+    const handleSelectUser = (user) => {
+        setSelectedUser(user);
+        setShowPopup(false);
+        handleConnectionsModalClose();
+    };
 
     // change contentType
     function handleContentTypeChange(option) {
@@ -68,14 +125,19 @@ function Share (props) {
         setImageID("");
     }
 
-    // get followers to send a public post
+    // get followers to send a post
     async function getFollowers() {
         const response = await axios.get(`/authors/${authorID}/followers/`, {
             headers:{
                 "Authorization": tokens[window.location.hostname]
             }
         });
-        return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
+        if (selectedUser) {  
+            console.log("working")
+            return [[selectedUser.id.replace(/\/$/, "") +"/inbox/", new URL(selectedUser.host).hostname]];
+        } else {
+            return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
+        }
     }
 
     const sendImagePost = async() => {
@@ -92,7 +154,7 @@ function Share (props) {
             "content": imageBase64,
             "author": authorData,
             "unlisted": true,
-            "visibility": "PUBLIC"
+            "visibility": visibility
         },
         {
             headers: {
@@ -105,29 +167,6 @@ function Share (props) {
         .then((res) => {
             sendPost();
         })
-        
-        // Might not need to send to followers' inboxes
-        
-        // .then((response) => {
-        //     const p3image = getFollowers()
-        //     const p4image = p3image.then((response2) => {
-        //         const requestPromises = response2.map(obj => {
-        //             axios.post(obj[0], response.data, {
-        //                 headers: {
-        //                     "Authorization": tokens[obj[1]]
-        //                 }
-        //             });
-        //         })
-        //         Promise
-        //         .all(requestPromises)
-        //         .then((responses) => {
-        //             console.log('All requests sent successfully:', responses);
-        //         })
-        //         .catch((error) => {
-        //             console.error('Error sending requests:', error);
-        //         })
-        //     })
-        // });
     }
 
     const sendPost = async () => {
@@ -140,8 +179,8 @@ function Share (props) {
             "title": titleText,
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
-            // "content": imageID ? contentText + `<img src = "${imageID}/image">` : contentText,
             "author": authorData,
+            "visibility": visibility
         }
 
         console.log("DATA!", data);
@@ -156,13 +195,15 @@ function Share (props) {
         
         const p2 = p1.then((response) => {
             handleDeleteImage();
-            setPostsUpdated(response.data);
             setContent("");
             setTitle("");
+            setVisibility("PUBLIC");
+            setSelectedUser(null);
+            setShowPopup(false);
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
-                
+                console.log("p3", p3);
                 //  Custom payload to post to Team 11 inbox
                 const team11Data = {};
                 team11Data["@context"] = "";
@@ -261,6 +302,16 @@ function Share (props) {
                     </div>
                 </div>
 
+                <div className="dmInfo">
+                    <div className="dmInfoText">
+                        {selectedUser && (
+                            <div className="dmInfoTextContainer">
+                                <p>Direct Message to <i>{selectedUser.displayName}</i></p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="bottom">
                     <div className="postOptionsContainer">
                         {/* actual image choice */}
@@ -278,19 +329,33 @@ function Share (props) {
                                         fontSize="small"     
                                         color="primary"
                                     />
-                                    <b> Upload a Photo</b>
+                                    <b> Upload Photo</b>
                                 </div>
                             </label>
                         </div>
 
-                        <div className="isPrivateSwitch">
+                        <div className="chooseVisibility">
+                            <Dropdown 
+                                options={visibilityOptions}
+                                value={visibility}
+                                onChange={handleVisibilityChange}
+                            />
+                            {/* <Popup 
+                                open={showPopup} 
+                                modal={true}
+                                onClose={() => setShowPopup(false)}
+                                >
+                                <Followers onSelectUser={handleSelectUser} authorData={authorData} authorID={authorID}/>
+                            </Popup> */}
+                        </div>
+                        {/* <div className="isPrivateSwitch">
                             <Switch
                                 private={isPrivate}
                                 onChange={(event) => setIsPrivate(event.target.checked)}
                                 color="primary"
                             />
                             <b>Private</b>  
-                        </div>
+                        </div> */}
                         <div className="chooseContentType">
                             <Dropdown 
                                 options={contentOptions}
@@ -314,6 +379,57 @@ function Share (props) {
                     </div>
                 </div>
             </div>
+            <Modal
+      open={connectionsModalOpen}
+      onClose={handleConnectionsModalClose}
+      aria-labelledby="connections-modal-title"
+      aria-describedby="connections-modal-description"
+    >
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%',
+        maxHeight: '80%',
+        overflowY: 'auto',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: '20px',
+      }}>
+        <h2 id="connections-modal-title" style={{ color: '#0058A2' }}>Select Friend</h2>
+        <ul id="connections-modal-description" className="connectionsList">
+          {connections.map((connection, index) => (
+            <li key={index} className="connectionItem">
+             <div className="avatarAndNameContainer">
+        <div className="post__headerText">
+          <h3>
+            {connection.displayName}{" "}
+            <span
+              className={
+                new URL(connection.host).hostname !== window.location.hostname
+                  ? "post__headerSpecial--different"
+                  : "post__headerSpecial"
+              }
+            >
+              @{new URL(connection.host).hostname}
+            </span>
+          </h3>
+        </div>
+      </div>
+              <button
+                className="deleteConnectionButton"
+                onClick={() => handleSelectUser(connection)}
+              >
+                Select
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Box>
+    </Modal>
         </div>
     );
 };
