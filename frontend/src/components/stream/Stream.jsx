@@ -15,7 +15,7 @@ function Stream(props) {
   console.log("filterParam: ", filterParam);
 
   useEffect(() => {  
-    const sse = new EventSource('http://localhost:8000/authors/69313508-2320-4b04-b44f-668090e85394/inbox/stream/',
+    const sse = new EventSource(`${authorData.id}/inbox/stream/`,
     { 
       // withCredentials: true,
       // headers: {
