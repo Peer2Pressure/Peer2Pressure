@@ -1,1 +1,1 @@
-web: gunicorn peer2pressure.wsgi
+web: gunicorn peer2pressure.wsgi --worker-class gevent --worker-connections 1000 --log-level debug --log-file=-
