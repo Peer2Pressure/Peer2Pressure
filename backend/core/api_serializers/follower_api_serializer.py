@@ -68,9 +68,6 @@ class FollowerAPISerializer(serializers.ModelSerializer):
     def create_follow_request(self, author_id, foreign_author_id, request_data):
         # if not author_serializer.author_exists(author_id):
         #     return {"msg": "Author does not exist"}, 404
-        print(request_data)
-        print("\n\nTYPE")
-        print(type(request_data))
         
         follow_serializer= FollowerSerializer(data=request_data)
         if follow_serializer.is_valid():

@@ -11,6 +11,7 @@ function Stream(props) {
   // const { filterParam } = props;
   // const {tokens, tokenError} = useGetTokens();
   const [inboxPosts, setInboxPosts] = useState([]);
+  // const [privatePosts,]
   const [error, setError] = useState(null);
   console.log("filterParam: ", filterParam);
 
@@ -24,6 +25,7 @@ function Stream(props) {
       // }
     });  
     
+
     function updateInboxPosts(newPost) {
       setInboxPosts(prevInboxPosts => {
         const existingPostIndex = prevInboxPosts.findIndex(post => post.id === newPost.id);

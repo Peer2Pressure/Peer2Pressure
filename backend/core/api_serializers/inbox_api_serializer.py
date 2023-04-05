@@ -11,7 +11,7 @@ from django.http import HttpResponseBadRequest
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.http import HttpResponse
-
+from django.utils import timezone
 
 # Local libraries
 from .. import utils
@@ -254,9 +254,16 @@ class InboxAPISerializer(serializers.ModelSerializer):
             # print(res.status_code, res.text)
             if code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
-                # create new inbox entry referencing the post send to inbox.
-                inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
-                inbox_post.save()
+                if method == "PUT":
+                    # create new inbox entry referencing the post send to inbox.
+                    print("CREATING: PUT")
+                    inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+                    inbox_post.save()
+                if method == "POST":
+                    print("UPDATING SAVEINFn: POST\n\n")
+                    inbox_post = Inbox.objects.get(object_id=post.m_id, author=author, type="post")
+                    inbox_post.updated_at = timezone.now
+                    inbox_post.save()
                 # return {"msg": f"Post has been send to {author_id} inbox"}, 200
                 return PostSerializer(post).data, 200
             elif code == 500:

@@ -190,11 +190,7 @@ class Inbox(AbstractModel):
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
     created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
         return self.type + " " +str(self.object_id)
-
-    # post = 1
-    # comment =1
-    # post_like = 2
-    # comment_like = 3

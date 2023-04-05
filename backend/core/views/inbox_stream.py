@@ -72,8 +72,8 @@ class InboxStreamView(View):
             new_messages = PostSerializer(inbox_posts, many=True).data
 
             # Sleeping 10 seconds to allow client to setup connection
-            print("Sleeping 10 seconds to allow client to setup connection\n")
-            time.sleep(10)
+            print("Sleeping 1 seconds to allow client to setup connection\n")
+            time.sleep(1)
 
             for message in new_messages:
                 json_string_msg = json.dumps(message, cls=DjangoJSONEncoder)
