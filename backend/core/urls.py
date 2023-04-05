@@ -4,7 +4,7 @@ from drf_yasg import openapi
 from django.urls import path, re_path, include
 from django.shortcuts import redirect, render
 
-from .views import account_views, author_views, follower_views, node_api, post_views, comment_views, like_views, inbox_views, image_views
+from .views import account_views, author_views, follower_views, node_api, post_views, comment_views, like_views, inbox_views, image_views, inbox_stream
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -65,6 +65,9 @@ urlpatterns = [
    path('nodes/api_endpoints/', node_api.get_api_endpoints, name="get_api_endpoints"),
 
    # Image
-   path('authors/<uuid:author_id>/posts/<uuid:post_id>/image', image_views.PostImageAPI.as_view(), name="post_image")
+   path('authors/<uuid:author_id>/posts/<uuid:post_id>/image', image_views.PostImageAPI.as_view(), name="post_image"),
+
+   # Inbox posts stream
+   path('authors/<uuid:author_id>/inbox/stream/', inbox_stream.InboxStreamView.as_view(), name="inbox_stream")
    
 ]

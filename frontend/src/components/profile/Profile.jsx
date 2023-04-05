@@ -11,6 +11,7 @@ import useGetTokens from "../../useGetTokens";
 import useGetAuthorData from "../../useGetAuthorData";
 
 
+
 function getCsrfToken() {
   // const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/);
   // return csrfToken ? csrfToken[1] : '';
@@ -21,6 +22,8 @@ function getCsrfToken() {
 
 export default function Profile(props) {
   const { authorData, authorID, tokens } = props;
+  const [followDelete, setFollowDelete] = useState(false);
+  
   const navigate = useNavigate();
   console.log("profile etsing:, ", authorData)
   // const {tokens, tokenError} = useGetTokens();
@@ -31,11 +34,12 @@ export default function Profile(props) {
   const [connectionCount, setConnectionCount] = useState(0);
   const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
   const [connections, setConnections] = useState([]);
-  
+
+
     const handleLogoutClick = async () => {
     try {
       await axios.get("/accounts/logout/");
-      navigate("/accounts/login/");
+      navigate(0);
       // navigate(0);
       console.log("logged out");
     } catch (err) {
@@ -80,6 +84,7 @@ export default function Profile(props) {
       });
         setAuthorData(response2.data);
         setLoading(false);
+        
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -88,7 +93,7 @@ export default function Profile(props) {
     if (tokens) {
       getAuthorData();
     };
-  }, [tokens]);
+  }, [tokens, followDelete]);
 
  
     const followerCount = async () => {
@@ -106,16 +111,31 @@ export default function Profile(props) {
         // Handle the error here
       }
     };
+    
   
+    
     useEffect(() => {
       if (authorID) {
         followerCount();
       }
     }, [authorID]);
     
-    const handleDeleteConnection = (connection) => {
+    const handleDeleteConnection = async (connection) => {
       // Implement the logic to delete the connection here.
       // For example, make an API call to delete the connection, and then update the state.
+      try{
+        await axios.delete("/authors/"+authorID+"/followers/"+connection.id.split("/").pop()+"/", {
+          headers: {
+            "Authorization": tokens[window.location.hostname],
+          },
+        });
+        setConnections(connections.filter((c) => c.id !== connection.id));
+        setFollowDelete(true)
+        setConnectionCount(connectionCount - 1);
+      }
+      catch(err){
+        console.log(err);
+      }
     };
     
   // check if loading 

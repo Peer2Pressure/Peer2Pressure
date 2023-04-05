@@ -108,6 +108,18 @@ const Post = forwardRef(
             // const response_comments = await axios.get(`/authors/${postAuthorID}/posts/${postID}/comments/`)
             setInboxComments(response_comments.data.comments);
 
+            setPostCommentString(`/authors/${postAuthorID}/inbox/`);
+            console.log("This is the postCommentString\n\n\n", postCommentString);
+            if (host === "https://distribution.social/api/") {
+            setPostCommentString(`/authors/${postAuthorID}/inbox`);
+            } 
+
+            setPostLikeString(`/authors/${postAuthorID}/inbox/`);
+            // send axios post 
+            if (host === "https://distribution.social/api/") {
+              setPostLikeString(`/authors/${postAuthorID}/inbox`);
+            }
+
             if (responseLikesAuthorsSplit2.includes(authorID)) {
               // console.log("author is here!")
               setLike(true);
@@ -187,12 +199,6 @@ const Post = forwardRef(
           author: authorData,
           object: id
         };
-        // send axios post 
-        if (host === "https://distribution.social/api/") {
-          setPostLikeString(`/authors/${postAuthorID}/inbox`);
-        } else {
-          setPostLikeString(`/authors/${postAuthorID}/inbox/`);
-        }
 
         await axios.post(
           postLikeString,
@@ -220,6 +226,7 @@ const Post = forwardRef(
       console.log("This is the m_id;", authorID);
       console.log("This is the m_data;", authorData);
       console.log("This is the KEY;", id);
+      // setPostCommentString(`/authors/${postAuthorID}/inbox/`);
         try {
           const data = {
             type: 'comment',
@@ -236,12 +243,11 @@ const Post = forwardRef(
             contentType: 'text/markdown',
             object: id
           };
+
         
-          if (host === "https://distribution.social/api/") {
-          setPostCommentString(`/authors/${postAuthorID}/inbox`);
-          } else {
-            setPostCommentString(`/authors/${postAuthorID}/inbox/`);
-          }
+          // else {
+          //   setPostCommentString(`/authors/${postAuthorID}/inbox/`);
+          // }
           const response = await axios.post(postCommentString, data, {
           }, {
             headers: {
@@ -458,13 +464,23 @@ const Post = forwardRef(
             </div>
             <div className="post__headerDescription">
               
-              {contentType === "text/markdown" ?
+            {contentType === "text/markdown" ?
+              <p><ReactMarkdown>{text}</ReactMarkdown></p>
+              :
+              contentType === "image/png;base64" || contentType === "image/jpeg;base64" ?
+              <img src={text} alt="" />
+              :
+              <p>{text}</p>
+            }
+
+              {/* {contentType === "text/markdown" ?
                   <p><ReactMarkdown>{text}</ReactMarkdown></p>
                   :
-                    <p>{text}</p>
+                  <p>{text}</p>
               }
+              <img src={text} alt="" /> */}
               
-                {/* <img src={image} alt="" /> */}
+                
             </div>
             <div className="commentsContainer">
               {/* were going go put comment component here */}
@@ -533,6 +549,7 @@ const Post = forwardRef(
                             postAuthorID={postAuthorID}
                             postID={postID}
                             commentAuthorData={comment.author}
+                            fullHost={host}
                           />
                         </div>
                       ))}
