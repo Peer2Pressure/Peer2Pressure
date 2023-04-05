@@ -11,17 +11,14 @@ import useGetTokens from "../../useGetTokens";
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Switch, Button, Modal, Box } from "@mui/material";
 
-import Popup from "reactjs-popup";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 
 function Share (props) {
     const { authorData, authorID, tokens } = props;
-    const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
     const [titleText, setTitle] = useState("");
-    const [message, setMessage] = useState();
     const [selectedUser, setSelectedUser] = useState(null);
     const visibilityOptions = [
         { value: 'PUBLIC', label: 'Public' },
@@ -29,8 +26,6 @@ function Share (props) {
         { value: 'PRIVATE', label: 'Select Friend' }
     ];
     const [visibility, setVisibility] = useState(visibilityOptions[0].value);
-    const [showPopup, setShowPopup] = useState(false);
-    const [isPrivate, setIsPrivate] = useState(false); 
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
         { value: 'text/markdown', label: 'Markdown' },
@@ -51,11 +46,9 @@ function Share (props) {
     function handleVisibilityChange(option) {
         setVisibility(option.value);
         if (option.value === "PRIVATE") {
-            setShowPopup(true);
             handleConnectionsModalOpen();
         } else {
             setSelectedUser(null);
-            setShowPopup(false);
             handleConnectionsModalClose();
         }
     }
@@ -85,7 +78,6 @@ function Share (props) {
     // change selected user
     const handleSelectUser = (user) => {
         setSelectedUser(user);
-        setShowPopup(false);
         handleConnectionsModalClose();
     };
 
@@ -194,7 +186,6 @@ function Share (props) {
             setTitle("");
             setVisibility("PUBLIC");
             setSelectedUser(null);
-            setShowPopup(false);
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {

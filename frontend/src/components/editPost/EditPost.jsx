@@ -20,17 +20,16 @@ const EditPost = forwardRef(
     ({ postID, postTitle, postText, postContentType, postAuthorID, onClose }, ref) => {
     const [contentText, setContent] = useState(postText);
     const [titleText, setTitle] = useState(postTitle);
-    const [isPrivate, setIsPrivate] = useState(false); 
+    const visibilityOptions = [
+        { value: 'PUBLIC', label: 'Public' },
+        { value: 'FRIENDS', label: 'Friends' }
+    ];
+    const [visibility, setVisibility] = useState(visibilityOptions[0].value);
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
         { value: 'text/markdown', label: 'Markdown' },
     ];
     const [contentType, setContentType] = useState(postContentType);
-    const postUUID = postID.replace(/\/$/, "").split("/").pop()
-
-    // const [imageFile, setImageFile] = useState(null);
-    // const [imageBase64, setImageBase64] = useState(null);
-    const [imageID, setImageID] = useState(null);
        
     const {authorData, loading, authorError, authorID} = useGetAuthorData();
     const {tokens, tokenError} = useGetTokens();
@@ -46,6 +45,11 @@ const EditPost = forwardRef(
         }
     };
 
+    // change visibility
+    function handleVisibilityChange(option) {
+        setVisibility(option.value);
+    }
+
     // change contentType
     function handleContentTypeChange(option) {
         setContentType(option.value);
@@ -60,25 +64,6 @@ const EditPost = forwardRef(
     const handleTitleChange = event => {
         setTitle(event.target.value);
     };
-
-    // // select image from browser
-    // const handleFileUpload2 = (event) => {
-    //     const imageUUID = uuidv4();
-    //     setImageID(`${authorData.id}/posts/${imageUUID}`)
-    //     setImageFile(event.target.files[0]);
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         setImageBase64(reader.result);
-    //     };
-    //     reader.readAsDataURL(event.target.files[0]);
-    // };
-
-    // // delete image
-    // const handleDeleteImage = () => {
-    //     setImageFile(null);
-    //     setImageBase64(null);
-    //     setImageID("");
-    // }
 
     // get followers to send a public post
     async function getFollowers() {
@@ -97,15 +82,14 @@ const EditPost = forwardRef(
             "source": postID,
             "origin": postID,
             "title": titleText,
-            "contentType": imageID ?  "text/markdown" : contentType,
-            "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
+            "contentType": markdownImage ?  "text/markdown" : contentType,
+            "content": contentText,
             "author": authorData,
         }
 
         console.log("DATA!", postID);
 
         const p1 = axios
-        // .post(`/authors/${authorID}/inbox/`, data, {
         .post(postID+"/", data, {
             headers: {
                 "Authorization": tokens[window.location.hostname]
@@ -115,8 +99,6 @@ const EditPost = forwardRef(
             console.log(error)})
         
         const p2 = p1.then((response) => {
-            // handleDeleteImage();
-            // setPostsUpdated(response.data);
             setContent("");
             setTitle("");
             handleClose();
@@ -205,35 +187,13 @@ const EditPost = forwardRef(
 
                 <div className="bottom2">
                     <div className="postOptionsContainer2">
-                        {/* actual image choice */}
-                        {/* this works weird */}
-                        {/* <div className="shareImage2">                    
-                            <input 
-                                type="file"
-                                id="file" 
-                                accept="image/png, image/jpeg"
-                                style={{display:"none"}} 
-                                onChange={handleFileUpload2}
-                            />
-                            <label htmlFor="file">
-                                <div className="uploadImg2">
-                                    <PhotoSizeSelectActualOutlinedIcon 
-                                        fontSize="small"     
-                                        color="primary"
-                                    />
-                                    <b> Upload a Photo</b>
-                                </div>
-                            </label>
-                        </div> */}
-
-                        <div className="isPrivateSwitch2">
-                            <Switch
-                                private={isPrivate}
-                                onChange={(event) => setIsPrivate(event.target.checked)}
-                                color="primary"
-                            />
-                            <b>Private</b>  
-                        </div>
+                        <div className="chooseVisibility">
+                                <Dropdown 
+                                    options={visibilityOptions}
+                                    value={visibility}
+                                    onChange={handleVisibilityChange}
+                                />
+                            </div>
                         <div className="chooseContentType2">
                             <Dropdown 
                                 options={contentOptions}
@@ -250,7 +210,6 @@ const EditPost = forwardRef(
                                 variant="contained" 
                                 className="postButton" 
                                 role="button" 
-                                // onClick={imageBase64 ? sendImagePost : sendPost}>
                                 onClick={sendPost}>
                                 Post
                             </Button>
