@@ -72,18 +72,17 @@ function Share (props) {
                     },
                 });
                 setConnections(response.data.items)
-                console.log("CONNECTIONS", response.data.items);
+                console.log("FOLLOWERS", response.data.items);
             }   
         } catch (err) {
-            // Handle the error here
+            console.log("Error getting followers: ", err);
         }
     };
 
     const handleConnectionsModalClose = () => {
         setConnectionsModalOpen(false);
+        setVisibility(visibilityOptions[0].value);
     };
-
-    // TODO: if selectedUser is null and visibility is PRIVATE, show error message
 
     // change selected user
     const handleSelectUser = (user) => {
@@ -140,9 +139,7 @@ function Share (props) {
         }
     }
 
-    const sendImagePost = async() => {
-        // const postUUID = uuidv4();
-        
+    const sendImagePost = async() => {        
         axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
@@ -340,22 +337,7 @@ function Share (props) {
                                 value={visibility}
                                 onChange={handleVisibilityChange}
                             />
-                            {/* <Popup 
-                                open={showPopup} 
-                                modal={true}
-                                onClose={() => setShowPopup(false)}
-                                >
-                                <Followers onSelectUser={handleSelectUser} authorData={authorData} authorID={authorID}/>
-                            </Popup> */}
                         </div>
-                        {/* <div className="isPrivateSwitch">
-                            <Switch
-                                private={isPrivate}
-                                onChange={(event) => setIsPrivate(event.target.checked)}
-                                color="primary"
-                            />
-                            <b>Private</b>  
-                        </div> */}
                         <div className="chooseContentType">
                             <Dropdown 
                                 options={contentOptions}
@@ -380,56 +362,56 @@ function Share (props) {
                 </div>
             </div>
             <Modal
-      open={connectionsModalOpen}
-      onClose={handleConnectionsModalClose}
-      aria-labelledby="connections-modal-title"
-      aria-describedby="connections-modal-description"
-    >
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '50%',
-        maxHeight: '80%',
-        overflowY: 'auto',
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-        borderRadius: '20px',
-      }}>
-        <h2 id="connections-modal-title" style={{ color: '#0058A2' }}>Select Friend</h2>
-        <ul id="connections-modal-description" className="connectionsList">
-          {connections.map((connection, index) => (
-            <li key={index} className="connectionItem">
-             <div className="avatarAndNameContainer">
-        <div className="post__headerText">
-          <h3>
-            {connection.displayName}{" "}
-            <span
-              className={
-                new URL(connection.host).hostname !== window.location.hostname
-                  ? "post__headerSpecial--different"
-                  : "post__headerSpecial"
-              }
+                open={connectionsModalOpen}
+                onClose={handleConnectionsModalClose}
+                aria-labelledby="connections-modal-title"
+                aria-describedby="connections-modal-description"
             >
-              @{new URL(connection.host).hostname}
-            </span>
-          </h3>
-        </div>
-      </div>
-              <button
-                className="deleteConnectionButton"
-                onClick={() => handleSelectUser(connection)}
-              >
-                Select
-              </button>
-            </li>
-          ))}
-        </ul>
-      </Box>
-    </Modal>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '50%',
+                    maxHeight: '80%',
+                    overflowY: 'auto',
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                    borderRadius: '20px',
+                }}>
+                    <h2 id="connections-modal-title" style={{ color: '#0058A2' }}>Select Friend</h2>
+                    <ul id="connections-modal-description" className="connectionsList">
+                        {connections.map((connection, index) => (
+                            <li key={index} className="connectionItem">
+                                <div className="avatarAndNameContainer">
+                                    <div className="post__headerText">
+                                        <h3>
+                                            {connection.displayName}{" "}
+                                            <span
+                                                className={
+                                                    new URL(connection.host).hostname !== window.location.hostname
+                                                    ? "post__headerSpecial--different"
+                                                    : "post__headerSpecial"
+                                                }
+                                            >
+                                                @{new URL(connection.host).hostname}
+                                            </span>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <button
+                                    className="deleteConnectionButton"
+                                    onClick={() => handleSelectUser(connection)}
+                                >
+                                    Select
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </Box>
+            </Modal>
         </div>
     );
 };
