@@ -40,14 +40,15 @@ class InboxStreamView(View):
         # response['Connection'] = 'keep-alive'
         response["Access-Control-Allow-Origin"] = '*'
         
-        try:
-            for chunk in response.streaming_content:
-                # Attempt to write the chunk to the client
-                # This will raise an IOError if the client has disconnected
-                response.write(chunk)
-        except IOError:
-            # Handle client disconnect here
-            print("EORR HANDLIGN ====")    
+        if response.streaming_content:
+            try:
+                for chunk in response.streaming_content:
+                    # Attempt to write the chunk to the client
+                    # This will raise an IOError if the client has disconnected
+                    response.write(chunk)
+            except IOError:
+                # Handle client disconnect here
+                print("ERROR while wrting chunk ====")    
 
         # print()
         # print(response.streaming_content)
@@ -69,6 +70,10 @@ class InboxStreamView(View):
             inbox_posts = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
 
             new_messages = PostSerializer(inbox_posts, many=True).data
+
+            # Sleeping 10 seconds to allow client to setup connection
+            print("Sleeping 10 seconds to allow client to setup connection\n")
+            time.sleep(10)
 
             for message in new_messages:
                 json_string_msg = json.dumps(message, cls=DjangoJSONEncoder)
