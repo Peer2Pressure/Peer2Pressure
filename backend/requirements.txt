@@ -44,6 +44,8 @@ drf-yasg==1.21.5
     # via -r base.in
 executing==1.2.0
     # via varname
+gevent==22.10.2
+    # via -r base.in
 gunicorn==20.1.0
     # via -r base.in
 idna==3.4

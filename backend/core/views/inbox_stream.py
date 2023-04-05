@@ -57,8 +57,8 @@ class InboxStreamView(View):
         return response
         
     def stream_events(self, request, author_id):
-        yield "@" * 50 * 1024
-        
+        # yield "@" * 50 * 1024
+
         try:
             author = author_serializer.get_author_by_id(author_id)
 
