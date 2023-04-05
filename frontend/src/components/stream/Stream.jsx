@@ -45,6 +45,7 @@ function Stream(props) {
       console.log("Event source connection open.")
     };
 
+    // What to do when event stream returns 
     sse.onmessage = (e) => {
       console.log("E ====== ", e)
       const newPost = JSON.parse(e.data);
@@ -57,6 +58,7 @@ function Stream(props) {
 
     };
 
+    // What to do when an error occurs
     sse.onerror = (e) => {
       if (e.target.readyState === EventSource.CLOSED) {
         console.log('EventSource connection has been closed.');

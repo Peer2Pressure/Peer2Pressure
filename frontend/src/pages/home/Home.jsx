@@ -42,8 +42,8 @@ const Home = () => {
       </div> */}
       <div className="bodyContainer">
         <div className="profileContainer">
-          <Profile authorData={authorData} authorID={authorID} tokens={tokens} 
-          followAccept={followAccept} setFollowAccept={setFollowAccept}/>
+          {/* <Profile authorData={authorData} authorID={authorID} tokens={tokens} 
+          followAccept={followAccept} setFollowAccept={setFollowAccept}/> */}
           
         </div>
         <div className="streamContainer">
@@ -72,10 +72,10 @@ const Home = () => {
           />}
         </div>
         <div className="widgetContainer">
-           <Widgets authorData={authorData} authorID={authorID} tokens={tokens}/>
+           {/* <Widgets authorData={authorData} authorID={authorID} tokens={tokens}/>
            <FollowRequest authorData={authorData} authorID={authorID} tokens={tokens}
            setFollowAccept={setFollowAccept}/>
-           <Notification authorData={authorData} authorID={authorID} tokens={tokens}/>
+           <Notification authorData={authorData} authorID={authorID} tokens={tokens}/> */}
         </div>
       </div>
     </div>
