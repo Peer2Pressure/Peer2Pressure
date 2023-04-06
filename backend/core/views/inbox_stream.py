@@ -27,7 +27,17 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=0)
 
-    
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+inbox_updated = False
+
+@receiver(post_save, sender=Inbox)
+def inbox_saved(sender, instance, **kwargs):
+    global inbox_updated
+    inbox_updated = True
+
 class InboxStreamView(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -88,30 +98,32 @@ class InboxStreamView(View):
             # Continuously stream new inbox messages to the client
             counter = 1
             while True:
-                # from django.core.handlers.wsgi import LimitedStream
-                # limited_stream = request.META.get('wsgi.input')
-                # print(limited_stream)
-                # print("=====", limited_stream.stream, limited_stream.buffer, limited_stream.remaining)
-                
-                new_inbox = Inbox.objects.filter(author=author, type="post", updated_at__gt=last_updated_at).order_by('updated_at')
-                print("new inbo123: ", new_inbox, len(new_inbox))
-                
-                print("UPDATED AT: ", last_updated_at)
+                if inbox_updated:
 
-                if len(new_inbox) != 0:
-                    last_updated_at = new_inbox[0].updated_at
-                
-                    new_inbox_posts = [inbox_obj.content_object for inbox_obj in new_inbox if inbox_obj.content_object.unlisted == False]
-                    new_messages = PostSerializer(new_inbox_posts, many=True).data
+                    # from django.core.handlers.wsgi import LimitedStream
+                    # limited_stream = request.META.get('wsgi.input')
+                    # print(limited_stream)
+                    # print("=====", limited_stream.stream, limited_stream.buffer, limited_stream.remaining)
                     
-                    print("new messages", new_messages)
+                    new_inbox = Inbox.objects.filter(author=author, type="post", updated_at__gt=last_updated_at).order_by('updated_at')
+                    print("new inbo123: ", new_inbox, len(new_inbox))
+                    
+                    print("UPDATED AT: ", last_updated_at)
 
-                    for message in new_messages:
-                        json_string_msg = json.dumps(message, cls=DjangoJSONEncoder)
-                        yield "data: {}\n\n".format(json_string_msg)
+                    if len(new_inbox) != 0:
+                        last_updated_at = new_inbox[0].updated_at
+                    
+                        new_inbox_posts = [inbox_obj.content_object for inbox_obj in new_inbox if inbox_obj.content_object.unlisted == False]
+                        new_messages = PostSerializer(new_inbox_posts, many=True).data
+                        
+                        print("new messages", new_messages)
+
+                        for message in new_messages:
+                            json_string_msg = json.dumps(message, cls=DjangoJSONEncoder)
+                            yield "data: {}\n\n".format(json_string_msg)
 
                 # Sleep for a short time to prevent high CPU usage                
-                time.sleep(1)
+                time.sleep(2)
 
                 if counter % 10 == 0:
                     print("TESTING CONNECTION IS STILL OPEN")
