@@ -124,11 +124,10 @@ DATABASES = {
         'PASSWORD': os.environ.get("DATABASE_PASSWORD"),
         'HOST': os.environ.get("DATABASE_HOST"),
         'PORT': os.environ.get("DATABASE_PORT"),
-        'POOL_OPTIONS' : {
-            'POOL_SIZE': 10,
-            'MAX_OVERFLOW': 18,
-            'RECYCLE': 12 * 60 * 60
-        }
+        'OPTIONS': {
+            'MAX_CONNS': 15,  # Set the maximum number of connections in the pool
+        },
+        'ATOMIC_REQUESTS': True,  # Wrap each request in a transaction
     }
 }
 

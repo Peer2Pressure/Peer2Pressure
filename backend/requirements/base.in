@@ -1,7 +1,7 @@
 Django==4.1.7
 django-cors-headers==3.14.0
 django-cors-middleware==1.5.0
-django-db-connection-pool==1.2.2
+django-db-geventpool==4.0.1
 djangorestframework==3.14.0
 djangorestframework-swagger==0.2.2
 django-on-heroku==1.1.2
