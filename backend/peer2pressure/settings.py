@@ -125,7 +125,7 @@ DATABASES = {
         'HOST': os.environ.get("DATABASE_HOST"),
         'PORT': os.environ.get("DATABASE_PORT"),
         'OPTIONS': {
-            'MAX_CONNS': 15,  # Set the maximum number of connections in the pool
+            'MAX_CONNS': 5,  # Set the maximum number of connections in the pool
         },
         'ATOMIC_REQUESTS': True,  # Wrap each request in a transaction
     }
