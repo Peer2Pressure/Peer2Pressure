@@ -20,9 +20,11 @@ function Share (props) {
     const visibilityOptions = [
         { value: 'PUBLIC', label: 'Public' },
         { value: 'FRIENDS', label: 'Friends' },
+        { value: 'UNLISTED', label: 'Unlisted'},
         { value: 'PRIVATE', label: 'Select Friend' }
     ];
     const [visibility, setVisibility] = useState(visibilityOptions[0].value);
+    const [isUnlisted, setIsUnlisted] = useState(false);
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
         { value: 'text/markdown', label: 'Markdown' },
@@ -41,9 +43,13 @@ function Share (props) {
         setVisibility(option.value);
         if (option.value === "PRIVATE") {
             handleConnectionsModalOpen();
+        } else if (option.value === "UNLISTED") {
+            setIsUnlisted(true);
+            setVisibility("PUBLIC");  // unlisted posts are public if you know the URL
         } else {
             setSelectedUser(null);
             handleConnectionsModalClose();
+            setIsUnlisted(false);
         }
     }
 
@@ -161,6 +167,7 @@ function Share (props) {
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             "author": authorData,
+            "unlisted": isUnlisted,
             "visibility": visibility
         }
 
