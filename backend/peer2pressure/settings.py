@@ -118,7 +118,7 @@ WSGI_APPLICATION = "peer2pressure.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'dj_db_conn_pool.backends.postgresql',
+        'ENGINE': 'django_db_geventpool.backends.postgresql',
         'NAME': os.environ.get("DATABASE_NAME"),
         'USER': os.environ.get("DATABASE_USER"),
         'PASSWORD': os.environ.get("DATABASE_PASSWORD"),
