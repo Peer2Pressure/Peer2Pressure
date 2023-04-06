@@ -4,8 +4,6 @@ import { Avatar, Menu } from "@mui/material";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Button from "@mui/material/Button";
 import ReactMarkdown from 'react-markdown'
@@ -19,8 +17,6 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import EditPost from "../editPost/EditPost";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import useGetAuthorData from "../../useGetAuthorData";
-import useGetTokens from "../../useGetTokens";
 import axios from "axios";
 import { useEffect } from "react";
 import Comment from "../comment/Comment";
@@ -28,23 +24,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 // menu source: https://mui.com/material-ui/react-menu/
 
-// optios users can choose from upon clicking ellipsis
-const options = [
-  'Delete post',
-  'Edit post'
-];
-
-
-// TODO: include logic clicking delete post
-
-
-
-// TODO: include logic clicking delete post
-
 const Post = forwardRef(
   ({ id, host, displayName, username, text, avatar, comments, contentType, title, origin, visibility, source, postAuthorID2, authorData, authorID, tokens }, ref) => {
     const [like, setLike] = useState(false);
-    // const [likeCount, setLikeCount] = useState(likes);
     const [commentText, setCommentText] = useState("");
     const [showCommentArea, setShowCommentArea] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -57,12 +39,10 @@ const Post = forwardRef(
     const [showShareOptions, setShowShareOptions] = useState(false);
     const [shareAnchorEl, setShareAnchorEl] = useState(null);
     const [shareVisibility, setShareVisibility] = useState(null);
-    const [sourceAuthorDisplayName, setSourceAuthorDisplayName] = useState(null);
-    const [sourceAuthorHost, setSourceAuthorHost] = useState(null);
+    const [originAuthorDisplayName, setOriginAuthorDisplayName] = useState(null);
+    const [originAuthorHost, setOriginAuthorHost] = useState(null);
 
-    // const {authorData, authorID} = useGetAuthorData();
-    // const {tokens} = useGetTokens();
-    const sourceAuthor = source.replace(/\/posts\/.*$/, "/");
+    const originAuthor = origin.replace(/\/posts\/.*$/, "/");
     const [postLikeString, setPostLikeString] = useState("");
     const [postCommentString, setPostCommentString] = useState("");
 
@@ -70,14 +50,6 @@ const Post = forwardRef(
     const postIdSplit = id.replace(/\/$/, "").split("/");
     const postID = id.replace(/\/$/, "").split("/").pop();
     const postAuthorID = postIdSplit[postIdSplit.length - 3];
-
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
 
     const deletePost = () => {
       confirmAlert({
@@ -319,15 +291,15 @@ const Post = forwardRef(
       return response.data.items.map(obj => [obj.id.replace(/\/$/, "") +"/inbox/", new URL(obj.host).hostname]);
     }      
 
-    const getSourceAuthor = async () => {
-      axios.get(`${sourceAuthor}`, {
+    const getOriginAuthor = async () => {
+      axios.get(`${originAuthor}`, {
         headers: {
           "Authorization": tokens[window.location.hostname]
         }
       })
       .then((response) => {
-        setSourceAuthorDisplayName(response.data.displayName);
-        setSourceAuthorHost(new URL(response.data.host).hostname);
+        setOriginAuthorDisplayName(response.data.displayName);
+        setOriginAuthorHost(new URL(response.data.host).hostname);
       })
       .catch((error) => {
       console.log("probably a nothing error when getting source author bc ur not authorized even tho i send in authorization?");
@@ -335,15 +307,16 @@ const Post = forwardRef(
     }
     
     useEffect(() => {
-      getSourceAuthor();
-    }, [sourceAuthor, tokens]);
+      getOriginAuthor();
+    }, [originAuthor, tokens]);
 
     const sendPost = async () => {
       const postUUID = uuidv4();
       const data = {
           "type": "post",
           "id": `${authorData.id}/posts/${postUUID}`,
-          "source": id,
+          // "source": id,
+          "source": `${authorData.id}/posts/${postUUID}`,
           "origin": origin,
           "title": title,
           "contentType": contentType,
@@ -431,39 +404,6 @@ const Post = forwardRef(
                       </span>
                     </h3>
                   </div>
-                  <span className="post_headerMenu">
-                        {/* <IconButton
-                          aria-label="more"               // acccessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label
-                          id="long-button"
-                          aria-controls={open ? 'long-menu' : undefined}
-                          aria-expanded={open ? 'true' : undefined}
-                          aria-haspopup="true"
-                          onClick={handleClick}
-                          >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          id="long-menu"
-                          MenuListProps={{
-                            'aria-labelledby': 'long-button',
-                          }}
-                          anchorEl={anchorEl}
-                          open={open}
-                          onClose={handleClose}
-                          PaperProps={{
-                            style: {
-                              // maxHeight: ITEM_HEIGHT * 4.5,
-                              width: '20ch',
-                            },
-                          }}
-                        >
-                          {options.map((option) => (
-                            <MenuItem key={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Menu> */}
-                  </span>
                 </div>
               </div>
               <span className="post_headerMenu">
@@ -518,14 +458,22 @@ const Post = forwardRef(
           </div>
         </div>
         <div className="repostInfoArea">
-          {id !== source && (
-              sourceAuthorDisplayName && (
+          {source !== origin && (
+              originAuthorDisplayName && (
                 <div className="repostInfo">
                   <b>
-                <span>Reposted from {sourceAuthorDisplayName}@{sourceAuthorHost}</span></b>
+                <span>Reposted from {originAuthorDisplayName}@{originAuthorHost}</span></b>
                 </div>
               )
           )}
+          {/* {id !== source && (
+              originAuthorDisplayName && (
+                <div className="repostInfo">
+                  <b>
+                <span>Reposted from {originAuthorDisplayName}@{originAuthorHost}</span></b>
+                </div>
+              )
+          )} */}
         </div>
         <div className="post__footer">
               <div className="iconArea">

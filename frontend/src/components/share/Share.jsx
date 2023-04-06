@@ -5,11 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useState } from "react";
 
-import useGetAuthorData from "../../useGetAuthorData";
-import useGetTokens from "../../useGetTokens";
-
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Switch, Button, Modal, Box } from "@mui/material";
+import { Button, Modal, Box } from "@mui/material";
 
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
@@ -38,9 +35,6 @@ function Share (props) {
 
     const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
     const [connections, setConnections] = useState([]);
-       
-    // const {authorData, loading, authorError, authorID} = useGetAuthorData();
-    // const {tokens, tokenError} = useGetTokens();
 
     // change visibility
     function handleVisibilityChange(option) {
