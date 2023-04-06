@@ -436,7 +436,7 @@ const Post = forwardRef(
               </div>
               <span className="post_headerMenu">
                 <div className="post__edit">
-                  {authorData?.id === postAuthorID2 && (
+                  {authorData?.id === postAuthorID2 && visibility !== "PRIVATE" && (
                     <Popup 
                     trigger={<ModeEditIcon fontSize="small"/>}
                     modal={true}
@@ -450,6 +450,7 @@ const Post = forwardRef(
                             postText={text} 
                             postContentType={contentType} 
                             postAuthorID={postAuthorID2}
+                            postVisibility={visibility}
                             onClose={close}/>
                           <button className="closeButton" onClick={close}>x</button>
                         </>

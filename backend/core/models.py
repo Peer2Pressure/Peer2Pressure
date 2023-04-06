@@ -193,4 +193,4 @@ class Inbox(AbstractModel):
     updated_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.type + " " +str(self.object_id)
+        return self.type  + " " +str(self.object_id) + "  " + self.author.name

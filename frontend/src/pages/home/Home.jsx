@@ -42,8 +42,8 @@ const Home = () => {
       </div> */}
       <div className="bodyContainer">
         <div className="profileContainer">
-          {/* <Profile authorData={authorData} authorID={authorID} tokens={tokens} 
-          followAccept={followAccept} setFollowAccept={setFollowAccept}/> */}
+          <Profile authorData={authorData} authorID={authorID} tokens={tokens} 
+          followAccept={followAccept} setFollowAccept={setFollowAccept}/>
           
         </div>
         <div className="streamContainer">
@@ -63,8 +63,8 @@ const Home = () => {
               <Tab label="GitHub Activity" value="3" />
             </Tabs>
           </Box>
-          {tabValue === "1" && <Stream authorData={authorData} authorID={authorID} tokens={tokens} filterParam={true}/>}
-          {tabValue === "2" && <Stream authorData={authorData} authorID={authorID} tokens={tokens} filterParam={false}/>}
+          {tabValue === "1" && <Stream authorData={authorData} authorID={authorID} tokens={tokens} filterParam={false}/>}
+          {tabValue === "2" && <Stream authorData={authorData} authorID={authorID} tokens={tokens} filterParam={true}/>}
           {tabValue === "3" && <GitHubActivityFeed
             username={authorGitHubUsername ? authorGitHubUsername : ''}
             // username={usea}
@@ -72,10 +72,10 @@ const Home = () => {
           />}
         </div>
         <div className="widgetContainer">
-           {/* <Widgets authorData={authorData} authorID={authorID} tokens={tokens}/>
+           <Widgets authorData={authorData} authorID={authorID} tokens={tokens}/>
            <FollowRequest authorData={authorData} authorID={authorID} tokens={tokens}
            setFollowAccept={setFollowAccept}/>
-           <Notification authorData={authorData} authorID={authorID} tokens={tokens}/> */}
+           <Notification authorData={authorData} authorID={authorID} tokens={tokens}/>
         </div>
       </div>
     </div>

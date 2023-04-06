@@ -11,7 +11,7 @@ function Stream(props) {
   // const { filterParam } = props;
   // const {tokens, tokenError} = useGetTokens();
   const [inboxPosts, setInboxPosts] = useState([]);
-  // const [privatePosts,]
+  const [privatePosts, setPrivatePosts] = useState([]);
   const [error, setError] = useState(null);
   console.log("filterParam: ", filterParam);
 
@@ -27,19 +27,36 @@ function Stream(props) {
     
 
     function updateInboxPosts(newPost) {
-      setInboxPosts(prevInboxPosts => {
-        const existingPostIndex = prevInboxPosts.findIndex(post => post.id === newPost.id);
 
-        if (existingPostIndex > -1) {
-          // Update the existing post
-          const updatedPosts = [...prevInboxPosts];
-          updatedPosts[existingPostIndex] = newPost;
-          return updatedPosts;
-        } else {
-          // Add the new post to the state
-          return [newPost, ...prevInboxPosts];
-        }
-      });
+      if (newPost.visibility == "PUBLIC" || newPost.visibility == "FRIENDS") {
+        setInboxPosts(prevInboxPosts => {
+          const existingPostIndex = prevInboxPosts.findIndex(post => post.id === newPost.id);
+  
+          if (existingPostIndex > -1) {
+            // Update the existing post
+            const updatedPosts = [...prevInboxPosts];
+            updatedPosts[existingPostIndex] = newPost;
+            return updatedPosts;
+          } else {
+            // Add the new post to the state
+            return [newPost, ...prevInboxPosts];
+          }
+        });  
+      } else if (newPost.visibility == "PRIVATE") {
+        setPrivatePosts(prevPrivatePosts => {
+          const existingPostIndex = prevPrivatePosts.findIndex(post => post.id === newPost.id);
+  
+          if (existingPostIndex > -1) {
+            // Update the existing post
+            const updatedPosts = [...prevPrivatePosts];
+            updatedPosts[existingPostIndex] = newPost;
+            return updatedPosts;
+          } else {
+            // Add the new post to the state
+            return [newPost, ...prevPrivatePosts];
+          }
+        });
+      }
     }
 
     
@@ -133,38 +150,70 @@ function Stream(props) {
     return <div>Loading...</div>;
   }
 
-  const sortedInboxPosts = inboxPosts.sort((a, b) => {
-    return new Date(b.published) - new Date(a.published);
-  });
+  // const sortedInboxPosts = inboxPosts.sort((a, b) => {
+  //   return new Date(b.published) - new Date(a.published);
+  // });
+
+  // const sortedPriavtePosts = privatePosts.sort((a, b) => {
+  //   return new Date(b.published) - new Date(a.published);
+  // });
 
   return (
     <div className="stream">
         <Flipmove className="flippy">
-          {sortedInboxPosts.map((post) => (
-            <div className="stream__posts" key={post.id}>
-              <Post
-                className="post"
-                // postAuthorID={post.author.id}
-                id={post.id}
-                host={new URL(post.author.host).hostname}
-                displayName={post.author.displayName}
-                username={post.author.displayName}
-                text={post.content}
-                avatar={post.author.profileImage}
-                comments={post.comments}
-                contentType={post.contentType}
-                title={post.title}
-                origin={post.origin}
-                visibility={post.visibility}
-                source={post.source}
-                postAuthorID2={post.author.id}
-                authorData={authorData}
-                authorID={authorID}
-                tokens={tokens}
-                // likes={post.like}
-              />
-            </div>
-          ))}
+        { filterParam ?
+            privatePosts.map((post) => (
+              <div className="stream__posts" key={post.id}>
+                <Post
+                  className="post"
+                  // postAuthorID={post.author.id}
+                  id={post.id}
+                  host={new URL(post.author.host).hostname}
+                  displayName={post.author.displayName}
+                  username={post.author.displayName}
+                  text={post.content}
+                  avatar={post.author.profileImage}
+                  comments={post.comments}
+                  contentType={post.contentType}
+                  title={post.title}
+                  origin={post.origin}
+                  visibility={post.visibility}
+                  source={post.source}
+                  postAuthorID2={post.author.id}
+                  authorData={authorData}
+                  authorID={authorID}
+                  tokens={tokens}
+                  // likes={post.like}
+                />
+              </div>
+            ))
+            :
+            inboxPosts.map((post) => (
+              <div className="stream__posts" key={post.id}>
+                <Post
+                  className="post"
+                  // postAuthorID={post.author.id}
+                  id={post.id}
+                  host={new URL(post.author.host).hostname}
+                  displayName={post.author.displayName}
+                  username={post.author.displayName}
+                  text={post.content}
+                  avatar={post.author.profileImage}
+                  comments={post.comments}
+                  contentType={post.contentType}
+                  title={post.title}
+                  origin={post.origin}
+                  visibility={post.visibility}
+                  source={post.source}
+                  postAuthorID2={post.author.id}
+                  authorData={authorData}
+                  authorID={authorID}
+                  tokens={tokens}
+                  // likes={post.like}
+                />
+              </div>
+            ))   
+          }
         </Flipmove>
     </div>
 

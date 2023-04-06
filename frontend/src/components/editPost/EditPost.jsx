@@ -17,7 +17,7 @@ import 'react-dropdown/style.css';
 
 
 const EditPost = forwardRef(
-    ({ postID, postTitle, postText, postContentType, postAuthorID, onClose }, ref) => {
+    ({ postID, postTitle, postText, postContentType, postAuthorID, visibility, onClose }, ref) => {
     const [contentText, setContent] = useState(postText);
     const [titleText, setTitle] = useState(postTitle);
     const [isPrivate, setIsPrivate] = useState(false); 
@@ -100,13 +100,14 @@ const EditPost = forwardRef(
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             "author": authorData,
+            "visibility": visibility
         }
 
         console.log("DATA!", postID);
 
         const p1 = axios
         // .post(`/authors/${authorID}/inbox/`, data, {
-        .post(postID+"/", data, {
+        .post(authorData.id+"/inbox/", data, {
             headers: {
                 "Authorization": tokens[window.location.hostname]
             }

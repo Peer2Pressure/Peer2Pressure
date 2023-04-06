@@ -117,7 +117,7 @@ function Share (props) {
         };
         reader.readAsDataURL(event.target.files[0]);
     };
-
+    
     // delete image
     const handleDeleteImage = () => {
         setImageFile(null);

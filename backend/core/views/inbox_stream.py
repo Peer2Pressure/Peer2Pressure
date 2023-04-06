@@ -64,9 +64,13 @@ class InboxStreamView(View):
             author = author_serializer.get_author_by_id(author_id)
 
             # Get all posts from the author's inbox
-            inbox = author.inbox.all().filter(type="post").order_by('-created_at')
-            last_created_at = inbox[0].created_at
+            inbox = author.inbox.all().filter(type="post").order_by('created_at')
 
+            last_updated_at = "1970-01-01"
+
+            if inbox.exists():
+                last_updated_at = inbox[0].updated_at
+            print(last_updated_at)
             inbox_posts = [inbox_obj.content_object for inbox_obj in inbox if inbox_obj.content_object.unlisted == False]
 
             new_messages = PostSerializer(inbox_posts, many=True).data
@@ -84,16 +88,18 @@ class InboxStreamView(View):
             # Continuously stream new inbox messages to the client
             counter = 1
             while True:
-                from django.core.handlers.wsgi import LimitedStream
+                # from django.core.handlers.wsgi import LimitedStream
                 # limited_stream = request.META.get('wsgi.input')
                 # print(limited_stream)
                 # print("=====", limited_stream.stream, limited_stream.buffer, limited_stream.remaining)
                 
-                new_inbox = Inbox.objects.filter(author=author, type="post", created_at__gt=last_created_at).order_by('-created_at')
+                new_inbox = Inbox.objects.filter(author=author, type="post", updated_at__gt=last_updated_at).order_by('updated_at')
                 print("new inbo123: ", new_inbox, len(new_inbox))
+                
+                print("UPDATED AT: ", last_updated_at)
 
                 if len(new_inbox) != 0:
-                    last_created_at = new_inbox[0].created_at
+                    last_updated_at = new_inbox[0].updated_at
                 
                     new_inbox_posts = [inbox_obj.content_object for inbox_obj in new_inbox if inbox_obj.content_object.unlisted == False]
                     new_messages = PostSerializer(new_inbox_posts, many=True).data
