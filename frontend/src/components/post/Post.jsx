@@ -13,8 +13,12 @@ import RepeatOutlinedIcon from '@mui/icons-material/RepeatOutlined';
 
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
 import EditPost from "../editPost/EditPost";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import useGetAuthorData from "../../useGetAuthorData";
 import useGetTokens from "../../useGetTokens";
 import axios from "axios";
@@ -74,6 +78,34 @@ const Post = forwardRef(
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+    const deletePost = () => {
+      confirmAlert({
+        title: 'Delete Post?',
+        // message: 'Delete Post?',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => {
+              axios.delete(id+"/", {
+                headers: {
+                  "Authorization": tokens[window.location.hostname]
+                }
+              })
+                .then((response) => {
+                  console.log(response);
+                })
+                .catch((error) => {
+                  console.log(error);
+                })
+            }
+          },
+          {
+            label: 'No',
+          }
+        ]
+      });
+    }
 
     // calls the inbox api to get all data in items
     useEffect(() => {
@@ -457,6 +489,12 @@ const Post = forwardRef(
                   </Popup>
                   )}
                 </div>
+                {/* <div className="post__delete">
+                {authorData?.id === postAuthorID2 && (
+                    
+                    <DeleteIcon fontSize="small" onClick={deletePost}/>
+                  )}
+                </div> */}
               </span>
             </div>
             <div className="post__headerTitle">
@@ -471,15 +509,7 @@ const Post = forwardRef(
               <img src={text} alt="" />
               :
               <p>{text}</p>
-            }
-
-              {/* {contentType === "text/markdown" ?
-                  <p><ReactMarkdown>{text}</ReactMarkdown></p>
-                  :
-                  <p>{text}</p>
-              }
-              <img src={text} alt="" /> */}
-              
+            }              
                 
             </div>
             <div className="commentsContainer">
