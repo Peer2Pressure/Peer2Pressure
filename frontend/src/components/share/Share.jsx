@@ -1,38 +1,30 @@
 import "./share.css";
 
-import Followers from "../followers/Followers";
-
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 
 import { useState } from "react";
 
-import useGetAuthorData from "../../useGetAuthorData";
-import useGetTokens from "../../useGetTokens";
-
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Switch, Button, Modal, Box } from "@mui/material";
+import { Button, Modal, Box } from "@mui/material";
 
-import Popup from "reactjs-popup";
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 
 function Share (props) {
     const { authorData, authorID, tokens } = props;
-    const [files, setFiles] = useState([]);
     const [contentText, setContent] = useState("");
     const [titleText, setTitle] = useState("");
-    const [message, setMessage] = useState();
     const [selectedUser, setSelectedUser] = useState(null);
     const visibilityOptions = [
         { value: 'PUBLIC', label: 'Public' },
         { value: 'FRIENDS', label: 'Friends' },
+        { value: 'UNLISTED', label: 'Unlisted'},
         { value: 'PRIVATE', label: 'Select Friend' }
     ];
     const [visibility, setVisibility] = useState(visibilityOptions[0].value);
-    const [showPopup, setShowPopup] = useState(false);
-    const [isPrivate, setIsPrivate] = useState(false); 
+    const [isUnlisted, setIsUnlisted] = useState(false);
     const contentOptions = [
         { value: 'text/plain', label: 'Plaintext' },
         { value: 'text/markdown', label: 'Markdown' },
@@ -45,20 +37,19 @@ function Share (props) {
 
     const [connectionsModalOpen, setConnectionsModalOpen] = useState(false);
     const [connections, setConnections] = useState([]);
-       
-    // const {authorData, loading, authorError, authorID} = useGetAuthorData();
-    // const {tokens, tokenError} = useGetTokens();
 
     // change visibility
     function handleVisibilityChange(option) {
         setVisibility(option.value);
         if (option.value === "PRIVATE") {
-            setShowPopup(true);
             handleConnectionsModalOpen();
+        } else if (option.value === "UNLISTED") {
+            setIsUnlisted(true);
+            setVisibility("PUBLIC");  // unlisted posts are public if you know the URL
         } else {
             setSelectedUser(null);
-            setShowPopup(false);
             handleConnectionsModalClose();
+            setIsUnlisted(false);
         }
     }
 
@@ -72,23 +63,21 @@ function Share (props) {
                     },
                 });
                 setConnections(response.data.items)
-                console.log("CONNECTIONS", response.data.items);
+                console.log("FOLLOWERS", response.data.items);
             }   
         } catch (err) {
-            // Handle the error here
+            console.log("Error getting followers: ", err);
         }
     };
 
     const handleConnectionsModalClose = () => {
         setConnectionsModalOpen(false);
+        setVisibility(visibilityOptions[0].value);
     };
-
-    // TODO: if selectedUser is null and visibility is PRIVATE, show error message
 
     // change selected user
     const handleSelectUser = (user) => {
         setSelectedUser(user);
-        setShowPopup(false);
         handleConnectionsModalClose();
     };
 
@@ -140,9 +129,7 @@ function Share (props) {
         }
     }
 
-    const sendImagePost = async() => {
-        // const postUUID = uuidv4();
-        
+    const sendImagePost = async() => {        
         axios
         .post(`/authors/${authorID}/inbox/`, {
             "type": "post",
@@ -180,6 +167,7 @@ function Share (props) {
             "contentType": imageID ?  "text/markdown" : contentType,
             "content": imageID ? contentText + `\n\n \n\n![](${imageID}/image)` : contentText,
             "author": authorData,
+            "unlisted": isUnlisted,
             "visibility": visibility
         }
 
@@ -199,7 +187,6 @@ function Share (props) {
             setTitle("");
             setVisibility("PUBLIC");
             setSelectedUser(null);
-            setShowPopup(false);
             handleDeleteImage();
             const p3 = getFollowers()
             const p4 = p3.then((response2) => {
@@ -340,22 +327,7 @@ function Share (props) {
                                 value={visibility}
                                 onChange={handleVisibilityChange}
                             />
-                            {/* <Popup 
-                                open={showPopup} 
-                                modal={true}
-                                onClose={() => setShowPopup(false)}
-                                >
-                                <Followers onSelectUser={handleSelectUser} authorData={authorData} authorID={authorID}/>
-                            </Popup> */}
                         </div>
-                        {/* <div className="isPrivateSwitch">
-                            <Switch
-                                private={isPrivate}
-                                onChange={(event) => setIsPrivate(event.target.checked)}
-                                color="primary"
-                            />
-                            <b>Private</b>  
-                        </div> */}
                         <div className="chooseContentType">
                             <Dropdown 
                                 options={contentOptions}
@@ -380,56 +352,56 @@ function Share (props) {
                 </div>
             </div>
             <Modal
-      open={connectionsModalOpen}
-      onClose={handleConnectionsModalClose}
-      aria-labelledby="connections-modal-title"
-      aria-describedby="connections-modal-description"
-    >
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '50%',
-        maxHeight: '80%',
-        overflowY: 'auto',
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-        borderRadius: '20px',
-      }}>
-        <h2 id="connections-modal-title" style={{ color: '#0058A2' }}>Select Friend</h2>
-        <ul id="connections-modal-description" className="connectionsList">
-          {connections.map((connection, index) => (
-            <li key={index} className="connectionItem">
-             <div className="avatarAndNameContainer">
-        <div className="post__headerText">
-          <h3>
-            {connection.displayName}{" "}
-            <span
-              className={
-                new URL(connection.host).hostname !== window.location.hostname
-                  ? "post__headerSpecial--different"
-                  : "post__headerSpecial"
-              }
+                open={connectionsModalOpen}
+                onClose={handleConnectionsModalClose}
+                aria-labelledby="connections-modal-title"
+                aria-describedby="connections-modal-description"
             >
-              @{new URL(connection.host).hostname}
-            </span>
-          </h3>
-        </div>
-      </div>
-              <button
-                className="deleteConnectionButton"
-                onClick={() => handleSelectUser(connection)}
-              >
-                Select
-              </button>
-            </li>
-          ))}
-        </ul>
-      </Box>
-    </Modal>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '50%',
+                    maxHeight: '80%',
+                    overflowY: 'auto',
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                    borderRadius: '20px',
+                }}>
+                    <h2 id="connections-modal-title" style={{ color: '#0058A2' }}>Select Friend</h2>
+                    <ul id="connections-modal-description" className="connectionsList">
+                        {connections.map((connection, index) => (
+                            <li key={index} className="connectionItem">
+                                <div className="avatarAndNameContainer">
+                                    <div className="post__headerText">
+                                        <h3>
+                                            {connection.displayName}{" "}
+                                            <span
+                                                className={
+                                                    new URL(connection.host).hostname !== window.location.hostname
+                                                    ? "post__headerSpecial--different"
+                                                    : "post__headerSpecial"
+                                                }
+                                            >
+                                                @{new URL(connection.host).hostname}
+                                            </span>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <button
+                                    className="deleteConnectionButton"
+                                    onClick={() => handleSelectUser(connection)}
+                                >
+                                    Select
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </Box>
+            </Modal>
         </div>
     );
 };
