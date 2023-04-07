@@ -105,9 +105,6 @@ class FollowerSerializerTestCase(TestCase):
         }
 
         self.follower = Follower.objects.create(**self.follower_data)
-        print(self.follower)
-        print("fromauthor: ", self.follower.from_author)
-        print("toauthor: ", self.follower.to_author)
 
     def tearDown(self):
         self.author1.delete()
@@ -181,6 +178,7 @@ class PostSerializerTestCase(TestCase):
 
     def tearDown(self):
         Post.objects.filter(id=self.post_data["id"]).delete()
+        self.author.delete()
 
 
     def test_post_serializer(self):
@@ -231,20 +229,50 @@ class PostSerializerTestCase(TestCase):
         self.assertEqual(post.content, self.post_data['content'])
         self.assertEqual(post.description, self.post_data['description'])
         self.assertEqual(post.visibility, self.post_data['visibility'])
+        self.assertEqual(post.author, self.author_saved_data)
+
+class PostLikeSerializerTest(TestCase):
+    
+    def test_post_like_serializer(self):
+        post_like_data = {
+            "type": "like",
+            "summary": "Vivian liked your post",
+            "author": {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            },
+            "object": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+        }
+        serializer = PostLikeSerializer(data=post_like_data)
+        self.assertTrue(serializer.is_valid())
 
 
 
-    # def test_create(self):
-    #     validated_data = PostSerializer(data=self.post_data)
-    #     serializer = PostSerializer()
+
+    # def test_get_author_post(self):
+    #     serializer = PostSerializer(data=self.post_data)
+    #     self.assertTrue(serializer.is_valid())
+    #     validated_data = serializer.validated_data
+    #     validated_data["author"] = self.author_saved_data
+    #     validated_data["m_id"] = self.post_data["id"].split("/")[-1]
+    #     post = serializer.create(validated_data)
+    #     post_uuid = post.id.split("/")[-1]
+    #     print("Post authro", post.author)
+    #     print(post.author.id.split("/")[-1])
     #     author_serializer = AuthorSerializer()
-    #     author = author_serializer.get_author_by_id(author_id = self.author_data["id"].split("/")[-1])
-    #     self.assertTrue(validated_data.is_valid())
+    #     print("Author saved data", self.author_saved_data)
+    #     print("Author saved data id", self.author_saved_data.id)
+    #     # print("Author saved data", author_serializer.get_author_by_id(author_id = post.author.id.split("/")[-1]))
+    #     # post = serializer.get_author_post(post_id = post_uuid, author_id = post.author.id.split("/")[-1])
+    #     # post = serializer.get_author_post(post_id = post_uuid, author_id = self.author_saved_data.id.split("/")[-1])
+    #     print("POST: ", post)
+    #     # self.assertFalse(serializer.get_author_post(post_id = post_uuid, author_id = post.author.id.split("/")[-1]))
 
-    #     validated_data["author"] = author
-    #     validated_data.save()
-        
-        # self.assertEqual(validated_data.title, self.post_data['title'])
 
 # class AllFollowerSerializerTestCase(TestCase):
 #     def setUp(self) -> None:
@@ -273,27 +301,3 @@ class PostSerializerTestCase(TestCase):
 #         }
  
 #         self.follower = Follower.objects.create(**self.follower_data)
-
-
-    # def test_to_representation(self):
-    #     # serializer = AllFollowerSerializer(instance=[self.author1, self.author2])
-    #     serializer = AllFollowerSerializer(instance=self.follower)
-    #     data = serializer.to_representation(serializer.instance)
-    #     print("result of follower: ", data)
-
-
-
-'''
-# class PostSerializerTest(TestCase):
-#     def setUp(self) -> None:
-#         self.authorserializer = AuthorSerializer()
-#         self.author_id = self.authorserializer.create_author("author username", "author firstname", "author lastname", "author@gamil.com", "authorpassword")        
-#         self.serializer = PostSerializer()
-
-    # def test_post_create(self):
-    #     # post_id = self.serializer.create_post(self.author_id, {})
-    #     # post_id = self.serializer.create_post(self.author_id, False, caption="POST Caption")
-    #     created_post = Post.objects.get(id=post_id)
-    #     self.assertTrue(created_post.caption == "POST Caption")
-    #     self.assertTrue(not created_post.is_private)
-'''

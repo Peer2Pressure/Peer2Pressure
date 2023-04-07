@@ -43,20 +43,20 @@ class PostLikeSerializer(serializers.ModelSerializer):
 
     #     return like_obj.id
     
-    def get_like_by_id(self, author_id, post_id):
-        # try:
-        #     author = Author.objects.get(pk=author_id)
-        # except Author.DoesNotExist:
-        #     raise ValueError("Author does not exist.")
+    # def get_like_by_id(self, author_id, post_id):
+    #     # try:
+    #     #     author = Author.objects.get(pk=author_id)
+    #     # except Author.DoesNotExist:
+    #     #     raise ValueError("Author does not exist.")
         
-        # try:
-        #     post = Post.objects.get(pk=post_id, author=author)
-        # except Post.DoesNotExist:
-        #     raise ValueError("Post does not exist.")
+    #     # try:
+    #     #     post = Post.objects.get(pk=post_id, author=author)
+    #     # except Post.DoesNotExist:
+    #     #     raise ValueError("Post does not exist.")
         
-        try:
-            like = PostLike.objects.get()
-        except PostLike.DoesNotExist:
-            raise ValueError("Like does not exist.")
+    #     try:
+    #         like = PostLike.objects.get()
+    #     except PostLike.DoesNotExist:
+    #         raise ValueError("Like does not exist.")
         
-        return like
+    #     return like
