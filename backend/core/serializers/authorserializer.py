@@ -1,5 +1,3 @@
-
-
 # Third-party libraries
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
@@ -18,68 +16,18 @@ class AuthorSerializer(serializers.ModelSerializer):
     # username = serializers.CharField(max_length=300, required=False)
     github = serializers.URLField(required=False, allow_null=True, allow_blank=True)
     profileImage = serializers.URLField(source="avatar", required=False, allow_null=True, allow_blank=True)
-
-    # TODO: Set required attribute true for certain methods
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     if self.context['request'].method in ['POST', 'PUT']:
-    #         self.fields['my_field'].required = True
     
     class Meta:
         model = Author
         fields = ["type", "id", "url", "host", "displayName", "github", "profileImage"]
-        # extra_kwargs = {'image': {'required': False, 'allow_null': True}}
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
         instance.github = validated_data.get("github", instance.github)
         instance.avatar = validated_data.get("avatar", instance.avatar)
-        # instance.name = validated_data.get("name", instance.name)
-        # instance.username = validated_data.get("username", instance.username)
-        # instance.username = validated_data.get("github", instance.github)
-        # instance.avatar = validated_data.get("avatar", instance.avatar)
         instance.save()
         return instance
-    
-    # def create(self, validated_data):
-    #     return Author.objects.create(
-    #         id=validated_data['id'],
-    #         host=validated_data['host'],
-    #         username='',
-    #         name=validated_data['displayName'],
-    #         url=validated_data['url'],
-    #         email='',
-    #         password='',
-    #         avatar=validated_data.get('profileImage')
-    # )
 
-    def create_author(self, username, name, email, password, host = None, id = None, user=None):
-
-        defaults = {
-            nameof(Author.username): username,
-            nameof(Author.name): name,
-            nameof(Author.email): email,
-            nameof(Author.password): password
-        }
-
-        if id is not None:
-            try:
-                author_obj = self.get_author_by_id(id)
-            except ValueError:
-                defaults[Author.id] = id
-
-        if host is not None:
-            defaults[nameof(Author.host)] = host
-
-        if user is not None:
-            defaults[nameof(Author.user)] = user
-
-        # print("Defautls: ", defaults)
-
-        author_obj = Author.objects.create(**defaults)
-
-        return author_obj.id
-    
     def get_author_id_by_username(self, username):
         try:
             author_obj = Author.objects.get(username=username)

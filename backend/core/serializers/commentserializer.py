@@ -53,24 +53,11 @@ class CommentSerializer(serializers.ModelSerializer):
         return comment_obj.id
 
     def get_comment_by_id(self, comment_id):
-        # try:
-        #     print("Author id in serialzier: ", author_id)
-        #     author = author_serializer.get_author_by_id(author_id)
-        #     print("Author: ", author)
-        # except ValueError:
-        #     raise ValueError("Author does not exist.")
-        
-        # try:
-        #     print("Post id: ", post_id)
-        #     post = Post.objects.get(pk=post_id, author=author)
-        #     print("Post: ", post)
-        # except Post.DoesNotExist:
-        #     raise ValueError("Post does not exist.")
         
         try:
-            print("Comment id: ", comment_id)
+            # print("Comment id: ", comment_id)
             comment = Comment.objects.get(pk=comment_id)
-            print("Comment: ", comment)
+            # print("Comment: ", comment)
         except Comment.DoesNotExist:
             raise ValueError("Comment does not exist")
         
