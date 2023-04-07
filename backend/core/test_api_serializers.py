@@ -164,7 +164,37 @@ class InboxAPISerializerTest(TestCase):
 
         return_value = self.apiserializer.get_all_inbox_posts(user.m_id, data_type="request")
         self.assertTrue(200 == return_value[1])
- 
+
+    # def test_handle_post(self):
+    #     user = Author.objects.create(
+    #         name="John Doe",
+    #         username="johndoe",
+    #         email="johndoe@example.com",
+    #         password="password",
+    #         github="",
+    #         avatar=""
+    #     )
+
+    #     request_data = {
+    #         "type": "post",
+    #         "title": "test post",
+    #         "description": "test description",
+    #         "contentType": "text/plain",
+    #         "content": "test content",
+    #         "author": {
+    #             "id": user.id,
+    #             "host": user.host,
+    #             "displayName": user.name,
+    #             "url": user.id,
+    #             "github": user.github,
+    #         },
+    #         "comments": "",
+    #         "visibility": "PUBLIC",
+    #         "unlisted": False,
+    #     }
+
+    #     return_value = self.apiserializer.handle_post(user.m_id, request_data, "someauth")
+    #     self.assertTrue(200 == return_value[1])
 
     # def test_author_create(self):
         # author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
