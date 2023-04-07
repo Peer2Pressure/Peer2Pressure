@@ -232,7 +232,7 @@ class PostSerializerTestCase(TestCase):
         self.assertEqual(post.author, self.author_saved_data)
 
 class PostLikeSerializerTest(TestCase):
-    
+
     def test_post_like_serializer(self):
         post_like_data = {
             "type": "like",
@@ -251,6 +251,75 @@ class PostLikeSerializerTest(TestCase):
         serializer = PostLikeSerializer(data=post_like_data)
         self.assertTrue(serializer.is_valid())
 
+
+class PostCommentSerializerTest(TestCase):
+
+    def test_post_coment_serializer(self):
+        post_comment_data = {
+            "type": "comment",
+            "author": {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            },
+            "comment": "This is a comment",
+            "contentType": "text/plain",
+            "object": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+        }
+
+        serializer = CommentSerializer(data=post_comment_data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_get_comment_post(self):
+        post_comment_data = {
+            "type": "comment",
+            "author": {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            },
+            "comment": "This is a comment",
+            "contentType": "text/plain",
+            "object": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+        }
+
+        serializer = CommentSerializer(data=post_comment_data)
+        self.assertTrue(serializer.is_valid())
+        try:
+            post = serializer.get_comment_post(comment_id = post_comment_data["object"].split("/")[-1])
+        except ValueError as e:
+            self.assertTrue(str(e) == "Comment does not exist.")
+
+    def test_get_comment_by_id(self):
+        post_comment_data = {
+            "type": "comment",
+            "author": {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            },
+            "comment": "This is a comment",
+            "contentType": "text/plain",
+            "object": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+        }
+        serializer = CommentSerializer(data=post_comment_data)
+        self.assertTrue(serializer.is_valid())
+        try:
+            comment = serializer.get_comment_by_id(comment_id = post_comment_data["object"].split("/")[-1])
+        except ValueError as e:
+            self.assertTrue(str(e) == "Comment does not exist")
 
 
 
