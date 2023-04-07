@@ -18,6 +18,9 @@ class AuthorSerializerTestCase(TestCase):
             github="https://github.com/johndoe",
             avatar=""
         )
+    
+    def tearDown(self):
+        self.author.delete()
 
     def test_author_serializer(self):
         serializer = AuthorSerializer(instance=self.author)
@@ -105,6 +108,11 @@ class FollowerSerializerTestCase(TestCase):
         print(self.follower)
         print("fromauthor: ", self.follower.from_author)
         print("toauthor: ", self.follower.to_author)
+
+    def tearDown(self):
+        self.author1.delete()
+        self.author2.delete()
+        self.follower.delete()
 
     def test_get_relation_by_ids(self):
         serializer = FollowerSerializer()
