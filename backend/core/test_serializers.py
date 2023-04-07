@@ -321,6 +321,32 @@ class PostCommentSerializerTest(TestCase):
         except ValueError as e:
             self.assertTrue(str(e) == "Comment does not exist")
 
+    def test_create_comment(self):
+        post_comment_data = {
+            "type": "comment",
+            "author": {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            },
+            "comment": "This is a comment",
+            "contentType": "text/plain",
+            "object": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+        }
+        serializer = CommentSerializer(data=post_comment_data)
+        self.assertTrue(serializer.is_valid())
+        validated_data = serializer.validated_data
+        validated_data["author"] = post_comment_data["author"]
+        validated_data["m_id"] = post_comment_data["object"].split("/")[-1]
+        try:
+            comment = serializer.create_comment(author_id=post_comment_data["author"]["id"].split("/")[-1], post_id=post_comment_data["object"].split("/")[-1], comment=post_comment_data)
+        except ValueError as e:
+            self.assertTrue(str(e) == "Author does not exist")
+
 
 
     # def test_get_author_post(self):
