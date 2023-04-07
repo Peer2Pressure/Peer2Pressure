@@ -207,6 +207,11 @@ class PostSerializerTestCase(TestCase):
         post_uuid = self.post_data["id"].split("/")[-1]
         self.assertFalse(serializer.post_exists(post_id = post_uuid, author_id = self.author_data["id"].split("/")[-1]))
 
+    def test_update_post(self):
+        serializer = PostSerializer()
+        post_uuid = self.post_data["id"].split("/")[-1]
+        self.assertFalse(serializer.update_post(post_id = post_uuid, author_id = self.author_data["id"].split("/")[-1], defaults = self.post_data))
+
     # def test_create(self):
     #     validated_data = PostSerializer(data=self.post_data)
     #     serializer = PostSerializer()
