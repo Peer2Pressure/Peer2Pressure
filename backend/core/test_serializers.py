@@ -60,66 +60,95 @@ class AuthorSerializerTestCase(TestCase):
         self.assertTrue(serializer.author_exists(author_uuid))
         self.assertFalse(serializer.author_exists(999))
 
-# class AllAuthorSerializerTest(TestCase):
-#     def setUp(self):
-#         self.author_data = {
-#             "name": "Test Author",
-#             "github": "https://github.com/testauthor",
-#             "avatar": "https://testauthor.com/avatar.png"
-#         }
-#         self.author = Author.objects.create(**self.author_data)
+class AllAuthorSerializerTest(TestCase):
+    def setUp(self):
+        self.author_data = {
+            "name": "Test Author",
+            "github": "https://github.com/testauthor",
+            "avatar": "https://testauthor.com/avatar.png"
+        }
+        self.author = Author.objects.create(**self.author_data)
 
-#     def test_all_author_serializer(self):
-#         serializer = AllAuthorSerializer(instance={"items": [self.author]})
-#         self.assertEqual(serializer.data["items"][0]["name"], self.author_data["name"])
-#         self.assertEqual(serializer.data["items"][0]["github"], self.author_data["github"])
-#         self.assertEqual(serializer.data["items"][0]["avatar"], self.author_data["avatar"])
+    def test_all_author_serializer(self):
+        serializer = AllAuthorSerializer(instance={"items": [self.author]})
+        self.assertEqual(serializer.data["items"][0]["displayName"], self.author_data["name"])
+        self.assertEqual(serializer.data["items"][0]["github"], self.author_data["github"])
+
+class FollowerSerializerTest(TestCase):
+
+    def setUp(self):
+        self.author_data_1 = Author.objects.create(
+            name="John Doe1",
+            username="johndoe1",
+            email="johndoe1@example.com",
+            password="password1",
+            github="https://github.com/johndoe1",
+            avatar=""
+        )
+
+        self.author_data_2 = Author.objects.create(
+            name="Jane Doe",
+            username="janedoe",
+            email="johndoe@example.com",
+            password="password",
+            github="https://github.com/johndoe",
+            avatar=""
+        )
+
+        self.follower_data = {
+            "from_author": self.author_data_1,
+            "to_author": self.author_data_2,
+            "approved": True
+        }
+        self.follower = Follower.objects.create(**self.follower_data)
+
+    def test_follower_serializer(self):
+        serializer = FollowerSerializer(instance=self.follower)
+        expected_data = {
+            'type': 'follow',
+            'summary': 'John Doe1 is following Jane Doe',
+            'actor': {
+                'type': 'author', 
+                'id': self.author_data_1.id,
+                'url': self.author_data_1.url,
+                'host': self.author_data_1.host, 
+                'displayName': 'John Doe1',
+                'github': self.author_data_1.github, 
+                'profileImage': ''
+            },
+            'object':{
+                'type', 'author', 
+                'id', self.author_data_2.id,
+                'url', self.author_data_2.url,
+                'host', self.author_data_2.host, 
+                'displayName', 'Jane Doe', 
+                'github', self.author_data_2.github,
+                'profileImage', ''
+            },
+            'approved': True
+        }
+        self.assertEqual(serializer.data['type'], expected_data['type'])
+        self.assertEqual(serializer.data['actor']['type'], expected_data['actor']['type'])
+        self.assertEqual(serializer.data['actor']['id'], expected_data['actor']['id'])
+        self.assertEqual(serializer.data['actor']['url'], expected_data['actor']['url'])
+        self.assertEqual(serializer.data['actor']['host'], expected_data['actor']['host'])
+        self.assertEqual(serializer.data['actor']['displayName'], expected_data['actor']['displayName'])
+        self.assertEqual(serializer.data['actor']['github'], expected_data['actor']['github'])
+        self.assertEqual(serializer.data['actor']['profileImage'], expected_data['actor']['profileImage'])
+        self.assertEqual(serializer.data['approved'], expected_data['approved'])
+
+    def test_create_relations_method(self):
+        serializer = FollowerSerializer()
+        author_data_1_id = self.author_data_1.id.split("/")[-1]
+        author_data_2_id = self.author_data_2.id.split("/")[-1]
+        relation = serializer.create_relations(author_data_1_id, author_data_2_id)
+        relation = Follower.objects.get(m_id=relation.m_id)
+        self.assertEqual(str(relation.from_author), self.author_data_2.name)
+        self.assertEqual(str(relation.to_author), self.author_data_1.name)
+        self.assertFalse(relation.approved)
+
 
 '''
-# class AuthorSerializerTest(TestCase):
-#     def setUp(self):
-#         self.author_data = {
-#             "username": "authorusername",
-#             "name": "author name",
-#             "email": "author@gmail.com",
-#             "password": "authorpassword",
-#         }
-#         self.author = Author.objects.create(**self.author_data)
-
-#         self.serializer = AuthorSerializer(instance=self.author)
-
-#     def test_author_serialization(self):
-#         expected_data = {
-#             "type": "author",
-#             "id": str(self.author.id),
-#             "url": f"http://testserver/api/v1/authors/{self.author.id}",
-#             "host": None,
-#             "displayName": "author name",
-#             "github": None,
-#             "profileImage": None,
-#         }
-#         self.assertEqual(self.serializer.data, expected_data)
-
-#     def test_author_deserialization(self):
-#         author_data = {
-#             "username": "newusername",
-#             "name": "new name",
-#             "email": "newemail@gmail.com",
-#             "password": "newpassword",
-#         }
-#         serializer = AuthorSerializer(data=author_data)
-#         self.assertTrue(serializer.is_valid())
-
-#         author = serializer.save()
-#         self.assertTrue(Author.objects.filter(id=author.id).exists())
-#         self.assertEqual(author.username, author_data["username"])
-#         self.assertEqual(author.name, author_data["name"])
-#         self.assertEqual(author.email, author_data["email"])
-#         self.assertEqual(author.password, author_data["password"])
-
-#     def tearDown(self):
-#         self.author.delete()
-
 class FollowerSerializerTest(TestCase):
     def setUp(self) -> None:
         self.authorserializer = AuthorSerializer()

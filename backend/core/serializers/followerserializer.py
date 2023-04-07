@@ -19,10 +19,6 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follower
         fields = ["type", "summary", "actor", "object", "approved"]
-
-    # def create(self, validated_data):
-    #     follow, created = Follower.objects.create(**validated_data)
-    #     return follow, created
     
     def update(self, instance, validated_data):
         Follower.objects.filter(m_id=instance.m_id).update(**validated_data)
@@ -49,7 +45,8 @@ class FollowerSerializer(serializers.ModelSerializer):
             }
             relation_obj = Follower.objects.create(**defaults)
 
-            return relation_obj.id
+            # return relation_obj.id
+            return relation_obj
 
         return None
 

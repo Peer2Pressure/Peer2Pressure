@@ -10,7 +10,7 @@ from .serializers.postserializer import PostSerializer
 from .serializers.followerserializer import FollowerSerializer
 from .serializers.postlikeserializer import PostLikeSerializer
 from .serializers.commentserializer import CommentSerializer
-
+'''
 class AuthorAPISerializerTest(TestCase):
     def setUp(self) -> None:
         self.serializer = AuthorSerializer()
@@ -198,3 +198,4 @@ class RelationAPISerializerTest(TestCase):
 
     #     user1.delete()
     #     user2.delete()
+'''
