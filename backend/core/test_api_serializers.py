@@ -84,7 +84,62 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue(return_value[1] == 1)
         author_obj = self.serializer.get_author_by_id(user.m_id)
         self.assertTrue(author_obj.github == request_data["github"])
-        
+        author_data = self.apiserializer.get_single_author(user.m_id)
+        author_data_get_author = self.apiserializer.get_author_data(self.serializer.get_author_by_id(user.m_id))
+        self.assertTrue(author_data['id'] == author_data_get_author['id'])
+
+class FollowerAPISerializerTest(TestCase):
+    def setUp(self) -> None:
+        self.serializer = FollowerSerializer()
+        self.apiserializer = FollowerAPISerializer()
+        self.authorserializer = AuthorSerializer()
+
+    def test_get_all_followers(self):
+        user = Author.objects.create(
+            name="John Doe",
+            username="johndoe",
+            email="johndoe@example.com",
+            password="password",
+            github="",
+            avatar=""
+        )
+        return_value = self.apiserializer.get_all_followers(user.m_id)
+        self.assertTrue(0 == len(return_value[0]["items"]))
+        self.assertTrue("followers" == return_value[0]["type"])
+        self.assertTrue(200 == return_value[1])
+        user2 = Author.objects.create(
+            name="John Doe2",
+            username="johndoe2",
+            email="johndoe2@example.com",
+            password="password2",
+            github="",
+            avatar=""
+        )
+        request_data = {
+            "type": "follow",
+            "summary": "follow request",
+            "actor": {
+                "id": user2.id,
+                "host": user2.host,
+                "displayName": user2.name,
+                "url": user2.id,
+                "github": user2.github,
+            },
+            "object": {
+                "id": user.id,
+                "host": user.host,
+                "displayName": user.name,
+                "url": user.id,
+                "github": user.github,
+            },
+            "approved": False,
+        }
+        return_value = self.apiserializer.create_follow_request(user2.m_id, user.m_id, request_data)
+        self.assertTrue(200 == return_value[1])
+        return_value = self.apiserializer.get_single_follower(user.m_id, user2.m_id)
+        self.assertTrue(404 == return_value[1])
+        return_value = self.apiserializer.remove_follower(user.m_id, user2.m_id)
+        self.assertTrue(404 == return_value[1])
 
     # def test_author_create(self):
         # author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
