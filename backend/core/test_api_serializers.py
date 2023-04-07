@@ -37,43 +37,28 @@ class AuthorAPISerializerTest(TestCase):
         self.assertTrue(author_obj.id == single_author_response["url"])
         self.assertTrue(author_obj.name == single_author_response["displayName"])
         self.assertTrue(author_obj.github == single_author_response["github"])
-
     
-    # def test_get_all_authors(self):
-    #     user1 = User.objects.create_user(username="authorusername1", email="author@gamil.com", password="authorpassword")
-    #     user1.save()
+    def test_get_all_authors(self):
 
-    #     author_id1 = self.serializer.create_author("authorusername1", "author name", "author@gmail.com", "authorpassword", user=user1)
-        
-    #     user2 = User.objects.create_user(username="authorusername2", email="author@gamil.com", password="authorpassword")
-    #     user2.save()
-
-    #     author_id2 = self.serializer.create_author("authorusername2", "author name1", "author1@gmail.com", "authorpassword1", user=user2)
-
-    #     self.assertTrue(author_id1 == self.serializer.get_author_id_by_username("authorusername1"))
-    #     self.assertTrue(author_id2 == self.serializer.get_author_id_by_username("authorusername2"))
-
-    #     first_author_obj = self.serializer.get_author_by_id(author_id1)
-    #     second_author_obj = self.serializer.get_author_by_id(author_id2)
-
-    #     all_authors_response = self.apiserializer.get_all_authors()
-
-    #     self.assertTrue("authors" == all_authors_response["type"])
-    #     self.assertTrue(2 == len(all_authors_response["items"]))
-    #     self.assertTrue(first_author_obj.username == all_authors_response["items"][0]["username"])
-    #     self.assertTrue(first_author_obj.id == all_authors_response["items"][0]["id"])
-    #     self.assertTrue(first_author_obj.email == all_authors_response["items"][0]["email"])
-    #     self.assertTrue(first_author_obj.name == all_authors_response["items"][0]["displayName"])
-    #     self.assertTrue(first_author_obj.host == all_authors_response["items"][0]["host"])
-    #     self.assertTrue(second_author_obj.username == all_authors_response["items"][1]["username"])
-    #     self.assertTrue(second_author_obj.id == all_authors_response["items"][1]["id"])
-    #     self.assertTrue(second_author_obj.email == all_authors_response["items"][1]["email"])
-    #     self.assertTrue(second_author_obj.name == all_authors_response["items"][1]["displayName"])
-    #     self.assertTrue(second_author_obj.host == all_authors_response["items"][1]["host"])
-
-    #     user1.delete()
-    #     user2.delete()
-
+        all_authors_response = self.apiserializer.get_all_authors()
+        print(all_authors_response)
+        self.assertTrue("authors" == all_authors_response[0]["type"])
+        self.assertTrue(0 == len(all_authors_response[0]["items"]))
+        user = Author.objects.create(
+            name="John Doe",
+            username="johndoe",
+            email="johndoe@example.com",
+            password="password",
+            github="https://github.com/johndoe",
+            avatar=""
+        )
+        all_authors_response = self.apiserializer.get_all_authors()
+        print(all_authors_response)
+        self.assertTrue("authors" == all_authors_response[0]["type"])
+        self.assertTrue(1 == len(all_authors_response[0]["items"]))
+        self.assertTrue(user.id == all_authors_response[0]["items"][0]["id"])
+        self.assertTrue(user.name == all_authors_response[0]["items"][0]["displayName"])
+        self.assertTrue(user.github == all_authors_response[0]["items"][0]["github"])
 
     # def test_author_create(self):
         # author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
