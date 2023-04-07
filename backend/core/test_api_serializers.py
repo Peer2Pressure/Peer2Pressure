@@ -41,7 +41,6 @@ class AuthorAPISerializerTest(TestCase):
     def test_get_all_authors(self):
 
         all_authors_response = self.apiserializer.get_all_authors()
-        print(all_authors_response)
         self.assertTrue("authors" == all_authors_response[0]["type"])
         self.assertTrue(0 == len(all_authors_response[0]["items"]))
         user = Author.objects.create(
@@ -53,12 +52,39 @@ class AuthorAPISerializerTest(TestCase):
             avatar=""
         )
         all_authors_response = self.apiserializer.get_all_authors()
-        print(all_authors_response)
         self.assertTrue("authors" == all_authors_response[0]["type"])
         self.assertTrue(1 == len(all_authors_response[0]["items"]))
         self.assertTrue(user.id == all_authors_response[0]["items"][0]["id"])
         self.assertTrue(user.name == all_authors_response[0]["items"][0]["displayName"])
         self.assertTrue(user.github == all_authors_response[0]["items"][0]["github"])
+
+    def test_update_author(self):
+        user = Author.objects.create(
+            name="John Doe",
+            username="johndoe",
+            email="johndoe@example.com",
+            password="password",
+            github="",
+            avatar=""
+        )
+        request_data = {
+            "type": "author",
+            "github": "https://github.com",
+        }
+        return_value = self.apiserializer.update_author(user.m_id, request_data)
+        self.assertTrue(return_value[1] == 0)
+        request_data = {
+            "type": "author",
+            "id": user.id,
+            "displayName": user.name,
+            "github": "https://github.com",
+            "url": user.id,
+        }
+        return_value = self.apiserializer.update_author(user.m_id, request_data)
+        self.assertTrue(return_value[1] == 1)
+        author_obj = self.serializer.get_author_by_id(user.m_id)
+        self.assertTrue(author_obj.github == request_data["github"])
+        
 
     # def test_author_create(self):
         # author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
