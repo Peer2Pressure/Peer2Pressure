@@ -129,6 +129,83 @@ class FollowerSerializerTestCase(TestCase):
         instance = serializer.update(self.follower, data)
         self.assertEqual(instance.approved, True)
 
+class PostSerializerTestCase(TestCase):
+    def setUp(self):
+        self.author_data = {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            }
+        
+        validated_author = AuthorSerializer(data=self.author_data)
+        validated_author.is_valid(raise_exception=True)
+        self.author = validated_author.save()
+
+        self.post_data = {
+            "type": "post",
+            "title": "Another test",
+            "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+            "source": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+            "origin": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+            "description": "",
+            "contentType": "text/plain",
+            "content": "more tests",
+            "author": {
+                "type": "author",
+                "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "url": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+                "host": "https://p2psd.herokuapp.com",
+                "displayName": "Vivian",
+                "github": "",
+                "profileImage": ""
+            },
+            "comments": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd/comments",
+            "published": "2023-04-03T05:28:56.129880Z",
+            "visibility": "PUBLIC",
+        }
+
+    def tearDown(self):
+        Post.objects.filter(id=self.post_data["id"]).delete()
+
+
+    def test_post_serializer(self):
+        serializer = PostSerializer(data=self.post_data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_post_serializer_invalid(self):
+        invalid_post_data = {
+            "type": "post",
+            "title": "Another test",
+            "id": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+            "source": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+            "origin": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd",
+            "description": "",
+            "contentType": "text/plain",
+            "content": "more tests",
+            "author": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff",
+            "comments": "https://p2psd.herokuapp.com/authors/758be09e-e78d-411c-87cd-a5d9c9d816ff/posts/52cfadc1-548f-45f2-8fa4-286272f568cd/comments",
+            "published": "2023-04-03T05:28:56.129880Z",
+            "visibility": "PUBLIC",
+        }
+        serializer = PostSerializer(data=invalid_post_data)
+        self.assertFalse(serializer.is_valid())
+
+    # def test_create(self):
+    #     validated_data = PostSerializer(data=self.post_data)
+    #     serializer = PostSerializer()
+    #     author_serializer = AuthorSerializer()
+    #     author = author_serializer.get_author_by_id(author_id = self.author_data["id"].split("/")[-1])
+    #     self.assertTrue(validated_data.is_valid())
+
+    #     validated_data["author"] = author
+    #     validated_data.save()
+        
+        # self.assertEqual(validated_data.title, self.post_data['title'])
+
 # class AllFollowerSerializerTestCase(TestCase):
 #     def setUp(self) -> None:
 #         self.author1 = Author.objects.create(
