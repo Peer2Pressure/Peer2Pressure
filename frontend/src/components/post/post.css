@@ -14,14 +14,15 @@
   width: 1px;
 }
 
-
-.post_headerTop {
-  /* border: 1px solid green; */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+/* .post .post__edit, .post .post__delete {
+  color: transparent;
 }
+
+.post:hover .post__edit, .post:hover .post__delete {
+  color: black;
+  transition: color 0.5s ease;
+} */
+
 
 .post__body {
   flex: 1;
@@ -271,6 +272,13 @@ img {
   margin: 1rem;
 }
 
+.post__delete {
+  cursor: pointer;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  /* color: transparent; */
+}
+
 .closeButton {
   position: absolute;
   top: -0.5rem;
@@ -283,4 +291,9 @@ img {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+.post_headerMenu {
+  display: flex;
+  flex-direction: row;
 }
