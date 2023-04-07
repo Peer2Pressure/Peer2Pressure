@@ -202,6 +202,11 @@ class PostSerializerTestCase(TestCase):
         serializer = PostSerializer(data=invalid_post_data)
         self.assertFalse(serializer.is_valid())
 
+    def test_post_exists(self):
+        serializer = PostSerializer()
+        post_uuid = self.post_data["id"].split("/")[-1]
+        self.assertFalse(serializer.post_exists(post_id = post_uuid, author_id = self.author_data["id"].split("/")[-1]))
+
     # def test_create(self):
     #     validated_data = PostSerializer(data=self.post_data)
     #     serializer = PostSerializer()
