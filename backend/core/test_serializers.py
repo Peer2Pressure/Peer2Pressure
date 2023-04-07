@@ -2,10 +2,11 @@ from .models import *
 from django.test import TestCase
 from .serializers.authorserializer import AuthorSerializer, AllAuthorSerializer
 from .serializers.postserializer import PostSerializer
-from .serializers.followerserializer import FollowerSerializer
+from .serializers.followerserializer import FollowerSerializer, AllFollowerSerializer
 from .serializers.commentserializer import CommentSerializer
 from .serializers.postlikeserializer import PostLikeSerializer
 from django.contrib.auth.models import User, auth
+from rest_framework.exceptions import ValidationError
 
 class AuthorSerializerTestCase(TestCase):
     def setUp(self):
@@ -74,19 +75,18 @@ class AllAuthorSerializerTest(TestCase):
         self.assertEqual(serializer.data["items"][0]["displayName"], self.author_data["name"])
         self.assertEqual(serializer.data["items"][0]["github"], self.author_data["github"])
 
-class FollowerSerializerTest(TestCase):
-
+class FollowerSerializerTestCase(TestCase):
     def setUp(self):
-        self.author_data_1 = Author.objects.create(
-            name="John Doe1",
-            username="johndoe1",
-            email="johndoe1@example.com",
-            password="password1",
-            github="https://github.com/johndoe1",
-            avatar=""
+        self.author1 = Author.objects.create(
+        name="John Doe1",
+        username="johndoe1",
+        email="johndoe1@example.com",
+        password="password1",
+        github="https://github.com/johndoe1",
+        avatar=""
         )
 
-        self.author_data_2 = Author.objects.create(
+        self.author2 = Author.objects.create(
             name="Jane Doe",
             username="janedoe",
             email="johndoe@example.com",
@@ -96,114 +96,77 @@ class FollowerSerializerTest(TestCase):
         )
 
         self.follower_data = {
-            "from_author": self.author_data_1,
-            "to_author": self.author_data_2,
+            "from_author": self.author1,
+            "to_author": self.author2,
             "approved": True
         }
+
         self.follower = Follower.objects.create(**self.follower_data)
+        print(self.follower)
+        print("fromauthor: ", self.follower.from_author)
+        print("toauthor: ", self.follower.to_author)
 
-    def test_follower_serializer(self):
-        serializer = FollowerSerializer(instance=self.follower)
-        expected_data = {
-            'type': 'follow',
-            'summary': 'John Doe1 is following Jane Doe',
-            'actor': {
-                'type': 'author', 
-                'id': self.author_data_1.id,
-                'url': self.author_data_1.url,
-                'host': self.author_data_1.host, 
-                'displayName': 'John Doe1',
-                'github': self.author_data_1.github, 
-                'profileImage': ''
-            },
-            'object':{
-                'type', 'author', 
-                'id', self.author_data_2.id,
-                'url', self.author_data_2.url,
-                'host', self.author_data_2.host, 
-                'displayName', 'Jane Doe', 
-                'github', self.author_data_2.github,
-                'profileImage', ''
-            },
-            'approved': True
-        }
-        self.assertEqual(serializer.data['type'], expected_data['type'])
-        self.assertEqual(serializer.data['actor']['type'], expected_data['actor']['type'])
-        self.assertEqual(serializer.data['actor']['id'], expected_data['actor']['id'])
-        self.assertEqual(serializer.data['actor']['url'], expected_data['actor']['url'])
-        self.assertEqual(serializer.data['actor']['host'], expected_data['actor']['host'])
-        self.assertEqual(serializer.data['actor']['displayName'], expected_data['actor']['displayName'])
-        self.assertEqual(serializer.data['actor']['github'], expected_data['actor']['github'])
-        self.assertEqual(serializer.data['actor']['profileImage'], expected_data['actor']['profileImage'])
-        self.assertEqual(serializer.data['approved'], expected_data['approved'])
-
-    def test_create_relations_method(self):
+    def test_get_relation_by_ids(self):
         serializer = FollowerSerializer()
-        author_data_1_id = self.author_data_1.id.split("/")[-1]
-        author_data_2_id = self.author_data_2.id.split("/")[-1]
-        relation = serializer.create_relations(author_data_1_id, author_data_2_id)
-        relation = Follower.objects.get(m_id=relation.m_id)
-        self.assertEqual(str(relation.from_author), self.author_data_2.name)
-        self.assertEqual(str(relation.to_author), self.author_data_1.name)
-        self.assertFalse(relation.approved)
+        author1_uuid = self.author1.id.split("/")[-1]
+        author2_uuid = self.author2.id.split("/")[-1]
+        follower = serializer.get_relation_by_ids(author2_uuid, author1_uuid)
+        self.assertEqual(follower, self.follower)
+
+        with self.assertRaises(ValidationError):
+            serializer.get_relation_by_ids(self.author1.m_id, self.author1.m_id)
+    
+    def test_follower_exists(self):
+        serializer = FollowerSerializer()
+        author1_uuid = self.author1.id.split("/")[-1]
+        author2_uuid = self.author2.id.split("/")[-1]
+        self.assertTrue(serializer.follower_exists(author2_uuid, author1_uuid))
+        self.assertFalse(serializer.follower_exists(author1_uuid, author2_uuid))
+
+    def test_update(self):
+        serializer = FollowerSerializer()
+        data = {'approved': True}
+        instance = serializer.update(self.follower, data)
+        self.assertEqual(instance.approved, True)
+
+# class AllFollowerSerializerTestCase(TestCase):
+#     def setUp(self) -> None:
+#         self.author1 = Author.objects.create(
+#             name="John Doe1",
+#             username="johndoe1",
+#             email="johndoe1@example.com",
+#             password="password1",
+#             github="https://github.com/johndoe1",
+#             avatar=""
+#         )
+
+#         self.author2 = Author.objects.create(
+#             name="Jane Doe",
+#             username="janedoe",
+#             email="johndoe@example.com",
+#             password="password",
+#             github="https://github.com/johndoe",
+#             avatar=""
+#         )
+
+#         self.follower_data = {
+#             "from_author": self.author1,
+#             "to_author": self.author2,
+#             "approved": True
+#         }
+ 
+#         self.follower = Follower.objects.create(**self.follower_data)
+
+
+    # def test_to_representation(self):
+    #     # serializer = AllFollowerSerializer(instance=[self.author1, self.author2])
+    #     serializer = AllFollowerSerializer(instance=self.follower)
+    #     data = serializer.to_representation(serializer.instance)
+    #     print("result of follower: ", data)
+
 
 
 '''
-class FollowerSerializerTest(TestCase):
-    def setUp(self) -> None:
-        self.authorserializer = AuthorSerializer()
-        user1 = User.objects.create_user(username="authorusername1", email="author@gamil.com", password="authorpassword")
-        user1.save()
-        self.author_id1 = self.authorserializer.create_author("authorusername1", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=user1)
-        user2 = User.objects.create_user(username="authorusername2", email="author@gamil.com", password="authorpassword")
-        user2.save()
-        self.author_id2 = self.authorserializer.create_author("author username2", "author firstname", "author lastname", "author@gamil.com", "authorpassword", user=user2)        
-        self.serializer = FollowerSerializer()
-
-    def tearDown(self) -> None:
-        self.user_1.delete()
-        self.user_2.delete()
-
-    def test_relation_create(self):
-        relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
-        # relation_obj = Follower.objects.get(id = relation_id)
-        created_relation = self.serializer.get_relation_by_ids(self.author_id1, self.author_id2)
-        self.assertTrue(relation_id == created_relation.id)
-        self.assertTrue(not created_relation.from_author_request)
-        self.assertTrue(not created_relation.to_author_request)
-
-    def test_check_follow_status(self):
-        relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
-        created_relation = self.serializer.get_relation_by_ids(self.author_id1, self.author_id2)
-        self.assertTrue(relation_id == created_relation.id)
-        self.assertTrue(not created_relation.from_author_request)
-        self.assertTrue(not created_relation.to_author_request)
-        self.assertTrue(not self.serializer.check_follow_status(self.author_id1, self.author_id2))
-
-    def test_update_follow_status(self):
-        relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
-        created_relation = self.serializer.get_relation_by_ids(self.author_id1, self.author_id2)
-        self.assertTrue(relation_id == created_relation.id)
-        self.assertTrue(not created_relation.from_author_request)
-        self.assertTrue(not created_relation.to_author_request)
-        self.assertTrue(not self.serializer.check_follow_status(self.author_id1, self.author_id2))
-        self.assertTrue(self.serializer.update_follow_status(self.author_id1, self.author_id2, True))
-        self.assertTrue(self.serializer.check_follow_status(self.author_id1, self.author_id2))
-
-    # def test_get_all_followers(self):
-    #     relation_id = self.serializer.create_relations(self.author_id1, self.author_id2)
-    #     created_relation = self.serializer.get_relation_by_ids(self.author_id1, self.author_id2)
-    #     self.assertTrue(relation_id == created_relation.id)
-    #     self.assertTrue(not created_relation.from_author_request)
-    #     self.assertTrue(not created_relation.to_author_request)
-    #     self.assertTrue(not self.serializer.check_follow_status(self.author_id1, self.author_id2))
-    #     self.assertTrue(self.serializer.update_follow_status(self.author_id1, self.author_id2, True))
-    #     self.assertTrue(self.serializer.check_follow_status(self.author_id1, self.author_id2))
-
-    #     all_follower_response = self.serializer.get_all_followers(self.author_id1)
-
-    #     self.assertTrue(len(all_follower_response["items"]) == 1)
-
 # class PostSerializerTest(TestCase):
 #     def setUp(self) -> None:
 #         self.authorserializer = AuthorSerializer()
