@@ -81,7 +81,7 @@ class CommentAPISerializer(serializers.ModelSerializer):
             
             result_dict["page"] = page
             result_dict["size"] = size
-            result_dict["items"] = paginated_comments
+            result_dict["comments"] = paginated_comments
         else:
             result_dict["comments"] = comments_list
 
