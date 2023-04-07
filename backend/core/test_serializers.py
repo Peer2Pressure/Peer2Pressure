@@ -152,6 +152,9 @@ class PostSerializerTestCase(TestCase):
         validated_author = AuthorSerializer(data=self.author_data)
         validated_author.is_valid(raise_exception=True)
         self.author = validated_author.save()
+        self.author_serializer = AuthorSerializer()
+        self.author_saved_data = self.author_serializer.get_author_by_id(self.author.m_id)
+        # self.author_saved_data = self.author_serializer.get_author_by_id(self.author.id.split("/")[-1])
 
         self.post_data = {
             "type": "post",
@@ -216,6 +219,18 @@ class PostSerializerTestCase(TestCase):
         serializer = PostSerializer()
         post_uuid = self.post_data["id"].split("/")[-1]
         self.assertFalse(serializer.delete_post(post_id = post_uuid, author_id = self.author_data["id"].split("/")[-1]))
+        
+    def test_post_create(self):
+        serializer = PostSerializer(data=self.post_data)
+        self.assertTrue(serializer.is_valid())
+        validated_data = serializer.validated_data
+        validated_data["author"] = self.author_saved_data
+        validated_data["m_id"] = self.post_data["id"].split("/")[-1]
+        post = serializer.create(validated_data)
+        self.assertEqual(post.title, self.post_data['title'])
+        self.assertEqual(post.content, self.post_data['content'])
+        self.assertEqual(post.description, self.post_data['description'])
+        self.assertEqual(post.visibility, self.post_data['visibility'])
 
 
 
