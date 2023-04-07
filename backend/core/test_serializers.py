@@ -217,6 +217,8 @@ class PostSerializerTestCase(TestCase):
         post_uuid = self.post_data["id"].split("/")[-1]
         self.assertFalse(serializer.delete_post(post_id = post_uuid, author_id = self.author_data["id"].split("/")[-1]))
 
+
+
     # def test_create(self):
     #     validated_data = PostSerializer(data=self.post_data)
     #     serializer = PostSerializer()
