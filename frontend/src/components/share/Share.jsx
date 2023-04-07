@@ -72,7 +72,9 @@ function Share (props) {
 
     const handleConnectionsModalClose = () => {
         setConnectionsModalOpen(false);
-        setVisibility(visibilityOptions[0].value);
+        if (selectedUser === null) {
+            setVisibility(visibilityOptions[0].value);
+        }
     };
 
     // change selected user
