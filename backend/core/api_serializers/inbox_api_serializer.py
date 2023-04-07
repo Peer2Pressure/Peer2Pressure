@@ -34,6 +34,7 @@ post_serializer = PostSerializer()
 follower_serializer = FollowerSerializer()
 post_like_serializer = PostLikeSerializer()
 post_comment_serializer = CommentSerializer()
+inbox_serializer = InboxItemsSerializer()
 
 pp = pprint.PrettyPrinter()
 
@@ -207,7 +208,7 @@ class InboxAPISerializer(serializers.ModelSerializer):
             # Get post author id.
             validated_data = serializer.validated_data
             print("Validated data: ", validated_data)
-            post_id_url = urlparse(request_data["id"]).path.rstrip("/").split('/')
+            post_id_url = urlparse(request_data["source"]).path.rstrip("/").split('/')
             foreign_author_id = uuid.UUID(post_id_url[-3])
             post_id = uuid.UUID(post_id_url[-1])
 
@@ -254,10 +255,16 @@ class InboxAPISerializer(serializers.ModelSerializer):
             # print(res.status_code, res.text)
             if code in [200, 201]:
                 post = post_serializer.get_author_post(foreign_author_id, post_id)
-                # create new inbox entry referencing the post send to inbox.
-                inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
-                inbox_post.save()
-                # return {"msg": f"Post has been send to {author_id} inbox"}, 200
+                author = author_serializer.get_author_by_id(author_id)
+
+                # Create or update inbox objects for each user
+                if inbox_serializer.inbox_obj_exists(type="post", author=author, object_id=post.m_id):
+                    inbox_post = Inbox.objects.get(object_id=post.m_id, author=author, type="post")
+                    inbox_post.updated_at = timezone.now()
+                    inbox_post.save()
+                else:
+                    inbox_post = Inbox.objects.create(content_object=post, author=author, type="post")
+                    inbox_post.save()
                 return PostSerializer(post).data, 200
             elif code == 500:
                 return {"msg": "Internal Server Error"}, 500

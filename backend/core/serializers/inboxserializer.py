@@ -29,6 +29,21 @@ class InboxItemsSerializer(serializers.Serializer):
             data.pop('size')
         return data
 
+    def get_inbox_obj(self, type, author, object_id):
+        try:
+            inbox_obj = Inbox.objects.get(type=type, author=author, object_id=object_id)
+        except Inbox.DoesNotExist:
+            raise ValidationError
+
+        return inbox_obj
+
+    def inbox_obj_exists(self, type, author, object_id):
+        try:
+            inbox_obj = self.get_inbox_obj(type, author, object_id)
+            return True
+        except ValidationError:
+            return False
+
 class InboxFollowRequestSerializer(serializers.Serializer):
     type = serializers.CharField(default="requests" , max_length=10, read_only=True, required=False)
     author = serializers.URLField(allow_null=True, required=False)

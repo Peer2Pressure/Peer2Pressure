@@ -179,10 +179,11 @@ class PostAPISerializer(serializers.ModelSerializer):
 
     def delete_author_post(self, author_id, post_id):
         deleted_post_m_id = post_serializer.delete_post(author_id, post_id)
-
+        
         if deleted_post_m_id:
             try:
-                inbox = Inbox.objects.get(object_id=deleted_post_m_id)
+                author = author_serializer.get_author_by_id(author_id)
+                inbox = Inbox.objects.get(object_id=deleted_post_m_id, author=author)
                 inbox.delete()
             except Inbox.DoesNotExist:
                 print("Inbox object does not exist.")
