@@ -10,6 +10,7 @@ from .serializers.postserializer import PostSerializer
 from .serializers.followerserializer import FollowerSerializer
 from .serializers.postlikeserializer import PostLikeSerializer
 from .serializers.commentserializer import CommentSerializer
+from .api_serializers.inbox_api_serializer import InboxAPISerializer
 
 class AuthorAPISerializerTest(TestCase):
     def setUp(self) -> None:
@@ -140,6 +141,30 @@ class FollowerAPISerializerTest(TestCase):
         self.assertTrue(404 == return_value[1])
         return_value = self.apiserializer.remove_follower(user.m_id, user2.m_id)
         self.assertTrue(404 == return_value[1])
+
+class InboxAPISerializerTest(TestCase):
+    def setUp(self) -> None:
+        self.apiserializer = InboxAPISerializer()
+        self.authorserializer = AuthorSerializer()
+
+    def test_get_inbox(self):
+        user = Author.objects.create(
+            name="John Doe",
+            username="johndoe",
+            email="johndoe@example.com",
+            password="password",
+            github="",
+            avatar=""
+        )
+
+        return_value = self.apiserializer.get_all_inbox_posts(user.m_id, data_type="post")
+        self.assertTrue(200 == return_value[1])
+        self.assertTrue(0 == len(return_value[0]["items"]))
+        self.assertTrue("inbox" == return_value[0]["type"])
+
+        return_value = self.apiserializer.get_all_inbox_posts(user.m_id, data_type="request")
+        self.assertTrue(200 == return_value[1])
+ 
 
     # def test_author_create(self):
         # author_id = self.serializer.create_author("author username", "author firstname", "author lastname", "author@gmail.com", "authorpassword")
