@@ -134,7 +134,7 @@ Register your node using the steps mentiond [here](#setting-up-nodes). Update `h
 
 ### Team 4
 
-WebSite: https://www.distribution.social/
+WebSite: https://www.distribution.social/ \
 API Docs: https://www.distribution.social/swagger/
 
 ### Team 12
