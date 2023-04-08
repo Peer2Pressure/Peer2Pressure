@@ -92,7 +92,7 @@ npm start
 
 This will open a new browser page at http://localhost:3000.
 
-***Note:** The user will have to be logged in through https://localhost:8000 for the app to make successful api calls as the login is handled by Django*
+***Note:** The user will have to be log in through https://localhost:8000 for the app to make successful api calls as the login is handled by Django*
 
 All react updates will be reflected in the app realtime.
 
