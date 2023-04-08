@@ -14,7 +14,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import api_view, permission_classes
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 
 # Local Libraries
 from .. import utils
@@ -22,7 +22,6 @@ from ..models import *
 from ..serializers.postserializer import PostSerializer, AllPostSerializer
 from ..api_serializers.post_api_serializer import PostAPISerializer
 
-# @permission_classes([IsAuthenticated])
 def get_tokens(request):
     client_servers = Node.objects.all()
     if len(client_servers) == 0:
@@ -65,3 +64,29 @@ def get_hostnames(request):
         response["items"].append(hostname)
 
     return JsonResponse(response, status=status.HTTP_200_OK)
+
+
+class NodeView(GenericAPIView):
+    def post(self, request):
+        try:
+            api_endpoint = request.data["api_endpoint"]
+            token = request.data["token"]
+            client = Node(api_endpoint=api_endpoint, token=token)
+            client.save()
+        except Node.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print("asdsa", e)
+            return HttpResponse(str(e), status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponse("Node added.", status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        try:
+            api_endpoint = request.data["api_endpoint"]
+            client = Node.objects.get(api_endpoint=api_endpoint)
+        except Node.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return HttpResponse(str(e), status=status.HTTP_400_BAD_REQUEST)
+        client.delete()
+        return HttpResponse("Node deleted.", status=status.HTTP_204_NO_CONTENT)

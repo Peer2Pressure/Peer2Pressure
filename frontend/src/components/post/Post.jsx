@@ -142,59 +142,12 @@ const Post = forwardRef(
     }, [tokens, postAuthorID, postID]);
 
 
-    // // upon like click execute this
-    // useEffect(() => {
-    //   async function getLikes() {
-    //     try {
-    //       const response_likes = await axios.get(`${id}/likes/`);
-    //       setInboxLikes(response_likes.data.items);
-    //       setLikeCounter(response_likes.data.items.length);
-    //       const responseLikesAuthors = response_likes.data.items.map((item) => item.author.id);
-    //       const responseLikesAuthorsSplit = responseLikesAuthors.map((item) => item.split("/"));
-    //       const responseLikesAuthorsSplit2 = responseLikesAuthorsSplit.map((item) => item[4]);
-    //       setAuthorLikedList(responseLikesAuthorsSplit2);
-
-    //       const authorId = authorID;
-    //       if (responseLikesAuthorsSplit2.includes(authorId)) {
-    //         setLike(true);
-    //       } else {
-    //         setLike(false);
-    //       };
-
-    //     } catch (error) {
-    //       setError(error);
-    //     }
-    //   }
-
-    //   getLikes();
-    // }, [id, authorID]);
-
-    // useEffect(() => {
-    //   async function getComments() {
-    //     try {
-    //       const response_comments = await axios.get(`${id}/comments/`);
-    //       setInboxComments(response_comments.data.comments);
-    //     } catch (error) {
-    //       setError(error);
-    //     }
-    //   }
-
-    //   getComments();
-    // }, [id]);
-
     // upon like click execute this
     const handleLikeClick = async () => {
       if (like) {
         return;
       }
-      // if (like) {
-      //   // setLikeCount(likeCount + 1);
-      //   console.log("triggered if");
-      //   return;
-      // } else {
-      //   setLikeCount(likeCount - 1);
-      //   console.log("triggered else")
-      // }
+
       try {
         // encapsulated data to be sent
         const data = {
@@ -248,16 +201,11 @@ const Post = forwardRef(
             object: id
           };
 
-        
-          // else {
-          //   setPostCommentString(`/authors/${postAuthorID}/inbox/`);
-          // }
           const response = await axios.post(postCommentString, data, {
-          }, {
             headers: {
               'Authorization': tokens[new URL (comments).hostname],
-          },
-        });
+            }
+          });
     
         // Do something with the response, such as displaying the new comment
         console.log("This is post",response.data);
@@ -466,14 +414,6 @@ const Post = forwardRef(
                 </div>
               )
           )}
-          {/* {id !== source && (
-              originAuthorDisplayName && (
-                <div className="repostInfo">
-                  <b>
-                <span>Reposted from {originAuthorDisplayName}@{originAuthorHost}</span></b>
-                </div>
-              )
-          )} */}
         </div>
         <div className="post__footer">
               <div className="iconArea">

@@ -71,8 +71,10 @@ function Share (props) {
     };
 
     const handleConnectionsModalClose = () => {
+        // if (selectedUser === null) {
+        //     setVisibility(visibilityOptions[0].value);
+        // }
         setConnectionsModalOpen(false);
-        setVisibility(visibilityOptions[0].value);
     };
 
     // change selected user

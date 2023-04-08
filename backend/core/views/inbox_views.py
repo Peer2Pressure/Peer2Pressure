@@ -93,7 +93,11 @@ class InboxAPI(GenericAPIView):
             return Response(response, status=status.HTTP_404_NOT_FOUND)
         elif code == 500:
             return Response(response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+    
+    @swagger_auto_schema(
+        tags=["Inbox"],
+        operation_description="Delete an Inbox object.",
+    )
     @permission_classes([IsAuthenticated])
     def delete(self, request, author_id):
         response, code = inbox_api_serializer.delete_inbox_item(author_id, request.data)
