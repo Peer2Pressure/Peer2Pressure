@@ -129,4 +129,3 @@ heroku run --app <YOUR_APP_NAME> python manage.py createsuperuser
 ```
 
 Register your node using the steps mentiond [here](#setting-up-nodes). Update `https:localhost:8000` to your heroku app `BASE_HOST`.
-
