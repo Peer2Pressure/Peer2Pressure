@@ -139,10 +139,10 @@ API Docs: https://www.distribution.social/swagger/
 
 ### Team 12
 
-WebSite: https://www.distribution.social/
+WebSite: https://www.distribution.social/ \
 API Docs: https://www.distribution.social/swagger/
 
 ### Team 11
 
-WebSite: https://quickcomm-dev1.herokuapp.com/
+WebSite: https://quickcomm-dev1.herokuapp.com/ \
 API Docs: https://quickcomm-dev1.herokuapp.com/openapi
