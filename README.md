@@ -3,7 +3,7 @@
 
 ## About
 
-This document contains information on how to setup up and run and deploy the peer2pressure app.
+This document contains information on how to setup up, run and deploy the peer2pressure app.
 
 - [API Documentation](https://p2psd.herokuapp.com/swagger)
 - [Frontend documentation](https://github.com/Peer2Pressure/Peer2Pressure/blob/main/frontend/README.md) 
