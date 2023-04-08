@@ -67,7 +67,7 @@ Follow these commands to achieve this:
 ```sh
 ENDPOINT="http://localhost:8000"
 TOKEN=$(echo <your_username>:<your_password> | base64)
-curl -X POST -H "Content-Type: application/json" "http://localhost:8000/nodes/" -d '{"api_endpoint": "'"$ENDPOINT"'", "token": "'"$TOKEN"'"}'
+curl -X POST -H "Content-Type: application/json" "http://localhost:8000/nodes/" -d '{"api_endpoint": "'"$ENDPOINT"'", "token": "Basic '"$TOKEN"'"}'
 ```
 
 In order to delete a node:
