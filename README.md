@@ -6,7 +6,8 @@
 This document contains information on how to setup up, run and deploy the peer2pressure app.
 
 - [API Documentation](https://p2psd.herokuapp.com/swagger)
-- [Frontend documentation](https://github.com/Peer2Pressure/Peer2Pressure/blob/main/frontend/README.md) 
+- [Frontend Documentation](https://github.com/Peer2Pressure/Peer2Pressure/blob/main/frontend/README.md)
+- [Video Demo](https://www.youtube.com/watch?v=SRCNCyfNsec)
 
 ## Prerequisites
 - git
