@@ -151,5 +151,5 @@ API Docs: https://quickcomm-dev1.herokuapp.com/openapi
 
 ### Team 10
 
-WebSite: https://cmput404-project-data.herokuapp.com/ \
-API Docs: https://cmput404-project-data.herokuapp.com/swagger/
+WebSite: https://socialdistcmput404.herokuapp.com/ \
+API Docs: https://socialdistcmput404.herokuapp.com/api/swagger/
