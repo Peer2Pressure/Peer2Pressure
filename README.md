@@ -139,8 +139,8 @@ API Docs: https://www.distribution.social/swagger/
 
 ### Team 12
 
-WebSite: https://www.distribution.social/ \
-API Docs: https://www.distribution.social/swagger/
+WebSite: https://cmput404-project-data.herokuapp.com/ \
+API Docs: https://cmput404-project-data.herokuapp.com/swagger/
 
 ### Team 11
 
